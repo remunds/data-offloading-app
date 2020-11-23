@@ -22,7 +22,7 @@ jobs:
         with:
           java-version: '12.x'
       - run: git clone https://github.com/flutter/flutter.git --depth 1 -b v1.15.17 _flutter
-      - run: echo "$GITHUB_WORKSPACE/_flutter/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - run: echo "$GITHUB_WORKSPACE/_flutter/bin" >> $GITHUB_PATH
       - run: flutter pub get
         working-directory: ./
       - run: flutter build ios --no-codesign
