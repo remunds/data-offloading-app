@@ -1,65 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(App());
-}
+void main() => runApp(MyApp()); //runs the main application widget
 
-class App extends StatelessWidget {
-  // This widget is the root of your application.
+/// This is the main application widget.
+class MyApp extends StatelessWidget {
+  static const String _title = 'Data Offloading App';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Data Offloading App',
+      title: _title,
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: Colors.green, //Theme color of the app
       ),
-      home: MyHomePage(title: 'Data Offloading App'),
+      home: MyStatefulWidget(), //"home" page
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+/// This is the stateful widget that the main application instantiates.
+class MyStatefulWidget extends StatefulWidget {
+  MyStatefulWidget({Key key}) : super(key: key); //muss ich noch herausfinden
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyStatefulWidgetState createState() =>
+      _MyStatefulWidgetState(); //Because the apps basic structure is stateful and never changes its state we have to create a state.
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+/// This is the private State class that goes with MyStatefulWidget.
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  int _selectedIndex = 1;
 
-  void _incrementCounter() {
+  void _onItemTapped(int index) {
+    //Function that sets the state of the bottom bar to the selected icon (index 0 for "Karte", index 1 for "Uebersicht" and index 2 for "Tasks")
+
     setState(() {
-      _counter++;
+      _selectedIndex = index;
+      print(index);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _children = [Text("Map"), Text("Home"), Text("Tasks")];
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
+      body: SafeArea(
+          child: Container(
+        padding: EdgeInsets.all(5.0), //set an edge of 5px on all sides
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+          children: [
+            Row(
+              //Make a Row with a settings button on the right side
+              mainAxisAlignment:
+                  MainAxisAlignment.end, //align the button to the right side
+              children: [
+                IconButton(
+                    //button initialisation
+                    icon: Icon(
+                      Icons.settings,
+                      color: Colors.black54,
+                    ),
+                    onPressed: () {
+                      //not yet implemented
+                    }),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            _children[_selectedIndex],
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+      )),
+      bottomNavigationBar: BottomNavigationBar(
+        //Bottom navigation bar widget
+        items: const <BottomNavigationBarItem>[
+          // List, where all buttons/icons are stored
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Karte',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Übersicht',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_turned_in),
+            label: 'Tasks',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green,
+        onTap: _onItemTapped,
       ),
     );
   }
