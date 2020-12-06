@@ -13,7 +13,6 @@
 },
 }:
 pkgs.mkShell {
-    #buildInputs = with pkgs; [ flutter androidPkgs_10_0.androidsdk jdk ];
     buildInputs = with pkgs; [ flutter androidPkgs_10_0.androidsdk androidenv.androidPkgs_9_0.androidsdk jdk ];
     shellHook=''
       export USE_CCACHE=1
