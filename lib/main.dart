@@ -43,7 +43,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _children = [Text("Map"), Text("Home"), Text("Tasks")];
+    final List<Widget> _children = [Text("Map"), Text("Home"), Text("Task")];
     return Scaffold(
       body: SafeArea(
           child: Container(
