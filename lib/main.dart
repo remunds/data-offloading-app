@@ -1,4 +1,10 @@
+import 'logic/boxcommunicator.dart';
+import 'data/task.dart';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 
 import 'Screens/settings.dart';
 
@@ -27,6 +33,7 @@ class BaseAppWidget extends StatefulWidget {
       _BaseAppWidgetState(); //Because the apps basic structure is stateful and never changes its state we have to create a state.
 }
 
+<<<<<<< HEAD
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
   @override
@@ -119,6 +126,72 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
           ),
         ),
       ),
+=======
+class _MyHomePageState extends State<MyHomePage> {
+  Future<Album> _futureAlbum;
+
+  // final Connectivity _connectivity = new Connectivity();
+  // StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  //var subscription;
+  String _connectionStatus;
+  String _connection;
+  
+  
+  @override
+  void initState() async {
+    super.initState();
+    _futureAlbum = BoxCommunicator.fetchAlbum();
+    // _connectivitySubscription =
+    // subscription =
+    //     _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+    //   setState(() => _connectionStatus = result.toString());
+    //});
+  var connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.mobile) {
+    _connection = "mobile";
+  } else if (connectivityResult == ConnectivityResult.wifi) {
+    _connection = "wifi";
+  } else {
+    _connection = "nothing";
+  }
+  }
+
+  @override
+  void dispose() {
+    // subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'The following data came from the API:',
+            ),
+            FutureBuilder<Album>(
+              future: _futureAlbum,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.title);
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                // By default, show a loading spinner.
+                return CircularProgressIndicator();
+              }
+            ),
+            Text(_connection) 
+          ],
+        ),
+      )
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
     );
   }
 }

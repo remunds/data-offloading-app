@@ -2,6 +2,8 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   async:
+<<<<<<< HEAD
+=======
     dependency: transitive
     description:
       name: async
@@ -16,6 +18,27 @@ packages:
     source: hosted
     version: "2.1.0-nullsafety.1"
   characters:
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.dartlang.org"
+    source: hosted
+<<<<<<< HEAD
+    version: "2.5.0-nullsafety.1"
+  boolean_selector:
+=======
+    version: "1.1.0-nullsafety.3"
+  charcode:
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
+    dependency: transitive
+    description:
+      name: charcode
+      url: "https://pub.dartlang.org"
+    source: hosted
+<<<<<<< HEAD
+    version: "2.1.0-nullsafety.1"
+  characters:
     dependency: transitive
     description:
       name: characters
@@ -23,11 +46,23 @@ packages:
     source: hosted
     version: "1.1.0-nullsafety.3"
   charcode:
+=======
+    version: "1.2.0-nullsafety.1"
+  clock:
+    dependency: transitive
+    description:
+      name: clock
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0-nullsafety.1"
+  collection:
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
     dependency: transitive
     description:
       name: charcode
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "1.2.0-nullsafety.1"
   clock:
     dependency: transitive
@@ -43,6 +78,37 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0-nullsafety.3"
+=======
+    version: "1.15.0-nullsafety.3"
+  connectivity:
+    dependency: "direct main"
+    description:
+      name: connectivity
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  connectivity_for_web:
+    dependency: transitive
+    description:
+      name: connectivity_for_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1+4"
+  connectivity_macos:
+    dependency: transitive
+    description:
+      name: connectivity_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0+7"
+  connectivity_platform_interface:
+    dependency: transitive
+    description:
+      name: connectivity_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.6"
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -67,6 +133,28 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+<<<<<<< HEAD
+=======
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.2"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.4"
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
   matcher:
     dependency: transitive
     description:
@@ -88,6 +176,23 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0-nullsafety.1"
+<<<<<<< HEAD
+=======
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.9.2"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
   sky_engine:
     dependency: transitive
     description: flutter
@@ -151,3 +256,7 @@ packages:
     version: "2.1.0-nullsafety.3"
 sdks:
   dart: ">=2.10.0-110 <2.11.0"
+<<<<<<< HEAD
+=======
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+>>>>>>> 62833f5 (wip, api call works, wifi connections doesnt)
