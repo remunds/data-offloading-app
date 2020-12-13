@@ -1,10 +1,11 @@
 import 'logic/boxcommunicator.dart';
 import 'data/task.dart';
 
-import 'package:connectivity/connectivity.dart';
+// import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:wifi_info_plugin/wifi_info_plugin.dart';
+// import 'package:flutter/services.dart';
+//import 'package:wifi_info_plugin/wifi_info_plugin.dart';
+import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
 import 'dart:async';
