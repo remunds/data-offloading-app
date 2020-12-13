@@ -16,6 +16,10 @@ allprojects {
         google()
         jcenter()
     }
+    //dirty hack -> connectivity plugin leads to problems
+    tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:-options' 
+    }
 }
 
 rootProject.buildDir = '../build'

@@ -46,4 +46,11 @@
     </application>
   <!-- Required to fetch data from the internet. -->
   <uses-permission android:name="android.permission.INTERNET" />
+  <!-- for wifi_configuration-->
+  <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-feature android:name="android.hardware.wifi" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 </manifest>
