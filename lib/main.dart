@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Screens/settings.dart';
+
 void main() => runApp(MyApp()); //runs the main application widget
 
 /// This is the main application widget.
@@ -29,75 +31,95 @@ class BaseAppWidget extends StatefulWidget {
 
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
-  int _selectedIndex = 1;
-
-  void _onItemTapped(int index) {
-    //Function that sets the state of the bottom bar to the selected icon (index 0 for "Karte", index 1 for "Uebersicht" and index 2 for "Tasks")
-
-    setState(() {
-      _selectedIndex = index;
-      print(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _children = [
-      Text("Map"),
-      Text("Overview"),
-      Text("Task")
-    ]; //dummy Widgets, will be replaced in future
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
-    double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
-    return Scaffold(
-      body: SafeArea(
-          child: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: verticalPadding,
-            horizontal:
-                horizontalPadding), //set an padding of 5% of screen size on all sides
-        child: Column(
-          children: [
-            Row(
-              //Make a Row with a settings button on the right side
-              mainAxisAlignment:
-                  MainAxisAlignment.end, //align the button to the right side
+    double horizontalPadding = MediaQuery.of(context).size.width *
+        0.01; // Getting the pixels to use for the 1%-padding
+
+    return new MaterialApp(
+      home: DefaultTabController(
+        // Initializing a tab controller with 3 tabs to have swipe functionality between screens with a length of 3 tabs
+        length: 3,
+        child: new Scaffold(
+          body: SafeArea(
+            // SafeArea used to avoid that content lies behind the notification barr
+            child: TabBarView(
+              //This Widget is to fill the screen with content. We have an array which length equals to the length of TabController. Every array item is a new page.
               children: [
-                IconButton(
-                    //button initialisation
-                    icon: Icon(
-                      Icons.settings,
-                      color: Colors.black54,
-                    ),
-                    onPressed: () {
-                      //not yet implemented
-                    }),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set an padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [Text('Map')],
+                  ),
+                ),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set an padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [
+                      Row(
+                        //Make a Row with a settings button on the right side
+                        mainAxisAlignment: MainAxisAlignment
+                            .end, //align the button to the right side
+                        children: [
+                          IconButton(
+                              //button initialisation
+                              icon: Icon(
+                                Icons.settings,
+                                color: Colors.black54,
+                              ),
+                              onPressed: () {
+                                // this is what happens when the settings button is pressed
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                                );
+                              }),
+                        ],
+                      ),
+                      Text('Home') //dummy widget
+                    ],
+                  ),
+                ),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set an padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [Text('Tasks')], //dummy widget
+                  ),
+                ),
               ],
             ),
-            _children[_selectedIndex],
-          ],
+          ),
+          bottomNavigationBar: new TabBar(
+            //our navigation bar at the botton
+            tabs: [
+              // array of tabs, are icons enough?
+              Tab(
+                icon: new Icon(Icons.map),
+              ),
+              Tab(
+                icon: new Icon(Icons.home),
+              ),
+              Tab(
+                icon: new Icon(Icons.assignment_turned_in),
+              ),
+            ],
+            labelColor: Colors.green,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.white,
+          ),
         ),
-      )),
-      bottomNavigationBar: BottomNavigationBar(
-        //Bottom navigation bar widget
-        items: const <BottomNavigationBarItem>[
-          // List, where all buttons/icons are stored
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Overview',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment_turned_in),
-            label: 'Tasks',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        onTap: _onItemTapped,
       ),
     );
   }
