@@ -22,15 +22,9 @@ class _MyMapState extends State<MyMap> {
       context: context,
       mapController: mapController,
       markers: _boxes,
-<<<<<<< HEAD
       zoomToCurrentLocationOnLoad: true,
       showMoveToCurrentLocationFloatingActionButton: true,
       updateMapLocationOnPositionChange: false,
-=======
-      zoomToCurrentLocationOnLoad: false,
-      showMoveToCurrentLocationFloatingActionButton: false,
-      updateMapLocationOnPositionChange: true,
->>>>>>> b0aaf01 (removed unecessary widget from map)
     );
     return new Scaffold(
       body: FlutterMap(
