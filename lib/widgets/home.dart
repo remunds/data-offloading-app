@@ -13,87 +13,17 @@ import 'package:provider/provider.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
-// class Home extends StatefulWidget {
-//   Home({Key key, this.title}) : super(key: key);
-//   final String title;
-
-//   @override
-//   _HomeState createState() => _HomeState();
-// }
-
-// class _HomeState extends State<Home> {
-//   String _currentConnectionText;
-//   List<Widget> _currentTasks;
-
-//   List<Widget> _createTaskList(List<Task> taskList) {
-//     List<Widget> widgetList = new List<Widget>(taskList.length);
-//     for (int i = 0; i < widgetList.length; ++i) {
-//       widgetList[i] = TaskWidget(taskList[i]);
-//     }
-//     return widgetList;
-//   }
-
-//   void _fetchTasks() async {
-//     List<Task> taskList = await BoxCommunicator().fetchTasks();
-//     List<Widget> taskListWidget = _createTaskList(taskList);
-//     setState(() {
-//       _currentTasks = taskListWidget;
-//     });
-//   }
-
-//   void _getWifi(BuildContext context) async {
-//     String name = await WifiInfo().getWifiName();
-//     //TODO:
-//     // only fetch tasks and force wifiusage once per Sensorbox (get Hardware-ID like MAC from Box) -> we want the app to transfer data, not only tasks :)
-//     if (name == "Sensorbox") {
-//       if (Platform.isAndroid) {
-//         //force wifi so that we do not have problems with mobile data interfering api requests
-//         WiFiForIoTPlugin.forceWifiUsage(true);
-//       }
-//       context.read<BoxConnectionState>.connected();
-//       _fetchTasks();
-//       setState(() {
-//         _currentConnectionText = "You are currently in reach of a Sensorbox";
-//       });
-//     } else {
-//       setState(() {
-//         _currentConnectionText = "Please move closer to a Sensorbox";
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     _getWifi(context);
-//     return Column(
-//       children: [
-//         Text(_currentConnectionText ?? "no connection information"),
-//         //Expanded(child: ListView(children: _currentTasks ?? [])),
-//       ],
-//     );
-//   }
-// }
-
 class Home extends StatefulWidget {
   static void getConnectionState(BuildContext context) async {
     String name = await WifiInfo().getWifiName();
-    //TODO:
-    // only fetch tasks and force wifiusage once per Sensorbox (get Hardware-ID like MAC from Box) -> we want the app to transfer data, not only tasks :)
     if (name == "Sensorbox") {
       if (Platform.isAndroid) {
         //force wifi so that we do not have problems with mobile data interfering api requests
         WiFiForIoTPlugin.forceWifiUsage(true);
       }
       context.read<BoxConnectionState>().connected();
-      //_fetchTasks();
-      // setState(() {
-      //   _currentConnectionText = "You are currently in reach of a Sensorbox";
-      // });
     } else {
       context.read<BoxConnectionState>().disconnected();
-      // setState(() {
-      //   _currentConnectionText = "Please move closer to a Sensorbox";
-      // });
     }
   }
 
@@ -111,14 +41,6 @@ class _HomeState extends State<Home> {
     setState(() {
       _currentTasks = taskList;
     });
-  }
-
-  List<Widget> _createTaskList(List<Task> taskList) {
-    List<Widget> widgetList = new List<Widget>(taskList.length);
-    for (int i = 0; i < widgetList.length; ++i) {
-      widgetList[i] = TaskWidget(taskList[i]);
-    }
-    return widgetList;
   }
 
   @override
