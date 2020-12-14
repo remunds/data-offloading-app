@@ -1,5 +1,5 @@
 class Task {
-  final int id;
+  final String id;
   final String title;
   final String description;
 
@@ -14,7 +14,7 @@ class Task {
   }
 }
 
-class Album{
+class Album {
   final int userId;
   final int id;
   final String title;

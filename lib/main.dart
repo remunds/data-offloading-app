@@ -1,14 +1,14 @@
+import 'package:data_offloading_app/widgets/taskwidget.dart';
+
 import 'logic/boxcommunicator.dart';
 import 'data/task.dart';
+import 'widgets/taskwidget.dart';
 
-// import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-//import 'package:wifi_info_plugin/wifi_info_plugin.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
-import 'dart:async';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import 'Screens/settings.dart';
 
