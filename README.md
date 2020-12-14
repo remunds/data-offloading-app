@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+![Client build](https://github.com/remunds/data-offloading-app/workflows/Client%20build/badge.svg)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
