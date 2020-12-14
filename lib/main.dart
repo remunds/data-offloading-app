@@ -1,65 +1,123 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(App());
-}
+import 'Screens/settings.dart';
 
-class App extends StatelessWidget {
-  // This widget is the root of your application.
+void main() => runApp(MyApp()); //runs the main application widget
+
+/// This is the main application widget.
+class MyApp extends StatelessWidget {
+  static const String _title = 'Data Offloading App';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Data Offloading App',
+      title: _title,
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: Colors.green, //Theme color of the app
       ),
-      home: MyHomePage(title: 'Data Offloading App'),
+      home: BaseAppWidget(), //"home" page
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
+/// This is the stateful widget that the main application instantiates.
+class BaseAppWidget extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _BaseAppWidgetState createState() =>
+      _BaseAppWidgetState(); //Because the apps basic structure is stateful and never changes its state we have to create a state.
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+/// This is the private State class that goes with BaseAppWidget.
+class _BaseAppWidgetState extends State<BaseAppWidget> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+    double verticalPadding = MediaQuery.of(context).size.height * 0.01;
+    double horizontalPadding = MediaQuery.of(context).size.width *
+        0.01; // Getting the pixels to use for the 1%-padding
+
+    return new MaterialApp(
+      home: DefaultTabController(
+        // Initializing a tab controller with 3 tabs to have swipe functionality between screens with a length of 3 tabs
+        length: 3,
+        child: new Scaffold(
+          body: SafeArea(
+            // SafeArea used to avoid that content lies behind the notification barr
+            child: TabBarView(
+              //This Widget is to fill the screen with content. We have an array which length equals the length of TabController. Every array item is a new page.
+              children: [
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set an padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [Text('Map')],
+                  ),
+                ),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set a padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [
+                      Row(
+                        //Make a Row with a settings button on the right side
+                        mainAxisAlignment: MainAxisAlignment
+                            .end, //align the button to the right side
+                        children: [
+                          IconButton(
+                              //button initialisation
+                              icon: Icon(
+                                Icons.settings,
+                                color: Colors.black54,
+                              ),
+                              onPressed: () {
+                                // this is what happens when the settings button is pressed
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                                );
+                              }),
+                        ],
+                      ),
+                      Text('Home') //dummy widget
+                    ],
+                  ),
+                ),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set an padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [Text('Tasks')], //dummy widget
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+          ),
+          bottomNavigationBar: new TabBar(
+            //our navigation bar at the botton
+            tabs: [
+              // array of tabs, are icons enough?
+              Tab(
+                icon: new Icon(Icons.map),
+              ),
+              Tab(
+                icon: new Icon(Icons.home),
+              ),
+              Tab(
+                icon: new Icon(Icons.assignment_turned_in),
+              ),
+            ],
+            labelColor: Colors.green,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.white,
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
