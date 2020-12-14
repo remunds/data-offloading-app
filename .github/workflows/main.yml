@@ -39,5 +39,5 @@ jobs:
       - run: flutter pub get
         working-directory: ./
       - run: flutter build appbundle
-      - run: flutter test test
+      - run: flutter test ../test
       - run: flutter analyze
