@@ -22,8 +22,6 @@ class MyApp extends StatelessWidget {
 
 /// This is the stateful widget that the main application instantiates.
 class BaseAppWidget extends StatefulWidget {
-  BaseAppWidget({Key key}) : super(key: key); //muss ich noch herausfinden
-
   @override
   _BaseAppWidgetState createState() =>
       _BaseAppWidgetState(); //Because the apps basic structure is stateful and never changes its state we have to create a state.
@@ -45,7 +43,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
           body: SafeArea(
             // SafeArea used to avoid that content lies behind the notification barr
             child: TabBarView(
-              //This Widget is to fill the screen with content. We have an array which length equals to the length of TabController. Every array item is a new page.
+              //This Widget is to fill the screen with content. We have an array which length equals the length of TabController. Every array item is a new page.
               children: [
                 new Container(
                   color: Colors.white,
@@ -60,7 +58,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(
                       vertical: verticalPadding, horizontal: horizontalPadding),
-                  //set an padding of 1% of screen size on all sides
+                  //set a padding of 1% of screen size on all sides
                   child: Column(
                     children: [
                       Row(

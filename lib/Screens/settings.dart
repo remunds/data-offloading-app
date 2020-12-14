@@ -12,7 +12,7 @@ class SettingsPage extends StatelessWidget {
           padding: EdgeInsets.symmetric(
               vertical: verticalPadding,
               horizontal:
-                  horizontalPadding), //set an padding of 1% of screen size on all sides
+                  horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
               Row(
