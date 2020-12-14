@@ -47,11 +47,12 @@ class _MyMapState extends State<MyMap> {
         mapController: mapController,
       ),
       //the standart Container is overwritten by the user_location package
+      //the action button focuses the camera on the current position of the user
       floatingActionButton: Container(),
     );
   }
 
-  //Wrapper funktion to build a marker for a sensor box.
+  //Wrapper function to build a Marker from the flutter_map package for a sensor box.
   //pass latitude and longitude as parameter
   Marker _buildBoxMarker(double lat, double long) {
     return new Marker(
@@ -64,11 +65,10 @@ class _MyMapState extends State<MyMap> {
           behavior: HitTestBehavior.opaque,
           child: new Icon(
             Icons.location_on,
-            size: 20.0,
             color: Colors.brown,
           ),
           onTap: () {
-            //push the boxinfo page to the navigator
+            //push the boxinfopage to the navigator
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -79,7 +79,7 @@ class _MyMapState extends State<MyMap> {
     );
   }
 
-  //used to initialize the _boxes List. In the real application the entires from the DB would be read at this point.
+  //used to initialize the _boxes List. In the real application the entries from the DB would be read at this point.
   @protected
   @mustCallSuper
   void initState() {
