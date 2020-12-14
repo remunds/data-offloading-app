@@ -22,12 +22,8 @@ jobs:
         with:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
-      # - run: git clone https://github.com/flutter/flutter.git --depth 1 -b stable _flutter
-      # - run: echo "$GITHUB_WORKSPACE/_flutter/bin" >> $GITHUB_PATH
       - run: flutter pub get
-        # working-directory: ./
       - run: flutter format --set-exit-if-changed .
       - run: flutter analyze .
       - run: flutter test
       - run: flutter build appbundle
-        # working-directory: ./lib
