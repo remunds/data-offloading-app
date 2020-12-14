@@ -23,27 +23,39 @@ class _MyMapState extends State<MyMap> {
       mapController: mapController,
       markers: _boxes,
       zoomToCurrentLocationOnLoad: false,
-      showMoveToCurrentLocationFloatingActionButton: false,
-      updateMapLocationOnPositionChange: true,
+      showMoveToCurrentLocationFloatingActionButton: true,
+      updateMapLocationOnPositionChange: false,
     );
-    return new FlutterMap(
-      options: new MapOptions(
-        center: new latLng.LatLng(50.8022, 8.7668),
-        zoom: 13.0,
-        plugins: [
-          //to track user
-          UserLocationPlugin(),
+    return new Scaffold(
+      body: FlutterMap(
+        options: new MapOptions(
+          center: new latLng.LatLng(50.8022, 8.7668),
+          zoom: 13.0,
+          plugins: [
+            //to track user
+            UserLocationPlugin(),
+          ],
+        ),
+        layers: [
+          new TileLayerOptions(
+              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: ['a', 'b', 'c']),
+          //add list of markers to map
+          new MarkerLayerOptions(markers: _boxes),
+          userLocationOptions,
         ],
+        mapController: mapController,
       ),
-      layers: [
-        new TileLayerOptions(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c']),
-        //add list of markers to map
-        new MarkerLayerOptions(markers: _boxes),
-        userLocationOptions,
-      ],
-      mapController: mapController,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+            color: Colors.blueAccent,
+            borderRadius: BorderRadius.circular(20.0),
+            boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10.0)]),
+        child: Icon(
+          Icons.my_location,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 
@@ -65,8 +77,10 @@ class _MyMapState extends State<MyMap> {
           ),
           onTap: () {
             //push the boxinfo page to the navigator
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BoxInfoPage()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BoxInfoPage(1337, 7331)));
           },
         ),
       ),
