@@ -37,14 +37,13 @@ void main() {
 
   // you can also use: findsWidgets, findsNWidgets
 
-  group('unit tests for some function', ()
-  {
+  group('unit tests for some function', () {
     test('this is a unit test', () {
       //instantiate some class
       // call a function of that class
       expect(1, 1);
     });
-    test('another test', (){
+    test('another test', () {
       expect(1, 1);
     });
   });
