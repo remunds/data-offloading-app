@@ -22,6 +22,9 @@ class _MyMapState extends State<MyMap> {
       context: context,
       mapController: mapController,
       markers: _boxes,
+      zoomToCurrentLocationOnLoad: false,
+      showMoveToCurrentLocationFloatingActionButton: false,
+      updateMapLocationOnPositionChange: true,
     );
     return new FlutterMap(
       options: new MapOptions(
