@@ -15,24 +15,29 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
 
-    // Verify that all components exist
-    expect(find.text('Übersicht'), findsOneWidget);
-    expect(find.text('Karte'), findsOneWidget);
-    expect(find.text('Tasks'), findsOneWidget);
-
-    expect(find.byIcon(Icons.settings), findsOneWidget);
-
-    //verify that app starts at homepage
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Map'), findsNothing);
-
-    // Tap the map icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.map));
-    await tester.pump();
-
-    //Verify that page has been switched to map page.
+    // Verify that start page is map
     expect(find.text('Home'), findsNothing);
     expect(find.text('Map'), findsOneWidget);
+    expect(find.text('Tasks'), findsNothing);
+
+    // Tap the map icon and trigger a frame.
+    //await tester.tap(find.byIcon(Icons.home));
+    await tester.tap(find.byIcon(Icons.home));
+    await tester.pumpAndSettle();
+
+    //Verify that page has been switched to home page with settings button.
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Map'), findsNothing);
+    expect(find.text('Tasks'), findsNothing);
+    expect(find.byIcon(Icons.settings), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.assignment_turned_in));
+    await tester.pumpAndSettle();
+
+    //Verify that page has been switched to tasks page
+    expect(find.text('Tasks'), findsOneWidget);
+    expect(find.text('Map'), findsNothing);
+    expect(find.text('Home'), findsNothing);
   });
 
   // you can also use: findsWidgets, findsNWidgets
