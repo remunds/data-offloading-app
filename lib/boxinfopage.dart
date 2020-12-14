@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class BoxInfoPage extends StatefulWidget {
+  final power;
+  final dataLoad;
+  BoxInfoPage(this.power, this.dataLoad);
   @override
   _BoxInfoPageState createState() => _BoxInfoPageState();
 }
 
 class _BoxInfoPageState extends State<BoxInfoPage> {
   @override
-  int power = 0;
-  int dataLoad = 0;
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -16,10 +17,10 @@ class _BoxInfoPageState extends State<BoxInfoPage> {
         ),
         body: Column(children: [
           Center(
-            child: Text("Power level:" + power.toString()),
+            child: Text("Power level:" + widget.power.toString()),
           ),
           Center(
-            child: Text("Dataload: " + dataLoad.toString()),
+            child: Text("Dataload: " + widget.dataLoad.toString()),
           )
         ]));
   }
