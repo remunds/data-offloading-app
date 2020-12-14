@@ -24,10 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
-  #wifi_info_plugin: ^1.1.5
+  provider: ^4.3.2+3
   wifi_info_flutter: ^1.0.1
-  #connectivity: ^2.0.2
-  #wifi_configuration: ^1.2.1 
   permission_handler: ^5.0.1+1
   wifi_iot: ^0.2.0
 

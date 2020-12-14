@@ -1,21 +1,22 @@
-import 'package:data_offloading_app/widgets/taskwidget.dart';
-
-import 'logic/boxcommunicator.dart';
-import 'data/task.dart';
-import 'widgets/taskwidget.dart';
+import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:io' show Platform;
-import 'package:wifi_iot/wifi_iot.dart';
+
+import 'package:provider/provider.dart';
 
 import 'Screens/settings.dart';
+import 'provider/boxconnectionstate.dart';
+import 'widgets/home.dart';
 
-void main() => runApp(MyApp()); //runs the main application widget
+void main() => runApp(MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => BoxConnectionState()),
+    ], child: const MyApp())); //runs the main application widget
 
 /// This is the main application widget.
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
   @override
@@ -39,8 +40,37 @@ class BaseAppWidget extends StatefulWidget {
 
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
+  void getPermission() async {
+    if (Platform.isAndroid) {
+      print('Checking Android permissions');
+      var status = await Permission.location.status;
+      // Blocked?
+      if (status.isUndetermined || status.isDenied || status.isRestricted) {
+        // Ask the user to unblock
+        if (await Permission.location.request().isGranted) {
+          // Either the permission was already granted before or the user just granted it.
+          print('Location permission granted');
+        } else {
+          print('Location permission not granted');
+        }
+      } else {
+        print('Permission already granted (previous execution?)');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      Home.getConnectionState(context);
+    });
+    getPermission();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Home.getConnectionState(context);
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width *
         0.01; // Getting the pixels to use for the 1%-padding
@@ -93,7 +123,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                               }),
                         ],
                       ),
-                      Text('Home') //dummy widget
+                      Home(),
                     ],
                   ),
                 ),
