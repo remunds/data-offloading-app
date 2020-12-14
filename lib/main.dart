@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'map.dart';
 
+<<<<<<< HEAD
 import 'Screens/settings.dart';
 
 void main() => runApp(MyApp()); //runs the main application widget
@@ -9,15 +10,24 @@ void main() => runApp(MyApp()); //runs the main application widget
 /// This is the main application widget.
 class MyApp extends StatelessWidget {
   static const String _title = 'Data Offloading App';
+=======
+void main() {
+  runApp(App());
+}
+>>>>>>> 94d9a54fec246274e522167f024023c075a4f247
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+<<<<<<< HEAD
       title: _title,
       theme: ThemeData(
         primarySwatch: Colors.green, //Theme color of the app
       ),
       home: BaseAppWidget(), //"home" page
+=======
+      home: MyMap(),
+>>>>>>> 94d9a54fec246274e522167f024023c075a4f247
     );
   }
 }
