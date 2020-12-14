@@ -12,11 +12,11 @@ class MyMap extends StatefulWidget {
 
 //MyMap state to keep track of the _boxes list
 class _MyMapState extends State<MyMap> {
-  @override
   MapController mapController = MapController();
   List<Marker> _boxes = [];
   UserLocationOptions userLocationOptions;
 
+  @override
   Widget build(BuildContext context) {
     userLocationOptions = UserLocationOptions(
       context: context,
