@@ -22,7 +22,7 @@ class _MyMapState extends State<MyMap> {
       context: context,
       mapController: mapController,
       markers: _boxes,
-      zoomToCurrentLocationOnLoad: false,
+      zoomToCurrentLocationOnLoad: true,
       showMoveToCurrentLocationFloatingActionButton: true,
       updateMapLocationOnPositionChange: false,
     );
@@ -46,16 +46,8 @@ class _MyMapState extends State<MyMap> {
         ],
         mapController: mapController,
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-            color: Colors.blueAccent,
-            borderRadius: BorderRadius.circular(20.0),
-            boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10.0)]),
-        child: Icon(
-          Icons.my_location,
-          color: Colors.white,
-        ),
-      ),
+      //the standart Container is overwritten by the user_location package
+      floatingActionButton: Container(),
     );
   }
 
