@@ -17,11 +17,12 @@ class _MyMapState extends State<MyMap> {
   UserLocationOptions userLocationOptions;
   latLng.LatLng pos;
 
+  /*
   _getInitialPos(double lat, double long) {
     setState(() {
       pos = new latLng.LatLng(lat, long);
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class _MyMapState extends State<MyMap> {
 
     return new Scaffold(
       body: FlutterMap(
-        options: new MapOptions(
+        options: MapOptions(
           center: new latLng.LatLng(49.8728, 8.6512),
           zoom: 13.0,
           plugins: [
@@ -48,11 +49,11 @@ class _MyMapState extends State<MyMap> {
           ],
         ),
         layers: [
-          new TileLayerOptions(
+          TileLayerOptions(
               urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
               subdomains: ['a', 'b', 'c']),
           //add list of markers to map
-          new MarkerLayerOptions(markers: _boxes),
+          MarkerLayerOptions(markers: _boxes),
           userLocationOptions,
         ],
         mapController: mapController,
@@ -66,7 +67,7 @@ class _MyMapState extends State<MyMap> {
   //Wrapper function to build a Marker from the flutter_map package for a sensor box.
   //pass latitude and longitude as parameter
   Marker _buildBoxMarker(double lat, double long) {
-    return new Marker(
+    return Marker(
       width: 20.0,
       height: 20.0,
       point: new latLng.LatLng(lat, long),
@@ -74,7 +75,7 @@ class _MyMapState extends State<MyMap> {
         //GestureDetector to detect if marker is clicked
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          child: new Icon(
+          child: Icon(
             Icons.location_on,
             color: Colors.brown,
           ),
