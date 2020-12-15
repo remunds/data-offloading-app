@@ -14,6 +14,7 @@ class _BoxInfoPageState extends State<BoxInfoPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text("BoxInfo"),
+          backgroundColor: Colors.green,
         ),
         body: Column(children: [
           Center(
