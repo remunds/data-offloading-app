@@ -1,4 +1,4 @@
-import 'package:data_offloading_app/boxinfopage.dart';
+import 'package:data_offloading_app/box_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong/latlong.dart" as latLng;
@@ -17,25 +17,16 @@ class _MyMapState extends State<MyMap> {
   UserLocationOptions userLocationOptions;
   latLng.LatLng pos;
 
-  _getInitialPos(double lat, double long) {
-    setState(() {
-      pos = new latLng.LatLng(lat, long);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
       markers: _boxes,
-      // onLocationUpdate: (latLng.LatLng myPos) =>
-      //     _getInitialPos(myPos.latitude, myPos.longitude),
       zoomToCurrentLocationOnLoad: true,
       showMoveToCurrentLocationFloatingActionButton: true,
       updateMapLocationOnPositionChange: false,
     );
-    //print("HEREEEEEEEEEEE ${pos.toString()}");
 
     return new Scaffold(
       body: FlutterMap(
@@ -80,10 +71,8 @@ class _MyMapState extends State<MyMap> {
           ),
           onTap: () {
             //push the boxinfopage to the navigator
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BoxInfoPage(1337, 7331)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => BoxInfo(1337, 7331)));
           },
         ),
       ),
@@ -92,7 +81,6 @@ class _MyMapState extends State<MyMap> {
 
   //used to initialize the _boxes List. In the real application the entries from the DB would be read at this point.
   @protected
-  @mustCallSuper
   void initState() {
     _boxes.add(_buildBoxMarker(50.8050, 8.7669));
     _boxes.add(_buildBoxMarker(50.8160, 8.7669));
