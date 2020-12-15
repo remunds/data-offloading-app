@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:data_offloading_app/provider/boxconnectionstate.dart';
+import 'package:data_offloading_app/provider/box_connection_state.dart';
 
-import '../logic/boxcommunicator.dart';
+import '../logic/box_communicator.dart';
 import '../data/task.dart';
-import 'taskwidget.dart';
+import 'task_widget.dart';
 
 import 'dart:io' show Platform;
 
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
         children: [
           Text(_connection
               ? "You are connected to a Sensorbox"
-              : "You are currently not in reach of a Sensorbox"),
+              : "You are currently not connected to a Sensorbox"),
           Expanded(
             child: ListView.builder(
               itemCount: _currentTasks == null ? 0 : _currentTasks.length,
