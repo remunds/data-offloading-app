@@ -106,8 +106,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Map'),
-                      Container(height: 636, child: MyMap()),
+                      Expanded(child: MyMap()),
                     ],
                   ),
                 ),
