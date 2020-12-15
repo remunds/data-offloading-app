@@ -81,7 +81,9 @@ class _MyMapState extends State<MyMap> {
 
   //used to initialize the _boxes List. In the real application the entries from the DB would be read at this point.
   @protected
+  @mustCallSuper
   void initState() {
+    super.initState();
     _boxes.add(_buildBoxMarker(50.8050, 8.7669));
     _boxes.add(_buildBoxMarker(50.8160, 8.7669));
     _boxes.add(_buildBoxMarker(50.8080, 8.7769));
