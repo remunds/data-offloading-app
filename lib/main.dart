@@ -1,11 +1,25 @@
+import 'dart:io';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-import 'Screens/settings.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp()); //runs the main application widget
+import 'provider/box_connection_state.dart';
+import 'widgets/home.dart';
+
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BoxConnectionState()),
+      ],
+      builder: (context, child) => const MyApp(),
+    ));
+// child: const MyApp())); //runs the main application widget
 
 /// This is the main application widget.
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
   @override
@@ -29,8 +43,44 @@ class BaseAppWidget extends StatefulWidget {
 
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
+  Timer _timer;
+  void getPermission() async {
+    if (Platform.isAndroid) {
+      print('Checking Android permissions');
+      var status = await Permission.location.status;
+      // Blocked?
+      if (status.isUndetermined || status.isDenied || status.isRestricted) {
+        // Ask the user to unblock
+        if (await Permission.location.request().isGranted) {
+          // Either the permission was already granted before or the user just granted it.
+          print('Location permission granted');
+        } else {
+          print('Location permission not granted');
+        }
+      } else {
+        print('Permission already granted (previous execution?)');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      Home.getConnectionState(context);
+    });
+    getPermission();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Home.getConnectionState(context);
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width *
         0.01; // Getting the pixels to use for the 1%-padding
@@ -54,39 +104,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                     children: [Text('Map')],
                   ),
                 ),
-                new Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      vertical: verticalPadding, horizontal: horizontalPadding),
-                  //set a padding of 1% of screen size on all sides
-                  child: Column(
-                    children: [
-                      Row(
-                        //Make a Row with a settings button on the right side
-                        mainAxisAlignment: MainAxisAlignment
-                            .end, //align the button to the right side
-                        children: [
-                          IconButton(
-                              //button initialisation
-                              icon: Icon(
-                                Icons.settings,
-                                color: Colors.black54,
-                              ),
-                              onPressed: () {
-                                // this is what happens when the settings button is pressed
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
-                                );
-                              }),
-                        ],
-                      ),
-                      Text('Home') //dummy widget
-                    ],
-                  ),
-                ),
+                Home(),
                 new Container(
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(
