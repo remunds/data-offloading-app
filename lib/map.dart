@@ -17,16 +17,6 @@ class _MyMapState extends State<MyMap> {
   UserLocationOptions userLocationOptions;
   latLng.LatLng pos;
 
-<<<<<<< HEAD
-=======
-  /*
-  _getInitialPos(double lat, double long) {
-    setState(() {
-      pos = new latLng.LatLng(lat, long);
-    });
-  }*/
-
->>>>>>> 665b4dc2b54026a78b55ca9026e2d7851128f654
   @override
   Widget build(BuildContext context) {
     userLocationOptions = UserLocationOptions(
