@@ -6,13 +6,16 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
-import 'Screens/settings.dart';
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
 
-void main() => runApp(MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => BoxConnectionState()),
-    ], child: const MyApp())); //runs the main application widget
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BoxConnectionState()),
+      ],
+      builder: (context, child) => const MyApp(),
+    ));
+// child: const MyApp())); //runs the main application widget
 
 /// This is the main application widget.
 class MyApp extends StatelessWidget {
@@ -40,6 +43,7 @@ class BaseAppWidget extends StatefulWidget {
 
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
+  Timer _timer;
   void getPermission() async {
     if (Platform.isAndroid) {
       print('Checking Android permissions');
@@ -62,10 +66,16 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 1), (Timer t) {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       Home.getConnectionState(context);
     });
     getPermission();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
   }
 
   @override
@@ -94,39 +104,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                     children: [Text('Map')],
                   ),
                 ),
-                new Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      vertical: verticalPadding, horizontal: horizontalPadding),
-                  //set a padding of 1% of screen size on all sides
-                  child: Column(
-                    children: [
-                      Row(
-                        //Make a Row with a settings button on the right side
-                        mainAxisAlignment: MainAxisAlignment
-                            .end, //align the button to the right side
-                        children: [
-                          IconButton(
-                              //button initialisation
-                              icon: Icon(
-                                Icons.settings,
-                                color: Colors.black54,
-                              ),
-                              onPressed: () {
-                                // this is what happens when the settings button is pressed
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
-                                );
-                              }),
-                        ],
-                      ),
-                      Home(),
-                    ],
-                  ),
-                ),
+                Home(),
                 new Container(
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(
