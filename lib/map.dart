@@ -15,6 +15,13 @@ class _MyMapState extends State<MyMap> {
   MapController mapController = MapController();
   List<Marker> _boxes = [];
   UserLocationOptions userLocationOptions;
+  latLng.LatLng pos;
+
+  _getInitialPos(double lat, double long) {
+    setState(() {
+      pos = new latLng.LatLng(lat, long);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +29,18 @@ class _MyMapState extends State<MyMap> {
       context: context,
       mapController: mapController,
       markers: _boxes,
+      // onLocationUpdate: (latLng.LatLng myPos) =>
+      //     _getInitialPos(myPos.latitude, myPos.longitude),
       zoomToCurrentLocationOnLoad: true,
       showMoveToCurrentLocationFloatingActionButton: true,
       updateMapLocationOnPositionChange: false,
     );
+    //print("HEREEEEEEEEEEE ${pos.toString()}");
+
     return new Scaffold(
       body: FlutterMap(
         options: new MapOptions(
-          center: new latLng.LatLng(50.8022, 8.7668),
+          center: new latLng.LatLng(49.8728, 8.6512),
           zoom: 13.0,
           plugins: [
             //to track user
