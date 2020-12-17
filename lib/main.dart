@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
-import 'Screens/map.dart';
+import 'widgets/map.dart';
 
 void main() => runApp(MultiProvider(
       providers: [
