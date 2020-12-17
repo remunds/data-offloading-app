@@ -6,11 +6,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
-import 'Screens/map.dart';
-
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
-import 'Screens/settings.dart';
+import 'Screens/map.dart';
 
 void main() => runApp(MultiProvider(
       providers: [
