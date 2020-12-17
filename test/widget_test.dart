@@ -17,7 +17,6 @@ void main() {
 
     // Verify that start page is map
     expect(find.text('Home'), findsNothing);
-    expect(find.text('Map'), findsOneWidget);
     expect(find.text('Tasks'), findsNothing);
 
     // Tap the map icon and trigger a frame.
@@ -27,7 +26,6 @@ void main() {
 
     //Verify that page has been switched to home page with settings button.
     expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Map'), findsNothing);
     expect(find.text('Tasks'), findsNothing);
     expect(find.byIcon(Icons.settings), findsOneWidget);
 
@@ -36,7 +34,6 @@ void main() {
 
     //Verify that page has been switched to tasks page
     expect(find.text('Tasks'), findsOneWidget);
-    expect(find.text('Map'), findsNothing);
     expect(find.text('Home'), findsNothing);
   });
 
