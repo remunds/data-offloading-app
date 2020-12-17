@@ -108,6 +108,17 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                     ],
                   ),
                 ),
+                new Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //set a padding of 1% of screen size on all sides
+                  child: Column(
+                    children: [
+                      Expanded(child: MyMap()),
+                    ],
+                  ),
+                ),
                 Home(),
                 new Container(
                   color: Colors.white,
