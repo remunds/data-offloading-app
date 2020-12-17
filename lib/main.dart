@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
+import 'widgets/map.dart';
 
 void main() => runApp(MultiProvider(
       providers: [
@@ -101,7 +102,10 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                       vertical: verticalPadding, horizontal: horizontalPadding),
                   //set an padding of 1% of screen size on all sides
                   child: Column(
-                    children: [Text('Map')],
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(child: MyMap()),
+                    ],
                   ),
                 ),
                 Home(),
