@@ -4,6 +4,8 @@ import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
 
+import '../logic/box_communicator.dart';
+
 import '../data/task.dart';
 import 'task_widget.dart';
 

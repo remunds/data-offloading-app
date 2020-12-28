@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         //Theme colors of the app
       ),
-      home: BaseAppWidget(), //"home"
+      home: BaseAppWidget(), //"home" page
     );
   }
 }

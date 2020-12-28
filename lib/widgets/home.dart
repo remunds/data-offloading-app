@@ -17,14 +17,14 @@ import 'package:wifi_iot/wifi_iot.dart';
 class Home extends StatefulWidget {
   static void getConnectionState(BuildContext context) async {
     String name = await WifiInfo().getWifiName();
-    if (name == "W(G)LAN_f8805106c6" &&
+    if (name == "Sensorbox" &&
         !context.read<BoxConnectionState>().connectionState) {
       if (Platform.isAndroid) {
         //force wifi so that we do not have problems with mobile data interfering api requests
         WiFiForIoTPlugin.forceWifiUsage(true);
       }
       context.read<BoxConnectionState>().connected();
-    } else if (name != "W(G)LAN_f8805106c6" &&
+    } else if (name != "Sensorbox" &&
         context.read<BoxConnectionState>().connectionState) {
       context.read<BoxConnectionState>().disconnected();
     }
@@ -35,47 +35,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Task> _currentTasks;
-  Timer _timer;
-
-  void _fetchTasks() async {
-    print("fetching tasks");
-    try {
-      List<Task> taskList = await BoxCommunicator().fetchTasks();
-      setState(() {
-        _currentTasks = taskList;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<Image> _fetchImage(String id) async {
-    print("fetching image");
-    try {
-      return await BoxCommunicator().fetchImage(id);
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    //_fetchTasks();
-    //_fetchImage();
-    //check every 5 seconds for new Tasks
-    _timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
-      _fetchTasks();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer.cancel();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,31 +71,6 @@ class _HomeState extends State<Home> {
           Text(_connection
               ? "You are connected to a Sensorbox"
               : "You are currently not connected to a Sensorbox"),
-          Expanded(
-            child: GestureDetector(
-              child: Card(
-                child: Text("foto labelling page"),
-              ),
-              onTap: () async {
-                var id = "5ff444933dd44d0e8aa05509";
-                Image img = await _fetchImage(id);
-                int selectedLabel = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        FotoLabelPage(img)),
-                );
-
-                if(selectedLabel != null){
-                  try {
-                    BoxCommunicator().setLabel(id, selectedLabel);
-                  } catch (e) {
-                    print(e);
-                  }
-                }
-              },
-            )
-          )
         ],
       ),
     );
