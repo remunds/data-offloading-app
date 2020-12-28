@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
 import 'widgets/map.dart';
+import 'Screens/foto_labelling.dart';
 
 void main() => runApp(MultiProvider(
       providers: [
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green, //Theme color of the app
       ),
-      home: BaseAppWidget(), //"home" page
+      home: FotoLabelPage(), //BaseAppWidget(), //"home" page
     );
   }
 }

@@ -170,6 +170,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  interval_tree:
+    dependency: transitive
+    description:
+      name: interval_tree
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   intl:
     dependency: transitive
     description:
@@ -177,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
+  item_selector:
+    dependency: "direct main"
+    description:
+      name: item_selector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   js:
     dependency: transitive
     description:
