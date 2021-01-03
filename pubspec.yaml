@@ -32,6 +32,7 @@ dependencies:
   user_location: ^0.1.3
   item_selector: ^0.1.1
   flutter_statusbarcolor: ^0.2.3
+  flutter_offline: ^0.3.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -41,12 +42,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  flutter_offline: ^0.3.0
+  connectivity: 0.4.5+2
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
+  assets:
+    - assets/logo_n40.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
