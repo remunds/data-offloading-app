@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 
@@ -17,14 +18,14 @@ import 'package:wifi_iot/wifi_iot.dart';
 class Home extends StatefulWidget {
   static void getConnectionState(BuildContext context) async {
     String name = await WifiInfo().getWifiName();
-    if (name == "Sensorbox" &&
+    if (name == "W(G)LAN_f8805106c6" &&
         !context.read<BoxConnectionState>().connectionState) {
       if (Platform.isAndroid) {
         //force wifi so that we do not have problems with mobile data interfering api requests
         WiFiForIoTPlugin.forceWifiUsage(true);
       }
       context.read<BoxConnectionState>().connected();
-    } else if (name != "Sensorbox" &&
+    } else if (name != "W(G)LAN_f8805106c6" &&
         context.read<BoxConnectionState>().connectionState) {
       context.read<BoxConnectionState>().disconnected();
     }
@@ -50,13 +51,25 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<Image> _fetchImage(String id) async {
+    print("fetching image");
+    try {
+      return await BoxCommunicator().fetchImage(id);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _fetchTasks();
+    //_fetchTasks();
+    //_fetchImage();
     //check every 5 seconds for new Tasks
     _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      _fetchTasks();
+      //_fetchTasks();
+      //_fetchImage();
     });
   }
 
@@ -108,6 +121,22 @@ class _HomeState extends State<Home> {
                 return TaskWidget(_currentTasks[index]);
               },
             ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              child: Card(
+                child: Text("foto labelling page"),
+              ),
+              onTap: () async {
+                Image img = await _fetchImage("5ff444933dd44d0e8aa05509");
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        FotoLabelPage(img)),
+                );
+              },
+            )
           )
         ],
       ),

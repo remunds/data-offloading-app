@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:item_selector/item_selector.dart';
-import 'dart:math';
 
 final labels = ["dachs", "fuchs", "reh", "idk", "sonstiges"];
 int selectedLabel = -1;
 
+
 class FotoLabelPage extends StatefulWidget{
+  final Image img;
+  const FotoLabelPage(this.img);
   @override
   _FotoLabelPageState createState() => _FotoLabelPageState();
 }
@@ -22,13 +24,15 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
       body: Center(
         child: Column(
           children: [
-            Container(
-              color: Colors.blueGrey,
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(10),
-              child: Image.asset('assets/dachs.jpeg')
+            Expanded(
+              child: Container(
+                color: Colors.blueGrey,
+                margin: EdgeInsets.all(20),
+                padding: EdgeInsets.all(10),
+                child: widget.img,
+              )
             ),
-            Flexible(
+            Expanded(
                 child: AnimatedSwitcher(
                   duration: Duration(milliseconds: 246),
                   child: Container(
@@ -44,21 +48,20 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.done_all),
         onPressed: (){
-          print(selectedLabel);
           showDialog(
             context: context,
-            builder: (BuildContext context){
+            builder: (BuildContext buttonContext){
               List<String> str = [];
               List<Widget> actions;
               if(selectedLabel == -1){
                 str = ["You have not chosen a label.", "Do you want to try again or cancel?", "Try again", "Cancel"];
                 actions = [
                   FlatButton(
-                      onPressed: (){Navigator.of(context).pop();},
+                      onPressed: (){Navigator.of(buttonContext).pop();},
                       child: Text(str[2])
                   ),
                   FlatButton(
-                      onPressed: (){Navigator.of(context).pop(); Navigator.of(context).pop();},
+                      onPressed: (){Navigator.of(buttonContext).pop(); Navigator.of(context).pop();},
                       child: Text(str[3])
                   ),
                 ];
@@ -66,24 +69,24 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
                 str = ["Are you sure?", "Thanks for helping us :)", "Yes", "Go back"];
                 actions = [
                   FlatButton(
-                      onPressed: (){//save to database!
-                        Navigator.of(context).pop(); Navigator.of(context).pop();},
+                      onPressed: (){
+                        //save label to database!
+                        Navigator.of(buttonContext).pop(); Navigator.of(context).pop();
+                        },
                       child: Text(str[2])
                   ),
                   FlatButton(
-                      onPressed: (){Navigator.of(context).pop();},
+                      onPressed: (){Navigator.of(buttonContext).pop();},
                       child: Text(str[3])
                   ),
                 ];
               }
 
-              return Expanded(
-                child: AlertDialog(
+              return AlertDialog(
                   title: Text(str[0]),
                   content: Text(str[1]),
                   actions: actions,
-                )
-              );
+                );
             }
           );
           // write label to database
@@ -91,10 +94,6 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
       ),
     );
   }
-
-  /*Image getImage(){
-    return Image();
-  }*/
 }
 
 Widget buildGridItem(BuildContext context, int index, bool selected) {
@@ -123,8 +122,6 @@ class GridViewPage extends StatelessWidget {
       child: GridView.count(
         childAspectRatio: 2.5,
         crossAxisCount: 4,
-        //mainAxisSpacing: 4,
-        //crossAxisSpacing: 4,
         children: List.generate(labels.length, (int index) {
           return ItemSelectionBuilder(
             index: index,
@@ -132,8 +129,6 @@ class GridViewPage extends StatelessWidget {
           );
         }),
       ),
-      //onSelectionStart: selection.start,
-      //onSelectionUpdate: selection.update,
     );
   }
 }

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green, //Theme color of the app
       ),
-      home: FotoLabelPage(), //BaseAppWidget(), //"home" page
+      home: BaseAppWidget(), //"home"
     );
   }
 }
