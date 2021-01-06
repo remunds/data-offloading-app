@@ -7,7 +7,7 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['id'],
+      id: json['_id'],
       title: json['title'],
       description: json['description'],
     );
@@ -24,7 +24,7 @@ class Album {
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
       userId: json['userId'],
-      id: json['id'],
+      id: json['_id'],
       title: json['title'],
     );
   }
