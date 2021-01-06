@@ -70,8 +70,8 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
                 actions = [
                   FlatButton(
                       onPressed: (){
-                        //save label to database!
-                        Navigator.of(buttonContext).pop(); Navigator.of(context).pop();
+                        //return to home page and return selected label
+                        Navigator.of(buttonContext).pop(); Navigator.pop(context, selectedLabel);
                         },
                       child: Text(str[2])
                   ),

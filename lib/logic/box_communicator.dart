@@ -29,6 +29,7 @@ class BoxCommunicator {
       throw Exception('failed to load tasks');
     }
   }
+
   Future<Image> fetchImage(var id) async {
     Map<String, String> headers = {"Content-type": "image/jpeg"};
     final response =
@@ -47,4 +48,23 @@ class BoxCommunicator {
       throw Exception('failed to fetch image');
     }
   }
+
+  void setLabel(var id, int label) async {
+    var body = {'id': id, 'label': label.toString()};
+    final response =
+        await http.post("http://192.168.178.26:8000/api/putLabel", body: json.encode(body), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      print("successfully saved label");
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      print(response.statusCode);
+      throw Exception('failed to save label');
+    }
+  }
+
 }

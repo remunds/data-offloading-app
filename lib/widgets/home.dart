@@ -128,13 +128,22 @@ class _HomeState extends State<Home> {
                 child: Text("foto labelling page"),
               ),
               onTap: () async {
-                Image img = await _fetchImage("5ff444933dd44d0e8aa05509");
-                Navigator.push(
+                var id = "5ff444933dd44d0e8aa05509";
+                Image img = await _fetchImage(id);
+                int selectedLabel = await Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
                         FotoLabelPage(img)),
                 );
+
+                if(selectedLabel != null){
+                  try {
+                    BoxCommunicator().setLabel(id, selectedLabel);
+                  } catch (e) {
+                    print(e);
+                  }
+                }
               },
             )
           )
