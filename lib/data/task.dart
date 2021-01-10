@@ -12,6 +12,14 @@ class Task {
       description: json['description'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'description': description,
+    };
+  }
 }
 
 class Album {

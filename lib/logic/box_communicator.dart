@@ -35,9 +35,16 @@ class BoxCommunicator {
   }
 
   void deleteTask(Task task, BuildContext context) async {
-    Map<String, String> headers = {"Content-type": "application/json"};
+    String taskDel = jsonEncode(task);
+
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Content-Length": "83"
+    };
+
+    print("Task to delete: " + taskDel);
     final response = await http.post("http://10.3.141.1:8000/api/deleteTask",
-        headers: headers, body: jsonEncode(task));
+        headers: headers, body: taskDel);
 
     if (response.statusCode == 200) {
       context.read<TaskListProvider>().deleteFromTasks(task);

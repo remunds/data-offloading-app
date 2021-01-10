@@ -36,25 +36,23 @@ class Tasks extends StatefulWidget {
 }
 
 class _TasksState extends State<Tasks> {
-  BuildContext context;
+  //BuildContext context;
   List<Task> _currentTasks;
   Timer _timer;
 
   void _fetchTasks(BuildContext context) async {
     print("fetching tasks at tasks.dart");
+    print(context);
     try {
       List<Task> taskList = [];
-      if (context.read<TaskListProvider>().taskList == []) {
-        print("tasks.dart getting Tasks");
-        taskList = await context.read<TaskListProvider>().awaitTasks();
-      } else {
-        taskList = taskList;
-      }
+      print("tasks.dart getting Tasks");
+      taskList = await context.read<TaskListProvider>().awaitTasks();
       setState(() {
         _currentTasks = taskList;
       });
     } catch (e) {
       print(e);
+      print("LOOOOOOOOOOOOOOOOOL");
     }
   }
 
