@@ -8,11 +8,10 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['_id'],
-      title: json['title'],
-      description: json['description'],
-      imageId: json['imageId']
-    );
+        id: json['_id'],
+        title: json['title'],
+        description: json['description'],
+        imageId: json['imageId']);
   }
 
   Map<String, dynamic> toJson() {
@@ -20,10 +19,7 @@ class Task {
       '_id': id,
       'title': title,
       'description': description,
-<<<<<<< HEAD
       'imageId': imageId,
-=======
->>>>>>> develop
     };
   }
 }
