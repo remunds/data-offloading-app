@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:data_offloading_app/provider/tasklist_state.dart';
+import 'package:data_offloading_app/widgets/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 import 'package:provider/provider.dart';
 
@@ -14,6 +17,9 @@ import 'Screens/foto_labelling.dart';
 void main() => runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => BoxConnectionState()),
+        ChangeNotifierProvider(
+          create: (_) => TaskListProvider(),
+        )
       ],
       builder: (context, child) => const MyApp(),
     ));
@@ -26,10 +32,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.green);
     return MaterialApp(
       title: _title,
       theme: ThemeData(
-        primarySwatch: Colors.green, //Theme color of the app
+        primarySwatch: Colors.green,
+        //Theme colors of the app
       ),
       home: BaseAppWidget(), //"home"
     );
@@ -82,11 +90,6 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Home.getConnectionState(context);
-    double verticalPadding = MediaQuery.of(context).size.height * 0.01;
-    double horizontalPadding = MediaQuery.of(context).size.width *
-        0.01; // Getting the pixels to use for the 1%-padding
-
     return new MaterialApp(
       home: DefaultTabController(
         // Initializing a tab controller with 3 tabs to have swipe functionality between screens with a length of 3 tabs
@@ -99,8 +102,8 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
               children: [
                 new Container(
                   color: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      vertical: verticalPadding, horizontal: horizontalPadding),
+                  //padding: EdgeInsets.symmetric(
+                  //vertical: verticalPadding, horizontal: horizontalPadding),
                   //set an padding of 1% of screen size on all sides
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -110,15 +113,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
                   ),
                 ),
                 Home(),
-                new Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      vertical: verticalPadding, horizontal: horizontalPadding),
-                  //set an padding of 1% of screen size on all sides
-                  child: Column(
-                    children: [Text('Tasks')], //dummy widget
-                  ),
-                ),
+                Tasks()
               ],
             ),
           ),

@@ -12,6 +12,14 @@ class Task {
       //description: json['description'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'description': description,
+    };
+  }
 }
 
 class Album {
@@ -24,7 +32,7 @@ class Album {
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
       userId: json['userId'],
-      id: json['id'],
+      id: json['_id'],
       title: json['title'],
     );
   }
