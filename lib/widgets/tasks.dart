@@ -114,7 +114,8 @@ class _TasksState extends State<Tasks> {
                         },
                       )
                     : Text("Glückwunsch, alle Aufgaben wurden erledigt!")
-                : Text("You are currently not connected to a sensorbox"),
+                : Text(
+                    "Verbinde dich mit einer Sensorbox, um Tasks zu erhalten."),
           ),
         ],
       ),
