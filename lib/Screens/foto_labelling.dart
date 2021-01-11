@@ -45,30 +45,29 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
           child: Icon(Icons.done_all),
           backgroundColor: Colors.green,
           onPressed: () {
-
-            if(selectedLabel == -1) {
+            if (selectedLabel == -1) {
               showDialog(
                   context: context,
                   builder: (BuildContext buttonContext) {
                     List<String> str = [
-                    "Du hast kein Label ausgewählt.",
-                    "Willst du abbrechen oder es nochmal probieren?",
-                    "Nochmal",
-                    "Abbrechen"
+                      "Du hast kein Label ausgewählt.",
+                      "Willst du abbrechen oder es nochmal probieren?",
+                      "Nochmal",
+                      "Abbrechen"
                     ];
                     List<Widget> actions = [
-                        FlatButton(
-                            onPressed: () {
-                              Navigator.of(buttonContext).pop();
-                            },
-                            child: Text(str[2])),
-                        FlatButton(
-                            onPressed: () {
-                              Navigator.of(buttonContext).pop();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(str[3])),
-                      ];
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(buttonContext).pop();
+                          },
+                          child: Text(str[2])),
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(buttonContext).pop();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(str[3])),
+                    ];
 
                     return AlertDialog(
                       title: Text(str[0]),
@@ -76,8 +75,7 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
                       actions: actions,
                     );
                   });
-            }
-            else {
+            } else {
               Navigator.pop(context, labels[selectedLabel]);
             }
             // write label to database
