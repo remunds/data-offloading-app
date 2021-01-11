@@ -5,7 +5,6 @@ import 'package:data_offloading_app/provider/box_connection_state.dart';
 
 import '../logic/box_communicator.dart';
 import '../data/task.dart';
-import 'task_widget.dart';
 
 import 'dart:io' show Platform;
 
@@ -55,7 +54,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _fetchTasks();
     //check every 5 seconds for new Tasks
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    _timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
       _fetchTasks();
     });
   }

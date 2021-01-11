@@ -1,11 +1,7 @@
-import 'package:data_offloading_app/provider/taskList.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../data/task.dart';
-
-import 'package:provider/provider.dart';
 
 class BoxCommunicator {
   Future<List<Task>> fetchTasks() async {
@@ -16,15 +12,11 @@ class BoxCommunicator {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print("Hier 0");
       List<dynamic> taskListJson = jsonDecode(response.body);
-      print("Printing Tasks from Json: " + taskListJson.toString());
-      List<Task> taskList = List<Task>(taskListJson.length);
-      for (int i = 0; i < taskListJson.length; ++i) {
-        print("Hier 1");
-        taskList[i] = Task.fromJson(taskListJson[i]);
-        print("Hier 2 ");
-      }
+      List<Task> taskList = new List<Task>();
+
+      taskList = taskListJson.map((elem) => Task.fromJson(elem)).toList();
+
       return taskList;
     } else {
       // If the server did not return a 200 OK response,
@@ -34,24 +26,17 @@ class BoxCommunicator {
     }
   }
 
-  void deleteTask(Task task, BuildContext context) async {
-    String taskDel = jsonEncode(task);
+  //This is the way to communicate the deletion of a task with the box
+  Future<int> deleteTask(Task task) async {
+    //enconding the task to JSON
+    String taskDel = json.encode(task);
 
     Map<String, String> headers = {
       "Content-type": "application/json",
-      "Content-Length": "83"
     };
-
-    print("Task to delete: " + taskDel);
+    // sending a http post to the sensorbox to delete the task from our db.
     final response = await http.post("http://10.3.141.1:8000/api/deleteTask",
         headers: headers, body: taskDel);
-
-    if (response.statusCode == 200) {
-      context.read<TaskListProvider>().deleteFromTasks(task);
-      print("Deleted Task");
-    } else {
-      print(response.statusCode);
-      throw Exception("Failed to delete task");
-    }
+    return response.statusCode;
   }
 }

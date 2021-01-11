@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
-import 'package:data_offloading_app/provider/taskList.dart';
+import 'package:data_offloading_app/provider/tasklist_state.dart';
 
-import '../logic/box_communicator.dart';
 import '../data/task.dart';
 import 'task_widget.dart';
 
@@ -37,32 +36,15 @@ class Tasks extends StatefulWidget {
 
 class _TasksState extends State<Tasks> {
   //BuildContext context;
-  List<Task> _currentTasks;
   Timer _timer;
-
-  void _fetchTasks(BuildContext context) async {
-    print("fetching tasks at tasks.dart");
-    print(context);
-    try {
-      List<Task> taskList = [];
-      print("tasks.dart getting Tasks");
-      taskList = await context.read<TaskListProvider>().awaitTasks();
-      setState(() {
-        _currentTasks = taskList;
-      });
-    } catch (e) {
-      print(e);
-      print("LOOOOOOOOOOOOOOOOOL");
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _fetchTasks(context);
-    //check every 5 seconds for new Tasks
+    context.read<TaskListProvider>().awaitTasks();
+    //check every second for new Tasks
     _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      _fetchTasks(context);
+      context.read<TaskListProvider>().awaitTasks();
     });
   }
 
@@ -74,8 +56,8 @@ class _TasksState extends State<Tasks> {
 
   @override
   Widget build(BuildContext context) {
+    List<Task> _currentTasks = context.watch<TaskListProvider>().taskList;
     bool _connection = context.watch<BoxConnectionState>().connectionState;
-    print(_connection);
     return Container(
       padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.01,
@@ -87,6 +69,7 @@ class _TasksState extends State<Tasks> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             //align the button to the right side
             children: [
+              //Here starts the tasks view
               Text(
                 "   Aufgaben",
                 style: TextStyle(
@@ -112,17 +95,25 @@ class _TasksState extends State<Tasks> {
                   }),
             ],
           ),
+          //Expanded Widget to expand over whole
           Expanded(
+            //2 ternary operators. The first one checks if there is a connection to a sensorbox.
+            //The other checks on the length of the task list if connection is established
             child: _connection
-                ? ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                        //vertical: MediaQuery.of(context).size.height * 0.1,
-                        horizontal: MediaQuery.of(context).size.width * 0.05),
-                    itemCount: _currentTasks == null ? 0 : _currentTasks.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return TaskWidget(_currentTasks[index]);
-                    },
-                  )
+                ? _currentTasks.length != 0
+                    //The following ListView shows
+                    ? ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                            //Use a 1% horizontal padding for the list view
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.01),
+                        itemCount:
+                            _currentTasks == null ? 0 : _currentTasks.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return TaskWidget(_currentTasks[index]);
+                        },
+                      )
+                    : Text("Glückwunsch, alle Aufgaben wurden erledigt!")
                 : Text("You are currently not connected to a sensorbox"),
           ),
         ],

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:data_offloading_app/provider/taskList.dart';
+import 'package:data_offloading_app/provider/tasklist_state.dart';
 import 'package:data_offloading_app/widgets/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -10,7 +10,6 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/box_connection_state.dart';
-import 'provider/taskList.dart';
 import 'widgets/home.dart';
 import 'widgets/map.dart';
 
@@ -90,11 +89,6 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Home.getConnectionState(context);
-    //double verticalPadding = MediaQuery.of(context).size.height * 0.01;
-    //double horizontalPadding = MediaQuery.of(context).size.width *
-    //0.01; // Getting the pixels to use for the 1%-padding
-
     return new MaterialApp(
       home: DefaultTabController(
         // Initializing a tab controller with 3 tabs to have swipe functionality between screens with a length of 3 tabs
