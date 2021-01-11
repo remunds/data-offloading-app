@@ -35,7 +35,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   @override
   Widget build(BuildContext context) {
     bool _connection = context.watch<BoxConnectionState>().connectionState;

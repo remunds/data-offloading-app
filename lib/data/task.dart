@@ -20,7 +20,10 @@ class Task {
       '_id': id,
       'title': title,
       'description': description,
+<<<<<<< HEAD
       'imageId': imageId,
+=======
+>>>>>>> develop
     };
   }
 }
