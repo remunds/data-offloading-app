@@ -76,7 +76,7 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
                     );
                   });
             } else {
-              Navigator.pop(context, labels[selectedLabel]);
+              Navigator.pop(context, selectedLabel);
             }
             // write label to database
           }),
