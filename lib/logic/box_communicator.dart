@@ -1,12 +1,78 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
+import 'package:retry/retry.dart';
+
 import '../data/task.dart';
 
 class BoxCommunicator {
+  final int dataLimitInkB = 100;
+  String boxIP = "http://10.3.141.1:8000";
+
+  void downloadData() async {
+    print("downloading...");
+    String boxName;
+    // sleep(Duration(milliseconds: 100));
+    final boxResponse = await retry(
+        () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
+
+    if (boxResponse.statusCode == 200) {
+      var res = jsonDecode(boxResponse.body);
+      boxName = res["piID"];
+      print(boxName);
+    } else {
+      print(boxResponse.statusCode);
+      throw Exception('failed to register');
+    }
+
+    Box storage = await Hive.openBox('storage');
+    Box box = await Hive.openBox(boxName);
+    int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
+    print("totalsize: " + totalSizeInBytes.toString());
+
+    while (true) {
+      if (totalSizeInBytes > dataLimitInkB * 1000) {
+        print("data limit reached");
+        return;
+      }
+      final response = await retry(
+          () => http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
+          retryIf: (e) => e is SocketException || e is TimeoutException);
+
+      if (response.statusCode == 200) {
+        // List<dynamic> resJson = jsonDecode(response.body);
+        var id = jsonDecode(response.body)["_id"];
+        print(id);
+        if (id == null) {
+          throw Exception('response had no id');
+        }
+        if (box.get(id) != null) {
+          print("got all files");
+          break;
+        }
+        box.put(id, response.body);
+        //add size of this response to size of all data combined (for limiting data usage)
+        storage.put(
+            'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+        print("new entry at: ");
+        print(DateTime.now());
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        print(response.statusCode);
+        throw Exception('failed to load tasks');
+      }
+    }
+    box.close();
+  }
+
   Future<List<Task>> fetchTasks() async {
     Map<String, String> headers = {"Content-type": "application/json"};
     final response =
