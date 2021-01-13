@@ -12,6 +12,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'provider/box_connection_state.dart';
+import 'provider/poslist_state.dart';
 import 'widgets/home.dart';
 import 'widgets/map.dart';
 
@@ -23,6 +24,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),
       ChangeNotifierProvider(create: (_) => TaskListProvider()),
+      ChangeNotifierProvider(create: (_) => PosListProvider()),
     ],
     builder: (context, child) => const MyApp(),
   ));

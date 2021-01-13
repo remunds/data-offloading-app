@@ -1,8 +1,12 @@
 import 'package:data_offloading_app/Screens/box_info.dart';
+import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong/latlong.dart" as latLng;
 import 'package:user_location/user_location.dart';
+import '../provider/poslist_state.dart';
+import 'package:provider/provider.dart';
+import '../data/box_position.dart';
 
 //MyMap class
 class MyMap extends StatefulWidget {
@@ -84,10 +88,16 @@ class _MyMapState extends State<MyMap> {
   @mustCallSuper
   void initState() {
     super.initState();
-    _boxes.add(_buildBoxMarker(50.8050, 8.7669));
-    _boxes.add(_buildBoxMarker(50.8160, 8.7669));
-    _boxes.add(_buildBoxMarker(50.8080, 8.7769));
-    _boxes.add(_buildBoxMarker(50.8280, 8.7769));
-    _boxes.add(_buildBoxMarker(50.8080, 8.7869));
+
+    //context.read<PosListProvider>().awaitPositions();
+    BoxCommunicator bC = new BoxCommunicator();
+    bC.fetchPositions().then((value) {
+      context.read<PosListProvider>().setPos(value);
+      print("Currentpos in map.dart");
+      int numOfBoxes = bC.numberOfBoxes;
+      for (int box = 0; box < numOfBoxes; ++box) {
+        _boxes.add(_buildBoxMarker(value[box].lat, value[box].long));
+      }
+    });
   }
 }

@@ -9,11 +9,13 @@ import 'package:hive/hive.dart';
 import 'package:retry/retry.dart';
 
 import '../data/task.dart';
+import '../data/box_position.dart';
 
 class BoxCommunicator {
   final int dataLimitInkB = 100;
   String boxIP = "http://10.3.141.1:8000";
-
+  String backEndIP = "http://192.168.0.33:8000";
+  int numberOfBoxes = 2;
   void downloadData() async {
     print("downloading...");
     String boxName;
@@ -146,5 +148,39 @@ class BoxCommunicator {
       print(response.statusCode);
       throw Exception('failed to save label');
     }
+  }
+
+  Future<List<BoxPosition>> fetchPositions() async {
+    print("fetching positions");
+    Map<String, String> headers = {"Content-type": "application/json"};
+    //implement getter for number of boxes
+    List<BoxPosition> posList = new List<BoxPosition>();
+    int currBox = 1;
+    //for (int currBox = 1; currBox < numberOfBoxes + 1; ++currBox) {
+    String url = backEndIP + "/api/getPosition/" + currBox.toString();
+    dynamic response = await http.get(url, headers: headers);
+    if (response.statusCode != 200) {
+      print("Something went wrong!");
+    }
+    while (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String, dynamic> posListJson = jsonDecode(response.body);
+      //List<BoxPosition> posList = new List<BoxPosition>();
+      // print(posListJson.entries.map((e) => e.));
+      posList.addAll(posListJson.entries
+          .map((elem) => BoxPosition.fromJson(elem))
+          .toList());
+      print("PosList in communicator");
+      print(posList);
+
+      ++currBox;
+      String url = backEndIP + "/api/getPosition/" + currBox.toString();
+      response = await http.get(url, headers: headers);
+    }
+    //}
+    print(posList);
+
+    return posList;
   }
 }
