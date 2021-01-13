@@ -33,9 +33,9 @@ class _TaskWidgetState extends State<TaskWidget> {
       context.read<TaskListProvider>().deleteFromTasks(task);
     }
 
-    var tile_content;
+    var tileContent;
     if (widget.task.imageId == null) {
-      tile_content = [
+      tileContent = [
         Text(
           widget.task.description,
           style: TextStyle(
@@ -60,7 +60,7 @@ class _TaskWidgetState extends State<TaskWidget> {
         )
       ];
     } else {
-      tile_content = [
+      tileContent = [
         RaisedButton(
             onPressed: () async {
               var id = "5ff5e24be9ee9419f4d58c82";
@@ -95,7 +95,7 @@ class _TaskWidgetState extends State<TaskWidget> {
               size: 26,
               color: Colors.green,
             ),
-            children: tile_content),
+            children: tileContent),
       ],
     );
   }

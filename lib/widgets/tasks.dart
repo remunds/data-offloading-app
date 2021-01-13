@@ -4,34 +4,13 @@ import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
 
-import '../logic/box_communicator.dart';
-
 import '../data/task.dart';
 import 'task_widget.dart';
 
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
-import 'package:wifi_iot/wifi_iot.dart';
 
 class Tasks extends StatefulWidget {
-  static void getConnectionState(BuildContext context) async {
-    String name = await WifiInfo().getWifiName();
-    if (name == "Sensorbox" &&
-        !context.read<BoxConnectionState>().connectionState) {
-      if (Platform.isAndroid) {
-        //force wifi so that we do not have problems with mobile data interfering api requests
-        WiFiForIoTPlugin.forceWifiUsage(true);
-      }
-      context.read<BoxConnectionState>().connected();
-    } else if (name != "Sensorbox" &&
-        context.read<BoxConnectionState>().connectionState) {
-      context.read<BoxConnectionState>().disconnected();
-    }
-  }
-
   @override
   _TasksState createState() => _TasksState();
 }
