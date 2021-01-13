@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/Screens/aboutus.dart';
 import 'package:data_offloading_app/Screens/achievements.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
@@ -9,16 +6,12 @@ import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../logic/box_communicator.dart';
-import '../data/task.dart';
-
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:flutter_offline/flutter_offline.dart';
 
 class Home extends StatefulWidget {
   static void getConnectionState(BuildContext context) async {
@@ -43,107 +36,95 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    bool _connection = context.watch<BoxConnectionState>().connectionState;
+
     return new Scaffold(
-        //OfflineBuilder from the flutter_offline package handels the connection status to the sensorboxes
-        body: Builder(builder: (BuildContext context) {
-      return OfflineBuilder(
-          connectivityBuilder: (
-            BuildContext context,
-            ConnectivityResult connectivity,
-            Widget child,
-          ) {
-            //connectionListener
-            bool _connection =
-                context.watch<BoxConnectionState>().connectionState;
-            //A stack is used so that the connection status only covers other widgets
-            return new Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned(
-                  height: 20.0,
-                  left: 0.0,
-                  right: 0.0,
-                  //ConnectionMessage widget
-                  child: AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      color:
-                          _connection ? Color(0xFF00EE44) : Color(0xFFEE4400),
-                      child: _connection
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text("Sensorbox verbunden")],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Keine Senorbox in Reichweite",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            )),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.01),
-                  child: Column(
-                    children: [
-                      Row(
-                        //Make a Row with a settings button on the right side
-                        mainAxisAlignment: MainAxisAlignment
-                            .end, //align the button to the right side
-                        children: [
-                          IconButton(
-                              //button initialisation
-                              icon: Icon(
-                                Icons.settings,
-                                color: Colors.black54,
-                              ),
-                              onPressed: () {
-                                // this is what happens when the settings button is pressed
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
-                                );
-                              }),
-                        ],
-                      ),
-                      //Nature 4.0 Image
-                      Container(
-                          child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Image.asset('assets/logo_n40.png'))),
-                      //creation of the 4 tile menu
-                      Expanded(
-                        child: GridView.count(
-                          padding: const EdgeInsets.all(20),
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          children: [
-                            _makeHomeTile("Anleitung", Icons.article,
-                                ManualPage(), context),
-                            _makeHomeTile("Statistiken", Icons.analytics,
-                                StatisticsPage(), context),
-                            _makeHomeTile("Achievements", Icons.emoji_events,
-                                AchievementsPage(), context),
-                            _makeHomeTile("About us", Icons.import_contacts,
-                                AboutUsPage(), context)
-                          ],
+        body: Stack(
+      //OfflineBuilder from the flutter_offline package handels the connection status to the sensorboxes
+      //connectionListener
+      //A stack is used so that the connection status only covers other widgets
+      fit: StackFit.expand,
+      children: [
+        Positioned(
+          height: 20.0,
+          left: 0.0,
+          right: 0.0,
+          //ConnectionMessage widget
+          child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              color: _connection ? Color(0xFF00EE44) : Color(0xFFEE4400),
+              child: _connection
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text("Sensorbox verbunden")],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Keine Senorbox in Reichweite",
+                          style: TextStyle(color: Colors.white),
                         ),
+                      ],
+                    )),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.01,
+              horizontal: MediaQuery.of(context).size.width * 0.01),
+          child: Column(
+            children: [
+              Row(
+                //Make a Row with a settings button on the right side
+                mainAxisAlignment:
+                    MainAxisAlignment.end, //align the button to the right side
+                children: [
+                  IconButton(
+                      //button initialisation
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.black54,
                       ),
-                    ],
-                  ),
+                      onPressed: () {
+                        // this is what happens when the settings button is pressed
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                        );
+                      }),
+                ],
+              ),
+              //Nature 4.0 Image
+              Container(
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Image.asset('assets/logo_n40.png'))),
+              //creation of the 4 tile menu
+              Expanded(
+                child: GridView.count(
+                  padding: const EdgeInsets.all(20),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: [
+                    _makeHomeTile(
+                        "Anleitung", Icons.article, ManualPage(), context),
+                    _makeHomeTile("Statistiken", Icons.analytics,
+                        StatisticsPage(), context),
+                    _makeHomeTile("Achievements", Icons.emoji_events,
+                        AchievementsPage(), context),
+                    _makeHomeTile("About us", Icons.import_contacts,
+                        AboutUsPage(), context)
+                  ],
                 ),
-              ],
-            );
-          },
-          //Dummy Scaffold because no child is needed
-          child: Scaffold());
-    }));
+              ),
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 }
 
