@@ -22,9 +22,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),
-      ChangeNotifierProvider(
-        create: (_) => TaskListProvider(),
-      )
+      ChangeNotifierProvider(create: (_) => TaskListProvider()),
     ],
     builder: (context, child) => const MyApp(),
   ));

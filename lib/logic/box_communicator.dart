@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:hive/hive.dart';
 import 'package:retry/retry.dart';
 
@@ -18,7 +17,7 @@ class BoxCommunicator {
   void downloadData() async {
     print("downloading...");
     String boxName;
-    // sleep(Duration(milliseconds: 100));
+    //register to get the current boxName from the Sensorbox
     final boxResponse = await retry(
         () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
         retryIf: (e) => e is SocketException || e is TimeoutException);
@@ -26,33 +25,35 @@ class BoxCommunicator {
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
       boxName = res["piID"];
-      print(boxName);
     } else {
-      print(boxResponse.statusCode);
       throw Exception('failed to register');
     }
 
+    //storage box stores the number of received bytes at 'totalSizeInBytes'
     Box storage = await Hive.openBox('storage');
+    //opens the box for the current connected Sensorbox
     Box box = await Hive.openBox(boxName);
+
+    //if no data has been received: start with 0.
     int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
-    print("totalsize: " + totalSizeInBytes.toString());
 
     while (true) {
+      //is the data limit reached?
       if (totalSizeInBytes > dataLimitInkB * 1000) {
         print("data limit reached");
         return;
       }
+      //make getData call to collect data chunks or files from box
       final response = await retry(
           () => http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
           retryIf: (e) => e is SocketException || e is TimeoutException);
 
       if (response.statusCode == 200) {
-        // List<dynamic> resJson = jsonDecode(response.body);
         var id = jsonDecode(response.body)["_id"];
-        print(id);
         if (id == null) {
-          throw Exception('response had no id');
+          print('response had no id');
         }
+        //all files of the current box have been downloaded
         if (box.get(id) != null) {
           print("got all files");
           break;
@@ -67,7 +68,7 @@ class BoxCommunicator {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         print(response.statusCode);
-        throw Exception('failed to load tasks');
+        print('failed to get any data');
       }
     }
     box.close();
