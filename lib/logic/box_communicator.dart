@@ -1,12 +1,79 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:hive/hive.dart';
+import 'package:retry/retry.dart';
 
 import '../data/task.dart';
 
 class BoxCommunicator {
+  final int dataLimitInkB = 100;
+  String boxIP = "http://10.3.141.1:8000";
+
+  void downloadData() async {
+    print("downloading...");
+    String boxName;
+    //register to get the current boxName from the Sensorbox
+    final boxResponse = await retry(
+        () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
+
+    if (boxResponse.statusCode == 200) {
+      var res = jsonDecode(boxResponse.body);
+      boxName = res["piID"];
+    } else {
+      throw Exception('failed to register');
+    }
+
+    //storage box stores the number of received bytes at 'totalSizeInBytes'
+    Box storage = await Hive.openBox('storage');
+    //opens the box for the current connected Sensorbox
+    Box box = await Hive.openBox(boxName);
+
+    //if no data has been received: start with 0.
+    int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
+
+    while (true) {
+      //is the data limit reached?
+      if (totalSizeInBytes > dataLimitInkB * 1000) {
+        print("data limit reached");
+        return;
+      }
+      //make getData call to collect data chunks or files from box
+      final response = await retry(
+          () => http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
+          retryIf: (e) => e is SocketException || e is TimeoutException);
+
+      if (response.statusCode == 200) {
+        var id = jsonDecode(response.body)["_id"];
+        if (id == null) {
+          print('response had no id');
+        }
+        //all files of the current box have been downloaded
+        if (box.get(id) != null) {
+          print("got all files");
+          break;
+        }
+        box.put(id, response.body);
+        //add size of this response to size of all data combined (for limiting data usage)
+        storage.put(
+            'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+        print("new entry at: ");
+        print(DateTime.now());
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        print(response.statusCode);
+        print('failed to get any data');
+      }
+    }
+    box.close();
+  }
+
   Future<List<Task>> fetchTasks() async {
     Map<String, String> headers = {"Content-type": "application/json"};
     final response =

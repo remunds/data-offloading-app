@@ -1,3 +1,4 @@
+import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:flutter/material.dart';
 
 class BoxConnectionState with ChangeNotifier {
@@ -13,5 +14,6 @@ class BoxConnectionState with ChangeNotifier {
   void connected() {
     _connectionState = true;
     notifyListeners();
+    BoxCommunicator().downloadData();
   }
 }
