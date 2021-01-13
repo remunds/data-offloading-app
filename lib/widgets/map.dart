@@ -6,7 +6,6 @@ import "package:latlong/latlong.dart" as latLng;
 import 'package:user_location/user_location.dart';
 import '../provider/poslist_state.dart';
 import 'package:provider/provider.dart';
-import '../data/box_position.dart';
 
 //MyMap class
 class MyMap extends StatefulWidget {
@@ -92,8 +91,7 @@ class _MyMapState extends State<MyMap> {
     //context.read<PosListProvider>().awaitPositions();
     BoxCommunicator bC = new BoxCommunicator();
     bC.fetchPositions().then((value) {
-      context.read<PosListProvider>().setPos(value);
-      print("Currentpos in map.dart");
+      context.read<PosListProvider>().setPositions(value);
       int numOfBoxes = bC.numberOfBoxes;
       for (int box = 0; box < numOfBoxes; ++box) {
         _boxes.add(_buildBoxMarker(value[box].lat, value[box].long));

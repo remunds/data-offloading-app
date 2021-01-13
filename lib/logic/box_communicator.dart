@@ -15,7 +15,7 @@ class BoxCommunicator {
   final int dataLimitInkB = 100;
   String boxIP = "http://10.3.141.1:8000";
   String backEndIP = "http://192.168.0.33:8000";
-  int numberOfBoxes = 2;
+  int numberOfBoxes = 0;
   void downloadData() async {
     print("downloading...");
     String boxName;
@@ -151,7 +151,6 @@ class BoxCommunicator {
   }
 
   Future<List<BoxPosition>> fetchPositions() async {
-    print("fetching positions");
     Map<String, String> headers = {"Content-type": "application/json"};
     //implement getter for number of boxes
     List<BoxPosition> posList = new List<BoxPosition>();
@@ -171,13 +170,12 @@ class BoxCommunicator {
       posList.addAll(posListJson.entries
           .map((elem) => BoxPosition.fromJson(elem))
           .toList());
-      print("PosList in communicator");
-      print(posList);
 
       ++currBox;
       String url = backEndIP + "/api/getPosition/" + currBox.toString();
       response = await http.get(url, headers: headers);
     }
+    numberOfBoxes = currBox - 1;
     //}
     print(posList);
 
