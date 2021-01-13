@@ -150,23 +150,22 @@ class BoxCommunicator {
     }
   }
 
+  //fetches the lat and long coordinates from all sensorboxes
   Future<List<BoxPosition>> fetchPositions() async {
     Map<String, String> headers = {"Content-type": "application/json"};
-    //implement getter for number of boxes
     List<BoxPosition> posList = new List<BoxPosition>();
     int currBox = 1;
-    //for (int currBox = 1; currBox < numberOfBoxes + 1; ++currBox) {
     String url = backEndIP + "/api/getPosition/" + currBox.toString();
     dynamic response = await http.get(url, headers: headers);
     if (response.statusCode != 200) {
+      print("StatusCode " + response.statusCode.toString());
       print("Something went wrong!");
     }
+    //request sensorbox positions until no boxes are left
     while (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String, dynamic> posListJson = jsonDecode(response.body);
-      //List<BoxPosition> posList = new List<BoxPosition>();
-      // print(posListJson.entries.map((e) => e.));
       posList.addAll(posListJson.entries
           .map((elem) => BoxPosition.fromJson(elem))
           .toList());
@@ -176,7 +175,6 @@ class BoxCommunicator {
       response = await http.get(url, headers: headers);
     }
     numberOfBoxes = currBox - 1;
-    //}
     print(posList);
 
     return posList;

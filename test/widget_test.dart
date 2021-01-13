@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:data_offloading_app/provider/box_connection_state.dart';
+import 'package:data_offloading_app/provider/poslist_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,6 +19,7 @@ void main() {
     await tester.pumpWidget(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => BoxConnectionState()),
+        ChangeNotifierProvider(create: (_) => PosListProvider()),
       ],
       builder: (context, child) => const MyApp(),
     ));
