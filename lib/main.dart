@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'provider/box_connection_state.dart';
 import 'widgets/home.dart';
 import 'widgets/map.dart';
-import 'Screens/foto_labelling.dart';
 
 void main() => runApp(MultiProvider(
       providers: [

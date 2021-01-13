@@ -46,7 +46,7 @@ class BoxCommunicator {
   Future<Image> fetchImage(var id) async {
     Map<String, String> headers = {"Content-type": "image/jpeg"};
     final response = await http
-        .get("http://10.3.141.1:8000/api/getImage/?id=${id}", headers: headers);
+        .get("http://10.3.141.1:8000/api/getImage/?id=$id", headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
