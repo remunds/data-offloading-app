@@ -11,21 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Tasks extends StatefulWidget {
-  // static void getConnectionState(BuildContext context) async {
-  //   String name = await WifiInfo().getWifiName();
-  //   if (name == "Sensorbox" &&
-  //       !context.read<BoxConnectionState>().connectionState) {
-  //     if (Platform.isAndroid) {
-  //       //force wifi so that we do not have problems with mobile data interfering api requests
-  //       WiFiForIoTPlugin.forceWifiUsage(true);
-  //     }
-  //     context.read<BoxConnectionState>().connected();
-  //   } else if (name != "Sensorbox" &&
-  //       context.read<BoxConnectionState>().connectionState) {
-  //     context.read<BoxConnectionState>().disconnected();
-  //   }
-  // }
-
   @override
   _TasksState createState() => _TasksState();
 }

@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Keine Senorbox in Reichweite",
+                          "Keine Sensorbox in Reichweite",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
