@@ -1,4 +1,5 @@
 import 'package:data_offloading_app/logic/box_communicator.dart';
+
 import 'package:flutter/material.dart';
 
 class BoxConnectionState with ChangeNotifier {
