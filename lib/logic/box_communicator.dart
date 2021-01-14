@@ -17,8 +17,9 @@ class BoxCommunicator {
   void downloadData() async {
     print("downloading...");
     String boxName;
+    final r = RetryOptions(maxAttempts: 5);
     //register to get the current boxName from the Sensorbox
-    final boxResponse = await retry(
+    final boxResponse = await r.retry(
         () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
         retryIf: (e) => e is SocketException || e is TimeoutException);
 
@@ -32,46 +33,52 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     Box storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    Box box = await Hive.openBox(boxName);
+    LazyBox box = await Hive.openLazyBox(boxName);
 
     //if no data has been received: start with 0.
     int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
-
-    while (true) {
-      //is the data limit reached?
-      if (totalSizeInBytes > dataLimitInkB * 1000) {
-        print("data limit reached");
-        return;
-      }
-      //make getData call to collect data chunks or files from box
-      final response = await retry(
-          () => http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
-          retryIf: (e) => e is SocketException || e is TimeoutException);
-
-      if (response.statusCode == 200) {
-        var id = jsonDecode(response.body)["_id"];
-        if (id == null) {
-          print('response had no id');
-        }
-        //all files of the current box have been downloaded
-        if (box.get(id) != null) {
-          print("got all files");
+    try {
+      while (true) {
+        //is the data limit reached?
+        if (totalSizeInBytes > dataLimitInkB * 1000) {
+          print("data limit reached");
           break;
         }
-        box.put(id, response.body);
-        //add size of this response to size of all data combined (for limiting data usage)
-        storage.put(
-            'totalSizeInBytes', totalSizeInBytes + response.contentLength);
-        print("new entry at: ");
-        print(DateTime.now());
-      } else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
-        print(response.statusCode);
-        print('failed to get any data');
+        //make getData call to collect data chunks or files from box
+        final response = await r.retry(
+            () =>
+                http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
+            retryIf: (e) => e is SocketException || e is TimeoutException);
+
+        if (response.statusCode == 200) {
+          var id = jsonDecode(response.body)["_id"];
+          if (id == null) {
+            print('response had no id');
+          }
+          //all files of the current box have been downloaded
+          if (await box.get(id) != null) {
+            print("got all files");
+            break;
+          }
+          await box.put(id, response.body);
+          //add size of this response to size of all data combined (for limiting data usage)
+          storage.put(
+              'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+          print("new entry at: ");
+          print(DateTime.now());
+        } else {
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          print(response.statusCode);
+          print('failed to get any data');
+        }
       }
+    } catch (err) {
+      //user probably left the current Sensorbox
+      print("user left:");
+      print(err);
     }
-    box.close();
+    await box.close();
   }
 
   Future<List<Task>> fetchTasks() async {
