@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
@@ -13,8 +14,6 @@ import '../data/box_position.dart';
 
 class BoxCommunicator {
   final int dataLimitInkB = 100;
-  String boxIP = "http://10.3.141.1:8000";
-  String backEndIP = "http://192.168.0.33:8000";
   int _numberOfBoxes = 0;
 
   int getNumberOfBoxes() {
@@ -22,12 +21,53 @@ class BoxCommunicator {
   }
 
   Map<String, String> headers = {"Content-type": "application/json"};
+  final String boxIP = "http://10.3.141.1:8000";
+  final String backendIP = "http://192.168.0.64:8001";
+
+  void uploadToBackend(context) async {
+    print("uploading");
+    Box boxes = await Hive.openBox('boxes');
+    String query;
+
+    //iterate over all Sensorboxes we downloaded data from
+    for (String box in boxes.values) {
+      Box currBox = await Hive.openBox(box);
+      //get all the data from one Sensorbox
+      for (String data in currBox.values) {
+        //if files_id is specified, given data is a chunk
+        if (data.contains("files_id")) {
+          query = "?format=chunk";
+        } else {
+          query = "?format=file";
+        }
+
+        //check if still connected
+        if (!context.read<BoxConnectionState>().connectionState) {
+          return;
+        }
+        final boxResponse = await retry(
+            () => http
+                .get(backendIP + "/api/postData/" + box + query)
+                .timeout(Duration(seconds: 3)),
+            retryIf: (e) => e is SocketException || e is TimeoutException);
+        if (boxResponse.statusCode != 200) {
+          //user probably left WiFi
+          print("user probably left wifi");
+          return;
+        }
+        //else: succesfully uploaded, continue
+      }
+      //delete data from disk
+      await currBox.deleteFromDisk();
+    }
+  }
 
   void downloadData() async {
     print("downloading...");
     String boxName;
+    final r = RetryOptions(maxAttempts: 5);
     //register to get the current boxName from the Sensorbox
-    final boxResponse = await retry(
+    final boxResponse = await r.retry(
         () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
         retryIf: (e) => e is SocketException || e is TimeoutException);
 
@@ -41,46 +81,56 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     Box storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    Box box = await Hive.openBox(boxName);
+    LazyBox box = await Hive.openLazyBox(boxName);
+    Box boxes = await Hive.openBox('boxes');
+    boxes.add(boxName);
 
     //if no data has been received: start with 0.
     int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
-
-    while (true) {
-      //is the data limit reached?
-      if (totalSizeInBytes > dataLimitInkB * 1000) {
-        print("data limit reached");
-        return;
-      }
-      //make getData call to collect data chunks or files from box
-      final response = await retry(
-          () => http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
-          retryIf: (e) => e is SocketException || e is TimeoutException);
-
-      if (response.statusCode == 200) {
-        var id = jsonDecode(response.body)["_id"];
-        if (id == null) {
-          print('response had no id');
-        }
-        //all files of the current box have been downloaded
-        if (box.get(id) != null) {
-          print("got all files");
+    try {
+      while (true) {
+        //is the data limit reached?
+        if (totalSizeInBytes > dataLimitInkB * 1000) {
+          print("data limit reached");
           break;
         }
-        box.put(id, response.body);
-        //add size of this response to size of all data combined (for limiting data usage)
-        storage.put(
-            'totalSizeInBytes', totalSizeInBytes + response.contentLength);
-        print("new entry at: ");
-        print(DateTime.now());
-      } else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
-        print(response.statusCode);
-        print('failed to get any data');
+        //make getData call to collect data chunks or files from box
+        final response = await r.retry(
+            () =>
+                http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
+            retryIf: (e) => e is SocketException || e is TimeoutException);
+
+        if (response.statusCode == 200) {
+          var id = jsonDecode(response.body)["_id"];
+          if (id == null) {
+            print('response had no id');
+            continue;
+          }
+          //all files of the current box have been downloaded
+          if (await box.get(id) != null) {
+            print("got all files");
+            break;
+          }
+          await box.put(id, response.body);
+          //add size of this response to size of all data combined (for limiting data usage)
+          storage.put(
+              'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+          print("new entry at: ");
+          print(DateTime.now());
+        } else {
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          print(response.statusCode);
+          print('failed to get any data');
+          return;
+        }
       }
+    } catch (err) {
+      //user probably left the current Sensorbox
+      print("user left:");
+      print(err);
     }
-    box.close();
+    await box.close();
   }
 
   Future<List<Task>> fetchTasks() async {
@@ -154,7 +204,7 @@ class BoxCommunicator {
   Future<List<BoxPosition>> fetchPositions() async {
     List<BoxPosition> posList = new List<BoxPosition>();
     int currBox = 1;
-    String url = backEndIP + "/api/getPosition/" + currBox.toString();
+    String url = backendIP + "/api/getPosition/" + currBox.toString();
     dynamic response = await http.get(url, headers: headers);
     if (response.statusCode != 200) {
       print("StatusCode " + response.statusCode.toString());
@@ -171,7 +221,7 @@ class BoxCommunicator {
           .toList());
 
       ++currBox;
-      String url = backEndIP + "/api/getPosition/" + currBox.toString();
+      String url = backendIP + "/api/getPosition/" + currBox.toString();
       response = await http.get(url, headers: headers);
     }
     _numberOfBoxes = currBox - 1;

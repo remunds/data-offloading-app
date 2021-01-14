@@ -1,20 +1,24 @@
-import 'package:data_offloading_app/logic/box_communicator.dart';
-
 import 'package:flutter/material.dart';
 
-class BoxConnectionState with ChangeNotifier {
-  bool _connectionState = false;
+enum Connection { SENSORBOX, WIFI, NONE }
 
-  bool get connectionState => _connectionState;
+class BoxConnectionState with ChangeNotifier {
+  Connection _connectionState = Connection.NONE;
+
+  Connection get connectionState => _connectionState;
 
   void disconnected() {
-    _connectionState = false;
+    _connectionState = Connection.NONE;
     notifyListeners();
   }
 
-  void connected() {
-    _connectionState = true;
+  void connectedToWifi() {
+    _connectionState = Connection.WIFI;
     notifyListeners();
-    BoxCommunicator().downloadData();
+  }
+
+  void connectedToSensorbox() {
+    _connectionState = Connection.SENSORBOX;
+    notifyListeners();
   }
 }

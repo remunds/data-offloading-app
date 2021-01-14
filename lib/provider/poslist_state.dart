@@ -9,5 +9,6 @@ class PosListProvider with ChangeNotifier {
   //setter
   void setPositions(List<BoxPosition> posList) {
     _posList = posList;
+    notifyListeners();
   }
 }
