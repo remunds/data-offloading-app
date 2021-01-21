@@ -15,7 +15,12 @@ class BoxCommunicator {
   final int dataLimitInkB = 100;
   String boxIP = "http://10.3.141.1:8000";
   String backEndIP = "http://192.168.0.33:8000";
-  int numberOfBoxes = 0;
+  int _numberOfBoxes = 0;
+
+  int getNumberOfBoxes() {
+    return _numberOfBoxes;
+  }
+
   void downloadData() async {
     print("downloading...");
     String boxName;
@@ -160,6 +165,7 @@ class BoxCommunicator {
     if (response.statusCode != 200) {
       print("StatusCode " + response.statusCode.toString());
       print("Something went wrong!");
+      return null;
     }
     //request sensorbox positions until no boxes are left
     while (response.statusCode == 200) {
@@ -174,7 +180,7 @@ class BoxCommunicator {
       String url = backEndIP + "/api/getPosition/" + currBox.toString();
       response = await http.get(url, headers: headers);
     }
-    numberOfBoxes = currBox - 1;
+    _numberOfBoxes = currBox - 1;
     print(posList);
 
     return posList;

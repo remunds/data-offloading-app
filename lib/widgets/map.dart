@@ -93,7 +93,7 @@ class _MyMapState extends State<MyMap> {
     BoxCommunicator bC = new BoxCommunicator();
     bC.fetchPositions().then((value) {
       context.read<PosListProvider>().setPositions(value);
-      int numOfBoxes = bC.numberOfBoxes;
+      int numOfBoxes = bC.getNumberOfBoxes();
       for (int box = 0; box < numOfBoxes; ++box) {
         _boxes.add(_buildBoxMarker(value[box].lat, value[box].long));
       }
