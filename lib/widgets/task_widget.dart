@@ -1,3 +1,5 @@
+import 'package:camera/camera.dart';
+import 'package:data_offloading_app/Screens/foto_capturing.dart';
 import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,11 @@ class _TaskWidgetState extends State<TaskWidget> {
     }
   }
 
+  Future<CameraDescription> _getCamera() async {
+    final cameras = await availableCameras();
+    return cameras.first;
+  }
+
   @override
   Widget build(BuildContext context) {
     //this local function calls a provider function that deletes the task from the global task list and calls a delete function in box_communicator
@@ -34,7 +41,59 @@ class _TaskWidgetState extends State<TaskWidget> {
     }
 
     var tileContent;
-    if (widget.task.imageId == null) {
+    // if imageId is null, then this is not an image task
+    if (widget.task.imageId != null) {
+      // this is an image task
+      tileContent = [
+        RaisedButton(
+            onPressed: () async {
+              var id = widget.task.imageId;
+              Image img = await _fetchImage(id);
+              // route to image label page and wait for return
+              // return value will be the designated label
+              String selectedLabel = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FotoLabelPage(img)),
+              );
+
+              // if user has set a label, then save that label to the database
+              if (selectedLabel != null) {
+                try {
+                  BoxCommunicator().setLabel(id, selectedLabel);
+                  _deleteTask(widget.task);
+                } catch (e) {
+                  print(e);
+                }
+              }
+            },
+            child: Text(widget.task.description)),
+      ];
+    } else if (widget.task.title.compareTo("Baumkronen Foto") == 0) {
+      // this is a task for capturing an image
+      tileContent = [
+        RaisedButton(
+            onPressed: () async {
+              CameraDescription cam = await _getCamera();
+              var img = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FotoCapturePage(camera: cam)),
+              );
+
+              print(img);
+              if (img["pathToImg"] != null && img["label"] != null) {
+                try {
+                  BoxCommunicator()
+                      .saveUserImage(img["pathToImg"], img["label"]);
+                  _deleteTask(widget.task);
+                } catch (e) {
+                  print(e);
+                }
+              }
+            },
+            child: Text(widget.task.description))
+      ];
+    } else {
       tileContent = [
         Text(
           widget.task.description,
@@ -58,28 +117,6 @@ class _TaskWidgetState extends State<TaskWidget> {
             ),
           ),
         )
-      ];
-    } else {
-      tileContent = [
-        RaisedButton(
-            onPressed: () async {
-              var id = "5ff5e24be9ee9419f4d58c82";
-              Image img = await _fetchImage(id);
-              int selectedLabel = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FotoLabelPage(img)),
-              );
-
-              if (selectedLabel != null) {
-                try {
-                  BoxCommunicator().setLabel(id, selectedLabel);
-                  _deleteTask(widget.task);
-                } catch (e) {
-                  print(e);
-                }
-              }
-            },
-            child: Text(widget.task.description)),
       ];
     }
 

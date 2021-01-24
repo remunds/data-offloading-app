@@ -21,6 +21,8 @@ class BoxCommunicator {
     return _numberOfBoxes;
   }
 
+  Map<String, String> headers = {"Content-type": "application/json"};
+
   void downloadData() async {
     print("downloading...");
     String boxName;
@@ -82,9 +84,7 @@ class BoxCommunicator {
   }
 
   Future<List<Task>> fetchTasks() async {
-    Map<String, String> headers = {"Content-type": "application/json"};
-    final response =
-        await http.get("http://10.3.141.1:8000/api/getTasks", headers: headers);
+    final response = await http.get(boxIP + "/api/getTasks", headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -108,19 +108,15 @@ class BoxCommunicator {
     //enconding the task to JSON
     String taskDel = json.encode(task);
 
-    Map<String, String> headers = {
-      "Content-type": "application/json",
-    };
     // sending a http post to the sensorbox to delete the task from our db.
-    final response = await http.post("http://10.3.141.1:8000/api/deleteTask",
+    final response = await http.post(boxIP + "/api/deleteTask",
         headers: headers, body: taskDel);
     return response.statusCode;
   }
 
   Future<Image> fetchImage(var id) async {
-    Map<String, String> headers = {"Content-type": "image/jpeg"};
-    final response = await http
-        .get("http://10.3.141.1:8000/api/getImage/?id=$id", headers: headers);
+    final response =
+        await http.get(boxIP + "/api/getImage/?id=$id", headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -133,19 +129,18 @@ class BoxCommunicator {
       // If the server did not return a 200 OK response,
       // then throw an exception.
       print(response.statusCode);
-      throw Exception('failed to fetch image');
+      throw Exception(jsonDecode(response.body)["error"]);
     }
   }
 
-  void setLabel(var id, int label) async {
-    var body = {'id': id, 'label': label.toString()};
-    final response = await http.post("http://10.3.141.1:8000/api/putLabel",
-        body: json.encode(body), headers: {"Content-Type": "application/json"});
+  void setLabel(var id, String label) async {
+    var body = {'id': id, 'label': label};
+    final response = await http.post(boxIP + "/api/putLabel",
+        body: json.encode(body), headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-
       print("successfully saved label");
     } else {
       // If the server did not return a 200 OK response,
@@ -154,6 +149,7 @@ class BoxCommunicator {
       throw Exception('failed to save label');
     }
   }
+
 
   //fetches the lat and long coordinates from all sensorboxes
   Future<List<BoxPosition>> fetchPositions() async {
@@ -184,5 +180,27 @@ class BoxCommunicator {
     print(posList);
 
     return posList;
+  }
+
+  void saveUserImage(var imgPath, var label) async {
+    String base64Img = base64Encode(File(imgPath).readAsBytesSync());
+
+    var req =
+        http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
+    req.files.add(http.MultipartFile.fromString('data', base64Img));
+    req.fields['label'] = label;
+    req.fields['type'] = 'image/jpeg'; // TODO: is type necessary?
+    final response = await req.send();
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      print("successfully saved user image with label");
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      print(response.statusCode);
+      throw Exception('failed to save image');
+    }
   }
 }
