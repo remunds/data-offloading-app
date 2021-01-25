@@ -6,38 +6,17 @@ import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
-import 'package:wifi_iot/wifi_iot.dart';
 
-class Home extends StatefulWidget {
-  static void getConnectionState(BuildContext context) async {
-    String name = await WifiInfo().getWifiName();
-    String expectedName = "Sensorbox";
-    if (name == expectedName &&
-        !context.read<BoxConnectionState>().connectionState) {
-      if (Platform.isAndroid) {
-        //force wifi so that we do not have problems with mobile data interfering api requests
-        WiFiForIoTPlugin.forceWifiUsage(true);
-      }
-      context.read<BoxConnectionState>().connected();
-    } else if (name != expectedName &&
-        context.read<BoxConnectionState>().connectionState) {
-      context.read<BoxConnectionState>().disconnected();
-    }
-  }
-
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    bool _connection = context.watch<BoxConnectionState>().connectionState;
+    Connection _connection =
+        context.watch<BoxConnectionState>().connectionState;
+
+    Color green = Colors.green;
+    Color red = Color(0xFFEE4400);
 
     return new Scaffold(
         body: Stack(
@@ -53,21 +32,23 @@ class _HomeState extends State<Home> {
           //ConnectionMessage widget
           child: AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              color: _connection ? Color(0xFF00EE44) : Color(0xFFEE4400),
-              child: _connection
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text("Sensorbox verbunden")],
+              color: _connection == Connection.NONE ? red : green,
+              child: _connection == Connection.SENSORBOX
+                  ? Center(
+                      child: Text("Mit Sensorbox verbunden"),
                     )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Keine Sensorbox in Reichweite",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    )),
+                  : _connection == Connection.WIFI
+                      ? Center(
+                          child: Text(
+                            "Mit Wlan verbunden",
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            "Keine Sensorbox in Reichweite",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
         ),
         Container(
           padding: EdgeInsets.symmetric(

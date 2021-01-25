@@ -1,7 +1,12 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:data_offloading_app/logic/box_communicator.dart';
+import 'package:data_offloading_app/provider/box_connection_state.dart';
+import 'package:data_offloading_app/provider/poslist_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
+import 'package:data_offloading_app/widgets/home.dart';
+import 'package:data_offloading_app/widgets/map.dart';
 import 'package:data_offloading_app/widgets/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -10,11 +15,8 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-import 'provider/box_connection_state.dart';
-import 'provider/poslist_state.dart';
-import 'widgets/home.dart';
-import 'widgets/map.dart';
+import 'package:wifi_info_flutter/wifi_info_flutter.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 void main() async {
   //initialize hive, the nosql database
@@ -58,6 +60,47 @@ class BaseAppWidget extends StatefulWidget {
 
 /// This is the private State class that goes with BaseAppWidget.
 class _BaseAppWidgetState extends State<BaseAppWidget> {
+  static void getConnectionState(BuildContext context) async {
+    BoxConnectionState boxConnection = context.read<BoxConnectionState>();
+    Connection state = boxConnection.connectionState;
+    String name = await WifiInfo().getWifiName();
+    BoxCommunicator boxCommunicator = BoxCommunicator();
+    switch (state) {
+      case Connection.NONE:
+        if (name == "Sensorbox") {
+          if (Platform.isAndroid) {
+            //force wifi so that we do not have problems with mobile data interfering api requests
+            WiFiForIoTPlugin.forceWifiUsage(true);
+          }
+          boxConnection.connectedToSensorbox();
+          boxCommunicator.downloadData();
+          break;
+        } else if (name != null) {
+          boxConnection.connectedToWifi();
+          boxCommunicator.uploadToBackend(context);
+        }
+        break;
+
+      case Connection.SENSORBOX:
+        if (name == null)
+          boxConnection.disconnected();
+        else if (name != "Sensorbox") {
+          boxConnection.connectedToWifi();
+          boxCommunicator.uploadToBackend(context);
+        }
+        break;
+
+      case Connection.WIFI:
+        if (name == null)
+          boxConnection.disconnected();
+        else if (name == "Sensorbox") {
+          boxConnection.connectedToSensorbox();
+          boxCommunicator.downloadData();
+        }
+        break;
+    }
+  }
+
   Timer _timer;
   void getPermission() async {
     if (Platform.isAndroid) {
@@ -81,8 +124,8 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-      Home.getConnectionState(context);
+    _timer = Timer.periodic(Duration(seconds: 3), (Timer t) {
+      getConnectionState(context);
     });
     getPermission();
   }

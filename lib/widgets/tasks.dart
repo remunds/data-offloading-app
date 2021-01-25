@@ -38,7 +38,8 @@ class _TasksState extends State<Tasks> {
   @override
   Widget build(BuildContext context) {
     List<Task> _currentTasks = context.watch<TaskListProvider>().taskList;
-    bool _connection = context.watch<BoxConnectionState>().connectionState;
+    Connection _connection =
+        context.watch<BoxConnectionState>().connectionState;
     return Container(
       padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.01,
@@ -80,7 +81,7 @@ class _TasksState extends State<Tasks> {
           Expanded(
             //2 ternary operators. The first one checks if there is a connection to a sensorbox.
             //The other checks on the length of the task list if connection is established
-            child: _connection
+            child: _connection == Connection.SENSORBOX
                 ? _currentTasks.length != 0
                     //The following ListView shows
                     ? ListView.builder(
