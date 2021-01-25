@@ -19,7 +19,6 @@ import 'widgets/map.dart';
 void main() async {
   //initialize hive, the nosql database
   await Hive.initFlutter();
-  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MultiProvider(
     providers: [

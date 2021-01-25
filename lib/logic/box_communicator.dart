@@ -153,7 +153,6 @@ class BoxCommunicator {
 
   //fetches the lat and long coordinates from all sensorboxes
   Future<List<BoxPosition>> fetchPositions() async {
-    Map<String, String> headers = {"Content-type": "application/json"};
     List<BoxPosition> posList = new List<BoxPosition>();
     int currBox = 1;
     String url = backEndIP + "/api/getPosition/" + currBox.toString();
@@ -193,8 +192,6 @@ class BoxCommunicator {
     final response = await req.send();
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       print("successfully saved user image with label");
     } else {
       // If the server did not return a 200 OK response,

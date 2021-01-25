@@ -16,8 +16,7 @@ import 'package:wifi_iot/wifi_iot.dart';
 class Home extends StatefulWidget {
   static void getConnectionState(BuildContext context) async {
     String name = await WifiInfo().getWifiName();
-    //String expectedName = "Sensorbox";
-    String expectedName = "W(G)LAN_f8805106c6";
+    String expectedName = "Sensorbox";
     if (name == expectedName &&
         !context.read<BoxConnectionState>().connectionState) {
       if (Platform.isAndroid) {
