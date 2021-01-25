@@ -1,8 +1,13 @@
+import '../provider/poslist_state.dart';
 import 'package:data_offloading_app/Screens/box_info.dart';
-import 'package:flutter/material.dart';
+import 'package:data_offloading_app/logic/box_communicator.dart';
+
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong/latlong.dart" as latLng;
 import 'package:user_location/user_location.dart';
+
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 
 //MyMap class
 class MyMap extends StatefulWidget {
@@ -79,15 +84,19 @@ class _MyMapState extends State<MyMap> {
     );
   }
 
-  //used to initialize the _boxes List. In the real application the entries from the DB would be read at this point.
+  //used to initialize the _boxes List.
   @protected
   @mustCallSuper
   void initState() {
     super.initState();
-    _boxes.add(_buildBoxMarker(50.8050, 8.7669));
-    _boxes.add(_buildBoxMarker(50.8160, 8.7669));
-    _boxes.add(_buildBoxMarker(50.8080, 8.7769));
-    _boxes.add(_buildBoxMarker(50.8280, 8.7769));
-    _boxes.add(_buildBoxMarker(50.8080, 8.7869));
+
+    BoxCommunicator bC = new BoxCommunicator();
+    bC.fetchPositions().then((value) {
+      context.read<PosListProvider>().setPositions(value);
+      int numOfBoxes = bC.getNumberOfBoxes();
+      for (int box = 0; box < numOfBoxes; ++box) {
+        _boxes.add(_buildBoxMarker(value[box].lat, value[box].long));
+      }
+    });
   }
 }

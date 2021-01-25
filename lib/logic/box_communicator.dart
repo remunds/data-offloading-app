@@ -9,10 +9,17 @@ import 'package:hive/hive.dart';
 import 'package:retry/retry.dart';
 
 import '../data/task.dart';
+import '../data/box_position.dart';
 
 class BoxCommunicator {
   final int dataLimitInkB = 100;
   String boxIP = "http://10.3.141.1:8000";
+  String backEndIP = "http://192.168.0.33:8000";
+  int _numberOfBoxes = 0;
+
+  int getNumberOfBoxes() {
+    return _numberOfBoxes;
+  }
 
   void downloadData() async {
     print("downloading...");
@@ -146,5 +153,36 @@ class BoxCommunicator {
       print(response.statusCode);
       throw Exception('failed to save label');
     }
+  }
+
+  //fetches the lat and long coordinates from all sensorboxes
+  Future<List<BoxPosition>> fetchPositions() async {
+    Map<String, String> headers = {"Content-type": "application/json"};
+    List<BoxPosition> posList = new List<BoxPosition>();
+    int currBox = 1;
+    String url = backEndIP + "/api/getPosition/" + currBox.toString();
+    dynamic response = await http.get(url, headers: headers);
+    if (response.statusCode != 200) {
+      print("StatusCode " + response.statusCode.toString());
+      print("Something went wrong!");
+      return null;
+    }
+    //request sensorbox positions until no boxes are left
+    while (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String, dynamic> posListJson = jsonDecode(response.body);
+      posList.addAll(posListJson.entries
+          .map((elem) => BoxPosition.fromJson(elem))
+          .toList());
+
+      ++currBox;
+      String url = backEndIP + "/api/getPosition/" + currBox.toString();
+      response = await http.get(url, headers: headers);
+    }
+    _numberOfBoxes = currBox - 1;
+    print(posList);
+
+    return posList;
   }
 }
