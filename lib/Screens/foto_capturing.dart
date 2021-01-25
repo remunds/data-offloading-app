@@ -40,7 +40,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
     return Scaffold(
       backgroundColor: Colors.green,
       appBar: AppBar(
-        title: Text('Take a picture'),
+        title: Text('Nimm ein Foto auf'),
         backgroundColor: Colors.green,
       ),
       // Wait until the controller is initialized before displaying the
