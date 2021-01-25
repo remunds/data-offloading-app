@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:data_offloading_app/provider/box_connection_state.dart';
@@ -85,17 +86,17 @@ class BoxCommunicator {
     Box boxes = await Hive.openBox('boxes');
     boxes.add(boxName);
 
-    //if no data has been received: start with 0.
-    int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
+    List<String> idList = [];
+
+    print("before while");
+
     try {
       while (true) {
-        //is the data limit reached?
-        if (totalSizeInBytes > dataLimitInkB * 1000) {
-          print("data limit reached");
-          break;
-        }
+        //if no data has been received: start with 0.
+        int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
+
         //make getData call to collect data chunks or files from box
-        final response = await r.retry(
+        final response = await retry(
             () =>
                 http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
             retryIf: (e) => e is SocketException || e is TimeoutException);
@@ -106,23 +107,87 @@ class BoxCommunicator {
             print('response had no id');
             continue;
           }
-          //all files of the current box have been downloaded
-          if (await box.get(id) != null) {
+
+          if (box.get(id) != null || idList.contains(id)) {
+            //all files of the current box have been downloaded or checked (sizeLimit reached)
             print("got all files");
             break;
           }
-          await box.put(id, response.body);
-          //add size of this response to size of all data combined (for limiting data usage)
-          storage.put(
-              'totalSizeInBytes', totalSizeInBytes + response.contentLength);
-          print("new entry at: ");
-          print(DateTime.now());
+          //add the current id to the idList, so we can later check whether we had this file already
+          idList.add(id);
+
+          //for priority: split data string so that we can use the
+          // timestamp to compare values.
+          int incomingTime = jsonDecode(response.body)["timestamp"] ??
+              jsonDecode(response.body)["uploadDate"];
+          if (incomingTime == null) {
+            print("error getting time from response");
+            break;
+          }
+          // for (String data, int index in box.toMap()) {
+          //is the data limit reached?
+
+          //TODO:
+          // abbruchbedingung wenn datenlimit erreicht ist und alle daten durchprobiert wurden
+          if (totalSizeInBytes > dataLimitInkB * 1000) {
+            print("data limit reached, only replacing older files now");
+            box.toMap().forEach((key, data) {
+              int currTime = jsonDecode(data)["timestamp"] ??
+                  jsonDecode(data)["uploadDate"];
+              if (currTime == null) {
+                print("error getting time from current box value");
+              }
+              print("times:");
+              print(currTime);
+              print(incomingTime);
+              //compare current data's timestamp to the received data's timestamp
+              if (currTime > incomingTime) {
+                //replace the current data because it is older
+                box.delete(key);
+                box.put(id, response.body);
+                //if we want the storage to be extremely accurate,
+                // we need to get the size of the deleted key here and
+                // subtract it from 'totalSizeInBytes' and add the
+                // new contentLength like this:
+                // storage.put('totalSizeInBytes',
+                //     totalSizeInBytes - oldKeySize + response.contentLength);
+                print("new entry at: ");
+                print(DateTime.now());
+              } else {
+                print("skipped one entry");
+              }
+              //else continue in foreach
+            });
+          } else {
+            // print("storage used: ");
+            // print(response.contentLength);
+            await box.put(id, response.body);
+            //add size of this response to size of all data combined (for limiting data usage)
+            await storage.put(
+                'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+            print("new entry at: ");
+            print(DateTime.now());
+          }
+          // List<String> dataList = data.split(',');
+          // String timestamp =
+          //     dataList.firstWhere((el) => el.contains("timestamp") || el.contains("uploadDate"), orElse: () {
+          //   return "";
+          // });
+          // if (timestamp == "") {
+          //   print("timestamp could not be found or parsed");
+          // }
+          // //take only the timestamp itself, so after "timestamp: "
+          // timestamp = timestamp.substring(11);
+          // //take only the uploaddate
+          // String uploadDate = timestamp.substring(12);
+          // //take the one that is actually the timestamp (depends on chunk or file)
+          // timestamp = uploadDate.length > timestamp.length ? uploadDate : timestamp;
+          // int time = int.parse(timestamp);
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
           print(response.statusCode);
           print('failed to get any data');
-          return;
         }
       }
     } catch (err) {
