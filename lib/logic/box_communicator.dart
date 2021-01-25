@@ -150,7 +150,6 @@ class BoxCommunicator {
     }
   }
 
-
   //fetches the lat and long coordinates from all sensorboxes
   Future<List<BoxPosition>> fetchPositions() async {
     List<BoxPosition> posList = new List<BoxPosition>();
