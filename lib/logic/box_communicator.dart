@@ -85,6 +85,8 @@ class BoxCommunicator {
     Box boxes = await Hive.openBox('boxes');
     boxes.add(boxName);
 
+    //list to store all the id's of files/chunks that have already
+    // been downloaded/stored
     List<String> idList = [];
 
     try {
@@ -117,7 +119,8 @@ class BoxCommunicator {
 
           //for priority: split data string so that we can use the
           // timestamp to compare values.
-          int incomingTime = jsonDecode(response.body)["timestamp"] ??
+          int incomingTime = jsonDecode(response.body)[
+                  "timestamp"] ?? //if null: use after "??", else before
               jsonDecode(response.body)["uploadDate"];
           if (incomingTime == null) {
             print("error getting time from response");
@@ -134,10 +137,12 @@ class BoxCommunicator {
                   jsonDecode(data)["uploadDate"];
               if (currTime == null) {
                 print("error getting time from current box value");
+                continue;
               }
               //compare current data's timestamp to the received data's timestamp
               if (currTime > incomingTime) {
-                //replace the current data because it is older
+                //replace the current data on the smartphone because it is older than the incoming data
+                // and therefore has the lower priority
                 await box.deleteAt(i);
                 await box.put(id, response.body);
                 //if we want the storage to be extremely accurate,
