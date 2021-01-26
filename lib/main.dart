@@ -20,11 +20,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:flutter/services.dart';
+import 'package:data_offloading_app/logic/stats.dart';
 
 void main() async {
   //initialize hive, the nosql database
   await Hive.initFlutter();
-  await Hive.openBox('storage');
+  Box storage = await Hive.openBox('storage');
+  Stats.setBox(storage);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),

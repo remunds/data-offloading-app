@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../data/task.dart';
 import '../data/box_position.dart';
+import 'stats.dart';
 
 class BoxCommunicator {
   double dataLimitInMB =
@@ -107,6 +108,9 @@ class BoxCommunicator {
     //list to store all the id's of files/chunks that have already
     // been downloaded/stored
     List<String> idList = [];
+    Stats.setBox(storage);
+    //add the current box to the list of already visited boxes stored on the hive
+    Stats.addVisitedBox(boxName);
 
     bool oldData = storage.get('oldDataSwitch', defaultValue: true);
 

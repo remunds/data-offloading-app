@@ -222,7 +222,7 @@ class _HomeState extends State<Home> {
 
 //this function create a tile in a 2x2 Gridview. All tiles are the same except for the title, icon, the page it routes to and the context
 Card _makeHomeTile(
-    String name, IconData icon, StatelessWidget slwgt, BuildContext context) {
+    String name, IconData icon, Widget wgt, BuildContext context) {
   return Card(
       child: InkWell(
           splashColor: Colors.grey.withAlpha(30),
@@ -232,7 +232,7 @@ Card _makeHomeTile(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      slwgt), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                      wgt), // We use the Navigator to Route to the settings page wich is located in a new .dart file
             );
           },
           child: Padding(
