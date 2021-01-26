@@ -81,13 +81,11 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     Box storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    LazyBox box = await Hive.openLazyBox(boxName);
+    LazyBox<String> box = await Hive.openLazyBox(boxName);
     Box boxes = await Hive.openBox('boxes');
     boxes.add(boxName);
 
     List<String> idList = [];
-
-    print("before while");
 
     try {
       while (true) {
@@ -107,8 +105,10 @@ class BoxCommunicator {
             continue;
           }
 
-          if (box.get(id) != null || idList.contains(id)) {
+          if (await box.get(id) != null || idList.contains(id)) {
             //all files of the current box have been downloaded or checked (sizeLimit reached)
+            print(await box.get(id) != null);
+            print(idList.contains(id));
             print("got all files");
             break;
           }
@@ -123,27 +123,23 @@ class BoxCommunicator {
             print("error getting time from response");
             break;
           }
-          // for (String data, int index in box.toMap()) {
-          //is the data limit reached?
 
-          //TODO:
-          // abbruchbedingung wenn datenlimit erreicht ist und alle daten durchprobiert wurden
+          //check for data limit
           if (totalSizeInBytes > dataLimitInkB * 1000) {
             print("data limit reached, only replacing older files now");
-            box.toMap().forEach((key, data) {
+            for (int i = 0; i < box.length; i++) {
+              String data = await box.getAt(i);
+
               int currTime = jsonDecode(data)["timestamp"] ??
                   jsonDecode(data)["uploadDate"];
               if (currTime == null) {
                 print("error getting time from current box value");
               }
-              print("times:");
-              print(currTime);
-              print(incomingTime);
               //compare current data's timestamp to the received data's timestamp
               if (currTime > incomingTime) {
                 //replace the current data because it is older
-                box.delete(key);
-                box.put(id, response.body);
+                await box.deleteAt(i);
+                await box.put(id, response.body);
                 //if we want the storage to be extremely accurate,
                 // we need to get the size of the deleted key here and
                 // subtract it from 'totalSizeInBytes' and add the
@@ -155,11 +151,8 @@ class BoxCommunicator {
               } else {
                 print("skipped one entry");
               }
-              //else continue in foreach
-            });
+            }
           } else {
-            // print("storage used: ");
-            // print(response.contentLength);
             await box.put(id, response.body);
             //add size of this response to size of all data combined (for limiting data usage)
             await storage.put(
@@ -167,21 +160,6 @@ class BoxCommunicator {
             print("new entry at: ");
             print(DateTime.now());
           }
-          // List<String> dataList = data.split(',');
-          // String timestamp =
-          //     dataList.firstWhere((el) => el.contains("timestamp") || el.contains("uploadDate"), orElse: () {
-          //   return "";
-          // });
-          // if (timestamp == "") {
-          //   print("timestamp could not be found or parsed");
-          // }
-          // //take only the timestamp itself, so after "timestamp: "
-          // timestamp = timestamp.substring(11);
-          // //take only the uploaddate
-          // String uploadDate = timestamp.substring(12);
-          // //take the one that is actually the timestamp (depends on chunk or file)
-          // timestamp = uploadDate.length > timestamp.length ? uploadDate : timestamp;
-          // int time = int.parse(timestamp);
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
