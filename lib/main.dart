@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/poslist_state.dart';
+import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
 import 'package:data_offloading_app/widgets/home.dart';
 import 'package:data_offloading_app/widgets/map.dart';
@@ -21,11 +22,12 @@ import 'package:wifi_iot/wifi_iot.dart';
 void main() async {
   //initialize hive, the nosql database
   await Hive.initFlutter();
-
+  await Hive.openBox('storage');
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),
       ChangeNotifierProvider(create: (_) => TaskListProvider()),
+      ChangeNotifierProvider(create: (_) => DownloadAllState()),
       ChangeNotifierProvider(create: (_) => PosListProvider()),
     ],
     builder: (context, child) => const MyApp(),
