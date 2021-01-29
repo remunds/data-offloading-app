@@ -34,7 +34,6 @@ class BoxCommunicator {
   void uploadToBackend(context) async {
     print("uploading");
     Box boxes = await Hive.openBox('boxes');
-    Box storage = await Hive.openBox('storage');
     String query;
 
     //iterate over all Sensorboxes we downloaded data from
