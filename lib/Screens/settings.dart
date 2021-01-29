@@ -132,6 +132,54 @@ class SettingsPage extends StatelessWidget {
       });
     }
 
+    void _changedOldData(bool value) async {
+      if (value) {
+        Hive.box('storage').put('oldDataSwitch', true);
+      } else {
+        await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'Ja',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    onPressed: () {
+                      Hive.box('storage').put('oldDataSwitch', value);
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                  MaterialButton(
+                    color: Colors.green,
+                    child: Text(
+                      'Abbrechen',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ],
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: horizontalAlertPadding,
+                    vertical: verticalAlertPadding * 0.95),
+                //contentPadding: EdgeInsets.all(8.0),
+                title: Text(
+                  'Achtung!',
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.0),
+                ),
+                content: Text(
+                    'Nur für Wissenschaftler. Wollen sie wirklich den Download mit den neuesten Daten starten?'),
+              );
+            });
+      }
+    }
+
     return Scaffold(
       body: ValueListenableBuilder(
           valueListenable: Hive.box('storage').listenable(),
@@ -225,6 +273,45 @@ class SettingsPage extends StatelessWidget {
                               _showDataLimitDialog();
                             },
                           )),
+                          Card(
+                              child: Padding(
+                            padding: EdgeInsets.only(
+                                left: MediaQuery.of(context).size.width * 0.04),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Datenpriorität',
+                                    style: TextStyle(
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
+                                    /*defining default style is optional */
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text:
+                                              '  Zuerst alte Daten runterladen',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w100,
+                                              fontSize: 12.0)),
+                                    ],
+                                  ),
+                                ),
+                                Switch(
+                                  value: Hive.box('storage')
+                                      .get('oldDataSwitch', defaultValue: true),
+                                  onChanged: _changedOldData, // {
+                                  //   Hive.box('storage')
+                                  //       .put('oldDataSwitch', value);
+                                  // },
+                                  activeColor: Colors.lightGreen,
+                                  activeTrackColor: Colors.lightGreenAccent,
+                                )
+                              ],
+                            ),
+                          )),
+
                           //NATIVITY IS STILL MISSING. SORRY FOR THAT
                           SizedBox(
                             height: 5,
