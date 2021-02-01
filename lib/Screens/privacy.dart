@@ -1,9 +1,6 @@
-import 'package:data_offloading_app/widgets/how_to_connect.dart';
-import 'package:data_offloading_app/widgets/how_to_use.dart';
-
 import 'package:flutter/material.dart';
 
-class ManualPage extends StatelessWidget {
+class Privacy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
@@ -33,7 +30,7 @@ class ManualPage extends StatelessWidget {
                         Navigator.pop(context);
                       }),
                   Text(
-                    '   Anleitung',
+                    '   Datenschutz',
                     style: TextStyle(
                         fontSize: 22.0,
                         fontWeight: FontWeight.w700,
@@ -45,19 +42,42 @@ class ManualPage extends StatelessWidget {
               Divider(
                 thickness: 2,
               ),
-              Expanded(
-                child: ListView(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    HowToConnect(),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    HowToUse()
-                  ],
-                ),
-              )
+              Card(
+                  child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        ' Datenschutzinformationen ',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              'Für technische Informationen zur Applikation, besuchen sie das GitHub Repository oder wenden Sie sich per E-Mail an die Entwickler.',
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ))
             ],
           ),
         ),

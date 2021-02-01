@@ -8,9 +8,83 @@ import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  void _showFirstOpenDialog(BuildContext context) async {
+    double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
+    double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
+
+    Box box = await Hive.openBox('storage');
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return ValueListenableBuilder(
+            valueListenable: box.listenable(),
+            builder: (context, box, widget) {
+              return AlertDialog(
+                title: Text(
+                  'Herzlich Willkommen! ',
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0),
+                ),
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: horizontalAlertPadding,
+                    vertical: verticalAlertPadding),
+                contentPadding: EdgeInsets.all(20.0),
+                content: Text(
+                    'Möchten Sie wissen wie diese App funktioniert? Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen '),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'Zur Anleitung',
+                      style: TextStyle(color: Colors.lightGreen),
+                    ),
+                    onPressed: () {
+                      Hive.box('storage').put('firstTime', false);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ManualPage()),
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Schließen',
+                      style: TextStyle(color: Colors.lightGreen),
+                    ),
+                    onPressed: () {
+                      Hive.box('storage').put('firstTime', false);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      },
+    );
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      if (Hive.box('storage').get('firstTime', defaultValue: true)) {
+        _showFirstOpenDialog(context);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Connection _connection =
@@ -21,6 +95,7 @@ class Home extends StatelessWidget {
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
+    //Im Moment fuehrt die Folgende Abfrage bei Auswertung zu zweifacher ausfuehrung des jeweiligen Codes.
 
     return new Scaffold(
         body: Stack(
@@ -58,6 +133,9 @@ class Home extends StatelessWidget {
               horizontal: MediaQuery.of(context).size.width * 0.01),
           child: Column(
             children: [
+              SizedBox(
+                height: 5,
+              ),
               Row(
                 //Make a Row with a settings button on the right side
                 mainAxisAlignment:
@@ -99,7 +177,7 @@ class Home extends StatelessWidget {
                         StatisticsPage(), context),
                     _makeHomeTile("Achievements", Icons.emoji_events,
                         AchievementsPage(), context),
-                    _makeHomeTile("About us", Icons.import_contacts,
+                    _makeHomeTile("Über uns", Icons.import_contacts,
                         AboutUsPage(), context)
                   ],
                 ),

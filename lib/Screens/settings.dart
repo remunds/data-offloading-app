@@ -13,7 +13,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
-    double verticalAlertPadding = MediaQuery.of(context).size.height * 0.35;
+    double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
     double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
 
     Connection _connection =
@@ -33,7 +33,12 @@ class SettingsPage extends StatelessWidget {
               builder: (context, box, widget) {
                 return AlertDialog(
                   title: Text(
-                    'Legen Sie das aktuelle Datenlimit fest, welches von der App in Anspruch genommen werden darf.',
+                    'Legen Sie das aktuelle Datenlimit fest, welches von der App in Anspruch genommen werden darf. Aktuell: ' +
+                        sliderBox
+                            .get('dataLimitValueInMB', defaultValue: 10.0)
+                            .round()
+                            .toString() +
+                        ' MB',
                     style: TextStyle(
                         color: Colors.black87,
                         fontWeight: FontWeight.w600,
@@ -52,9 +57,10 @@ class SettingsPage extends StatelessWidget {
                       max: 10000.0,
                       divisions: 100,
                       label: sliderBox
-                          .get('dataLimitValueInMB', defaultValue: 10.0)
-                          .round()
-                          .toString(),
+                              .get('dataLimitValueInMB', defaultValue: 10.0)
+                              .round()
+                              .toString() +
+                          ' MB',
                       onChanged: (double value) =>
                           {sliderBox.put('dataLimitValueInMB', value)}),
                   actions: <Widget>[
@@ -374,43 +380,47 @@ class SettingsPage extends StatelessWidget {
                             textAlign: TextAlign.left,
                           ),
                           Card(
-                              child: FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Mitteilungen',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    /*defining default style is optional */
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text:
-                                              '  Erlauben Sie Benachrichtigungen',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.04),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Mitteilungen',
+                                      style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                      /*defining default style is optional */
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text:
+                                                '  Benachrichtigungen erlauben',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w100,
+                                                fontSize: 12.0)),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Switch(
-                                  value: Hive.box('storage').get(
-                                      'notificationSwitch',
-                                      defaultValue: false),
-                                  onChanged: (bool value) {
-                                    Hive.box('storage')
-                                        .put('notificationSwitch', value);
-                                  },
-                                  activeColor: Colors.lightGreen,
-                                  activeTrackColor: Colors.lightGreenAccent,
-                                )
-                              ],
+                                  Switch(
+                                    value: Hive.box('storage').get(
+                                        'notificationSwitch',
+                                        defaultValue: false),
+                                    onChanged: (bool value) {
+                                      Hive.box('storage')
+                                          .put('notificationSwitch', value);
+                                    },
+                                    activeColor: Colors.lightGreen,
+                                    activeTrackColor: Colors.lightGreenAccent,
+                                  )
+                                ],
+                              ),
                             ),
-                            onPressed: () {},
-                          )),
+                          ),
                           Card(
                               child: FlatButton(
                             child: Row(

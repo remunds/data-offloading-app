@@ -1,3 +1,6 @@
+import 'package:data_offloading_app/widgets/about_app.dart';
+import 'package:data_offloading_app/widgets/about_nature40.dart';
+import 'package:data_offloading_app/widgets/version_info.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsPage extends StatelessWidget {
@@ -29,9 +32,30 @@ class AboutUsPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                       }),
+                  Text(
+                    '   Über Uns',
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black45),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
-              Text("About us")
+              Divider(
+                thickness: 2,
+              ),
+              Expanded(
+                child: ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    AboutNature40(),
+                    AboutApp(),
+                    VersionInfo()
+                  ],
+                ),
+              )
             ],
           ),
         ),

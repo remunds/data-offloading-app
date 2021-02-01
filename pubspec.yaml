@@ -36,6 +36,14 @@ dependencies:
   hive_flutter: ^0.3.1 
   retry: ^3.0.1
   camera: ^0.7.0
+  system_settings: ^1.0.1
+  url_launcher: ^5.7.10
+  mailto: ^1.1.0
+  font_awesome_flutter: ^8.11.0
+
+
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -53,6 +61,8 @@ flutter:
   assets:
     - assets/logo_n40.png
     - assets/dachs.jpeg
+    - assets/example_wifi_connect.png
+    - assets/natur40_konzept.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

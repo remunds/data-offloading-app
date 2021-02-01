@@ -95,9 +95,14 @@ class _TasksState extends State<Tasks> {
                           return TaskWidget(_currentTasks[index]);
                         },
                       )
-                    : Text("Glückwunsch, alle Aufgaben wurden erledigt!")
+                    : Text(
+                        "Glückwunsch, alle Aufgaben wurden erledigt!",
+                        textAlign: TextAlign.center,
+                      )
                 : Text(
-                    "Verbinde dich mit einer Sensorbox, um Tasks zu erhalten."),
+                    "Verbinden Sie sich mit einer Sensorbox, um Aufgaben zu erhalten.",
+                    textAlign: TextAlign.center,
+                  ),
           ),
         ],
       ),
