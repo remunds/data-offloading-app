@@ -28,7 +28,7 @@ class BoxCommunicator {
   }
 
   Map<String, String> headers = {"Content-type": "application/json"};
-  final String boxIP = "http://10.3.141.1:8000";
+  final String boxIP = "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
   final String backendIP = "http://192.168.0.64:8001";
 
   void uploadToBackend(context) async {
@@ -414,7 +414,8 @@ class BoxCommunicator {
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
     req.files.add(http.MultipartFile.fromString('data', base64Img));
     req.fields['label'] = label;
-    req.fields['type'] = 'image/jpeg'; // TODO: is type necessary?
+    // set type to user to distinguish from box images
+    req.fields['type'] = 'user';
     final response = await req.send();
 
     if (response.statusCode == 200) {

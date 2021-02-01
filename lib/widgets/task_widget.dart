@@ -51,9 +51,10 @@ class _TaskWidgetState extends State<TaskWidget> {
               Image img = await _fetchImage(id);
               // route to image label page and wait for return
               // return value will be the designated label
+              var labelSet = ["Dachs", "Fuchs", "Reh", "Ich weiß nicht", "Sonstiges"]; // labelset for sensorbox images
               String selectedLabel = await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FotoLabelPage(img)),
+                MaterialPageRoute(builder: (context) => FotoLabelPage(img, labelSet)),
               );
 
               // if user has set a label, then save that label to the database

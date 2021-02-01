@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' ;
+
+final labelSet = ["Tanne", "Fichte", "Laubbaum", "Kiefer", "Buche", "Birke", "Kastanie", "Anderer Baum"];
 
 class FotoCapturePage extends StatefulWidget {
   final CameraDescription camera;
@@ -37,6 +40,12 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // disable auto rotation of screen
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return Scaffold(
       backgroundColor: Colors.green,
       appBar: AppBar(
@@ -58,6 +67,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
           }
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         child: Icon(Icons.camera_alt),
@@ -78,7 +88,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             String selectedLabel = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FotoLabelPage(img),
+                builder: (context) => FotoLabelPage(img, labelSet),
               ),
             );
 
