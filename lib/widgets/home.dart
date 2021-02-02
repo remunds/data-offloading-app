@@ -4,6 +4,7 @@ import 'package:data_offloading_app/Screens/manual.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
+import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,9 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     Connection _connection =
         context.watch<BoxConnectionState>().connectionState;
+
+    DownloadUpload _downloadUpload =
+        context.watch<DownloadUploadState>().downloadUploadState;
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
@@ -100,6 +104,36 @@ class Home extends StatelessWidget {
                   ],
                 ),
               ),
+              (_downloadUpload != DownloadUpload.IDLE &&
+                      _connection != Connection.NONE)
+                  ? Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                (_downloadUpload == DownloadUpload.DOWNLOAD)
+                                    ? Text("Download läuft...")
+                                    : Text("Upload läuft..."),
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.lightGreen),
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Text(""),
             ],
           ),
         ),

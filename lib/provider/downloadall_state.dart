@@ -11,7 +11,7 @@ class DownloadAllState with ChangeNotifier {
     notifyListeners();
   }
 
-  void downloading() {
+  void downloadingAll() {
     _downloadState = 1;
     notifyListeners();
   }

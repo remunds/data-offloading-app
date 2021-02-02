@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
+import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:data_offloading_app/provider/poslist_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
@@ -18,6 +19,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   //initialize hive, the nosql database
@@ -29,6 +31,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => TaskListProvider()),
       ChangeNotifierProvider(create: (_) => DownloadAllState()),
       ChangeNotifierProvider(create: (_) => PosListProvider()),
+      ChangeNotifierProvider(create: (_) => DownloadUploadState()),
     ],
     builder: (context, child) => MainApp(),
   ));
@@ -134,6 +137,10 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.green);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
         title: MainApp._title,
         theme: ThemeData(

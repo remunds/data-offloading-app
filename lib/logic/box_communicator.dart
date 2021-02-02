@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/data/idAndTimestamp.dart';
+import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +32,8 @@ class BoxCommunicator {
   final String backendIP = "http://192.168.0.64:8001";
 
   void uploadToBackend(context) async {
+    //We use Provider.of instead of context.read because context will be passed by a StatefulWidget or StatefulElement. StatefulElement has no instance method read.
+    Provider.of<DownloadUploadState>(context, listen: false).uploading();
     print("uploading");
     Box boxes = await Hive.openBox('boxes');
     String query;
@@ -52,6 +55,7 @@ class BoxCommunicator {
         if (Provider.of<BoxConnectionState>(context, listen: false)
                 .connectionState !=
             Connection.SENSORBOX) {
+          Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
         final boxResponse = await retry(
@@ -62,6 +66,7 @@ class BoxCommunicator {
         if (boxResponse.statusCode != 200) {
           //user probably left WiFi
           print("user probably left wifi");
+          Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
         //else: succesfully uploaded, continue
@@ -69,10 +74,13 @@ class BoxCommunicator {
       //delete data from disk
       await currBox.deleteFromDisk();
     }
+    Provider.of<DownloadUploadState>(context, listen: false).idle();
   }
 
   void downloadData(context) async {
     print("downloading...");
+    Provider.of<DownloadUploadState>(context, listen: false).downloading();
+
     String boxName;
     final r = RetryOptions(maxAttempts: 5);
     //register to get the current boxName from the Sensorbox
@@ -113,6 +121,12 @@ class BoxCommunicator {
           Provider.of<DownloadAllState>(context, listen: false).downloadState !=
               1) {
         int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
+        //is the data limit reached?
+        if (totalSizeInBytes > dataLimitInMB * 1000000) {
+          print("data limit reached");
+          Provider.of<DownloadUploadState>(context, listen: false).idle();
+          break;
+        }
         //make getData call to collect data chunks or files from box
         final response = await retry(
             () => http
@@ -130,10 +144,22 @@ class BoxCommunicator {
           if (await box.get(id) != null || idList.contains(id)) {
             //all files of the current box have been downloaded or checked (sizeLimit reached)
             print("got all files");
+            Provider.of<DownloadUploadState>(context, listen: false).idle();
             break;
           }
           //add the current id to the idList, so we can later check whether we had this file already
           idList.add(id);
+
+          //for priority: split data string so that we can use the
+          // timestamp to compare values.
+          int incomingTime = jsonDecode(response.body)[
+                  "timestamp"] ?? //if null: use after "??", else before
+              jsonDecode(response.body)["uploadDate"];
+          if (incomingTime == null) {
+            print("error getting time from response");
+            Provider.of<DownloadUploadState>(context, listen: false).idle();
+            break;
+          }
 
           //check for data limit
           if (totalSizeInBytes > dataLimitInMB * 1000000) {
@@ -198,6 +224,7 @@ class BoxCommunicator {
       print("user left:");
       print(err);
     }
+    Provider.of<DownloadUploadState>(context, listen: false).idle();
     await box.close();
   }
 
@@ -206,7 +233,7 @@ class BoxCommunicator {
   //are not on device yet.
   void downloadAllData(BuildContext context) async {
     print("Downloading All Data ...");
-    context.read<DownloadAllState>().downloading();
+    context.read<DownloadAllState>().downloadingAll();
     if (storage == null || !storage.isOpen) {
       storage = await Hive.openBox('storage');
     }
