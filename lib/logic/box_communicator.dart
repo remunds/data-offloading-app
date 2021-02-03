@@ -18,7 +18,6 @@ import '../data/box_position.dart';
 class BoxCommunicator {
   double dataLimitInMB =
       Hive.box('storage').get('dataLimitValueInMB', defaultValue: 10.0);
-  final int dataLimitInkB = 100;
   int _numberOfBoxes = 0;
   bool _executeDownload = true;
   LazyBox box;
@@ -43,6 +42,7 @@ class BoxCommunicator {
       //get all the data from one Sensorbox
       for (String data in currBox.values) {
         //if files_id is specified, given data is a chunk
+
         if (data.contains("files_id")) {
           query = "?format=chunk";
         } else {
@@ -97,18 +97,24 @@ class BoxCommunicator {
     // been downloaded/stored
     List<String> idList = [];
 
+    bool oldData = storage.get('oldDataSwitch', defaultValue: true);
+
+    String query = "";
+    //add priority to query
+    if (oldData) {
+      query += "?data=old";
+    } else {
+      query += "?data=new";
+    }
+
     try {
       while (_executeDownload) {
         int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
-        //is the data limit reached?
-        if (totalSizeInBytes > dataLimitInMB * 1000000) {
-          print("data limit reached");
-          break;
-        }
         //make getData call to collect data chunks or files from box
         final response = await retry(
-            () =>
-                http.get(boxIP + "/api/getData").timeout(Duration(seconds: 3)),
+            () => http
+                .get(boxIP + "/api/getData" + query)
+                .timeout(Duration(seconds: 3)),
             retryIf: (e) => e is SocketException || e is TimeoutException);
 
         if (response.statusCode == 200) {
@@ -120,27 +126,25 @@ class BoxCommunicator {
 
           if (await box.get(id) != null || idList.contains(id)) {
             //all files of the current box have been downloaded or checked (sizeLimit reached)
-            print(await box.get(id) != null);
-            print(idList.contains(id));
             print("got all files");
             break;
           }
           //add the current id to the idList, so we can later check whether we had this file already
           idList.add(id);
 
-          //for priority: split data string so that we can use the
-          // timestamp to compare values.
-          int incomingTime = jsonDecode(response.body)[
-                  "timestamp"] ?? //if null: use after "??", else before
-              jsonDecode(response.body)["uploadDate"];
-          if (incomingTime == null) {
-            print("error getting time from response");
-            break;
-          }
-
           //check for data limit
-          if (totalSizeInBytes > dataLimitInkB * 1000) {
-            print("data limit reached, only replacing older files now");
+          if (totalSizeInBytes > dataLimitInMB * 1000000) {
+            print("data limit reached, only replacing older/newer files now");
+            //for priority: decode data string so that we can use the
+            // timestamp to compare values.
+            int incomingTime = jsonDecode(response.body)[
+                    "timestamp"] ?? //if null: use after "??", else before
+                jsonDecode(response.body)["uploadDate"];
+            if (incomingTime == null) {
+              print("error getting time from response");
+              break;
+            }
+
             for (int i = 0; i < box.length; i++) {
               String data = await box.getAt(i);
 
@@ -151,7 +155,10 @@ class BoxCommunicator {
                 continue;
               }
               //compare current data's timestamp to the received data's timestamp
-              if (currTime > incomingTime) {
+              // if oldDataSwitch is on: replace if incomingTime is older, else if incomingTime is younger.
+              bool replace =
+                  oldData ? currTime > incomingTime : currTime < incomingTime;
+              if (replace) {
                 //replace the current data on the smartphone because it is older than the incoming data
                 // and therefore has the lower priority
                 await box.deleteAt(i);
