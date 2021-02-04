@@ -81,7 +81,7 @@ class BoxCommunicator {
     print("downloading...");
     Provider.of<DownloadUploadState>(context, listen: false).downloading();
 
-    String boxName;
+    var boxName;
     final r = RetryOptions(maxAttempts: 5);
     //register to get the current boxName from the Sensorbox
     final boxResponse = await r.retry(
@@ -90,7 +90,7 @@ class BoxCommunicator {
 
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
-      boxName = res["piID"];
+      boxName = res["piId"];
     } else {
       throw Exception('failed to register');
     }
@@ -98,7 +98,7 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    box = await Hive.openLazyBox(boxName);
+    box = await Hive.openLazyBox(boxName.toString());
     Box boxes = await Hive.openBox('boxes');
     boxes.add(boxName);
 
@@ -216,7 +216,9 @@ class BoxCommunicator {
           // If the server did not return a 200 OK response,
           // then throw an exception.
           print(response.statusCode);
-          print('failed to get any data');
+          print("done downloading");
+          Provider.of<DownloadUploadState>(context, listen: false).idle();
+          break;
         }
       }
     } catch (err) {
@@ -237,7 +239,7 @@ class BoxCommunicator {
     if (storage == null || !storage.isOpen) {
       storage = await Hive.openBox('storage');
     }
-    String boxName;
+    var boxName;
     int deviceTimestamp;
     List idList = List();
     Map<String, String> headers = {
@@ -251,14 +253,14 @@ class BoxCommunicator {
         retryIf: (e) => e is SocketException || e is TimeoutException);
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
-      if (res["piID"] == null || res["timestamp"] == null) {
-        print("Failed to get piID or Timestamp");
+      if (res["piId"] == null || res["timestamp"] == null) {
+        print("Failed to get piId or Timestamp");
         context.read<DownloadAllState>().completed();
         await Future.delayed(const Duration(seconds: 15));
         context.read<DownloadAllState>().initial();
         return;
       }
-      boxName = res["piID"];
+      boxName = res["piId"];
       deviceTimestamp = res["timestamp"];
       //storage box stores the number of received bytes at 'totalSizeInBytes'
       //opens the box for the current connected Sensorbox
