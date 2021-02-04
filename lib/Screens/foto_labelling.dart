@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:item_selector/item_selector.dart';
 
-final labels = ["dachs", "fuchs", "reh", "idk", "sonstiges"];
+import 'package:flutter/services.dart';
+
+final labelSetTrees = [
+  "Tanne",
+  "Fichte",
+  "Laubbaum",
+  "Kiefer",
+  "Buche",
+  "Birke",
+  "Kastanie",
+  "Anderer Baum"
+];
+final labelSetAnimals = [
+  "Dachs",
+  "Reh",
+  "Fuchs",
+  "Sonstiges",
+  "Ich weiß nicht"
+];
+var labelSet;
+
 int selectedLabel = -1;
 
 class FotoLabelPage extends StatefulWidget {
-  // TODO: a label set should probably passed as well
-  // TODO: so that user and box images have different label sets
   final Image img;
-  const FotoLabelPage(this.img);
+  final String takenBy;
+
+  FotoLabelPage(this.img, this.takenBy) {
+    labelSet = takenBy == "box" ? labelSetAnimals : labelSetTrees;
+  }
+
   @override
   _FotoLabelPageState createState() => _FotoLabelPageState();
 }
@@ -16,6 +39,11 @@ class FotoLabelPage extends StatefulWidget {
 class _FotoLabelPageState extends State<FotoLabelPage> {
   @override
   Widget build(BuildContext context) {
+    // disable auto rotation of screen
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     // on new build, reset label selection
     selectedLabel = -1;
     return Scaffold(
@@ -24,28 +52,27 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
         title: Text("Foto Labelling"),
         backgroundColor: Colors.green,
       ),
-      body: Center(
-          child: Column(
+      body: Column(
         children: [
-          Expanded(
-              // here goes the image
-              child: Container(
-            margin: EdgeInsets.all(20),
-            padding: EdgeInsets.all(10),
-            child: widget.img,
-          )),
-          Expanded(
-            // here goes the label selection
+          Flexible(
+              flex: 2,
+              child: Padding(
+                  child: widget.img, padding: EdgeInsets.fromLTRB(0, 20, 0, 0)))
+          // here goes the image
+          ,
+          Flexible(
+            flex: 1,
             child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 246),
-                child: Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.all(10),
-                  child: GridViewPage(),
-                )),
-          ),
+              duration: Duration(milliseconds: 246),
+              child: Container(
+                margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: EdgeInsets.all(10),
+                child: GridViewPage(),
+              ),
+            ),
+          )
         ],
-      )),
+      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.done_all),
           backgroundColor: Colors.green,
@@ -79,8 +106,8 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
                     );
                   });
             } else {
-              // go back to taks page and return the selected label
-              Navigator.pop(context, labels[selectedLabel]);
+              // go back to tasks page and return the selected label
+              Navigator.pop(context, labelSet[selectedLabel]);
             }
             // write label to database
           }),
@@ -99,7 +126,8 @@ Widget buildGridItem(BuildContext context, int index, bool selected) {
       color: selected ? Colors.green : Colors.white,
       elevation: selected ? 5 : 10,
       child: GridTile(
-        child: Center(child: Text(labels[index])),
+        child:
+            Center(child: Text(labelSet[index], textAlign: TextAlign.center)),
       ));
 }
 
@@ -113,7 +141,7 @@ class GridViewPage extends StatelessWidget {
       child: GridView.count(
         childAspectRatio: 2.5,
         crossAxisCount: 4, // number of label in a row
-        children: List.generate(labels.length, (int index) {
+        children: List.generate(labelSet.length, (int index) {
           return ItemSelectionBuilder(
             index: index,
             builder: buildGridItem,

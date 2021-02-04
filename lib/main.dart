@@ -86,6 +86,7 @@ class _BaseAppWidgetState extends State<BaseAppWidget> {
       case Connection.SENSORBOX:
         if (name == null)
           boxConnection.disconnected();
+        //"W(G)LAN_f8805106c6"
         else if (name != "Sensorbox") {
           boxConnection.connectedToWifi();
           boxCommunicator.uploadToBackend(context);
