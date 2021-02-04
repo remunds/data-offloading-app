@@ -21,7 +21,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => BoxConnectionState()),
         ChangeNotifierProvider(create: (_) => PosListProvider()),
       ],
-      builder: (context, child) => const MyApp(),
+      builder: (context, child) => MainApp(),
     ));
 
     // Verify that start page is map

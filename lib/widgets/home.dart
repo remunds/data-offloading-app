@@ -20,8 +20,6 @@ class Home extends StatelessWidget {
 
     return new Scaffold(
         body: Stack(
-      //OfflineBuilder from the flutter_offline package handels the connection status to the sensorboxes
-      //connectionListener
       //A stack is used so that the connection status only covers other widgets
       fit: StackFit.expand,
       children: [
@@ -141,7 +139,5 @@ Card _makeHomeTile(
                   ),
                   Text(name)
                 ],
-              )))
-      //ListTile,
-      );
+              ))));
 }
