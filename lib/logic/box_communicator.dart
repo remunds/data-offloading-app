@@ -92,7 +92,9 @@ class BoxCommunicator {
       var res = jsonDecode(boxResponse.body);
       boxName = res["piId"];
     } else {
-      throw Exception('failed to register');
+      print('failed to register');
+      Provider.of<DownloadUploadState>(context, listen: false).idle();
+      return;
     }
 
     //storage box stores the number of received bytes at 'totalSizeInBytes'
@@ -134,7 +136,7 @@ class BoxCommunicator {
                 .timeout(Duration(seconds: 3)),
             retryIf: (e) => e is SocketException || e is TimeoutException);
 
-        if (response.statusCode == 200) {
+        if (response.statusCode == 200 && response.body.length != 0) {
           var id = jsonDecode(response.body)["_id"];
           if (id == null) {
             print('response had no id');
