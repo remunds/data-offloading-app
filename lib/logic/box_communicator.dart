@@ -18,9 +18,8 @@ class BoxCommunicator {
   double dataLimitInMB =
       Hive.box('storage').get('dataLimitValueInMB', defaultValue: 10.0);
   int _numberOfBoxes = 0;
-  bool _executeDownload = true;
-  LazyBox box;
-  Box storage;
+  LazyBox<String> box;
+  Box<dynamic> storage;
 
   int getNumberOfBoxes() {
     return _numberOfBoxes;
@@ -50,7 +49,9 @@ class BoxCommunicator {
         }
 
         //check if still connected
-        if (!context.read<BoxConnectionState>().connectionState) {
+        if (Provider.of<BoxConnectionState>(context, listen: false)
+                .connectionState !=
+            Connection.SENSORBOX) {
           return;
         }
         final boxResponse = await retry(
@@ -70,7 +71,7 @@ class BoxCommunicator {
     }
   }
 
-  void downloadData() async {
+  void downloadData(context) async {
     print("downloading...");
     String boxName;
     final r = RetryOptions(maxAttempts: 5);
@@ -89,7 +90,7 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    LazyBox<String> box = await Hive.openLazyBox(boxName);
+    box = await Hive.openLazyBox(boxName);
     Box boxes = await Hive.openBox('boxes');
     boxes.add(boxName);
 
@@ -108,7 +109,9 @@ class BoxCommunicator {
     }
 
     try {
-      while (_executeDownload) {
+      while (
+          Provider.of<DownloadAllState>(context, listen: false).downloadState !=
+              1) {
         int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
         //make getData call to collect data chunks or files from box
         final response = await retry(
@@ -202,10 +205,9 @@ class BoxCommunicator {
   //the method will be executed. Normally all files and chunks will be downloaded that
   //are not on device yet.
   void downloadAllData(BuildContext context) async {
-    _executeDownload = false;
     print("Downloading All Data ...");
     context.read<DownloadAllState>().downloading();
-    if (storage == null) {
+    if (storage == null || !storage.isOpen) {
       storage = await Hive.openBox('storage');
     }
     String boxName;
@@ -233,7 +235,7 @@ class BoxCommunicator {
       deviceTimestamp = res["timestamp"];
       //storage box stores the number of received bytes at 'totalSizeInBytes'
       //opens the box for the current connected Sensorbox
-      if (box == null) {
+      if (box == null || !box.isOpen) {
         box = await Hive.openLazyBox(boxName);
       }
       print("Opened box with boxname " + boxName.toString());
@@ -273,7 +275,9 @@ class BoxCommunicator {
     int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
     //now this loop will be executed when the general download loop is paused.
     // Rest of work is done on the box
-    while (!_executeDownload) {
+    while (
+        Provider.of<DownloadAllState>(context, listen: false).downloadState ==
+            1) {
       final response = await retry(
           () => http
               .get(boxIP + "/api/getAllData?deviceTimestamp=$deviceTimestamp",
@@ -288,7 +292,7 @@ class BoxCommunicator {
 
         if (id == null) {
           print('response had no id');
-          break;
+          continue;
         }
 
         box.put(id, response.body);
