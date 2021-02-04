@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' ;
-
-final labelSet = ["Tanne", "Fichte", "Laubbaum", "Kiefer", "Buche", "Birke", "Kastanie", "Anderer Baum"];
+import 'package:flutter/services.dart';
 
 class FotoCapturePage extends StatefulWidget {
   final CameraDescription camera;
@@ -40,7 +38,6 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
 
   @override
   Widget build(BuildContext context) {
-
     // disable auto rotation of screen
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -88,7 +85,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             String selectedLabel = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FotoLabelPage(img, labelSet),
+                builder: (context) => FotoLabelPage(img, "user"),
               ),
             );
 

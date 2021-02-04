@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:item_selector/item_selector.dart';
 
+import 'package:flutter/services.dart';
+
+final labelSetTrees = [
+  "Tanne",
+  "Fichte",
+  "Laubbaum",
+  "Kiefer",
+  "Buche",
+  "Birke",
+  "Kastanie",
+  "Anderer Baum"
+];
+final labelSetAnimals = [
+  "Dachs",
+  "Reh",
+  "Fuchs",
+  "Sonstiges",
+  "Ich weiß nicht"
+];
 var labelSet;
+
 int selectedLabel = -1;
 
 class FotoLabelPage extends StatefulWidget {
   final Image img;
+  final String takenBy;
 
-  FotoLabelPage(this.img, labels){
-    labelSet = labels;
+  FotoLabelPage(this.img, this.takenBy) {
+    labelSet = takenBy == "box" ? labelSetAnimals : labelSetTrees;
   }
 
   @override
@@ -18,6 +39,11 @@ class FotoLabelPage extends StatefulWidget {
 class _FotoLabelPageState extends State<FotoLabelPage> {
   @override
   Widget build(BuildContext context) {
+    // disable auto rotation of screen
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     // on new build, reset label selection
     selectedLabel = -1;
     return Scaffold(
@@ -27,26 +53,24 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
         backgroundColor: Colors.green,
       ),
       body: Column(
-            children: [
-              Expanded(
-              // here goes the image
-                child: Container(
-                  color: Colors.grey,
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: widget.img
-                )
+        children: [
+          Flexible(
+              flex: 2,
+              child: Padding(
+                  child: widget.img, padding: EdgeInsets.fromLTRB(0, 20, 0, 0)))
+          // here goes the image
+          ,
+          Flexible(
+            flex: 1,
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 246),
+              child: Container(
+                margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: EdgeInsets.all(10),
+                child: GridViewPage(),
               ),
-              Expanded(
-                // here goes the label selection
-                child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 246),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      padding: EdgeInsets.all(10),
-                      child: GridViewPage(),
-                    )),
-          ),
+            ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -102,7 +126,8 @@ Widget buildGridItem(BuildContext context, int index, bool selected) {
       color: selected ? Colors.green : Colors.white,
       elevation: selected ? 5 : 10,
       child: GridTile(
-        child: Center(child: Text(labelSet[index])),
+        child:
+            Center(child: Text(labelSet[index], textAlign: TextAlign.center)),
       ));
 }
 

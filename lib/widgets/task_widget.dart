@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:data_offloading_app/Screens/foto_capturing.dart';
 import 'package:data_offloading_app/Screens/foto_labelling.dart';
@@ -18,16 +20,6 @@ class TaskWidget extends StatefulWidget {
 //This is is our TaskWidget. Every task is represented by a ExpansionTile, where you can see the title and a icon when it's unexpanded.
 //When you expand the tile you also see the task description and a button to check off that task
 class _TaskWidgetState extends State<TaskWidget> {
-  Future<Image> _fetchImage(String id) async {
-    print("fetching image");
-    try {
-      return await BoxCommunicator().fetchImage(id);
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
   Future<CameraDescription> _getCamera() async {
     final cameras = await availableCameras();
     return cameras.first;
@@ -48,23 +40,36 @@ class _TaskWidgetState extends State<TaskWidget> {
         RaisedButton(
             onPressed: () async {
               var id = widget.task.imageId;
-              Image img = await _fetchImage(id);
-              // route to image label page and wait for return
-              // return value will be the designated label
-              var labelSet = ["Dachs", "Fuchs", "Reh", "Ich weiß nicht", "Sonstiges"]; // labelset for sensorbox images
-              String selectedLabel = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FotoLabelPage(img, labelSet)),
-              );
+              try {
+                // fetch image from database
+                Map<String, dynamic> imgJson =
+                    await BoxCommunicator().fetchImage(id);
+                // convert bytes to image
+                Uint8List bytesUint8 =
+                    Uint8List.fromList(imgJson['data']['data'].cast<int>());
+                String takenBy = imgJson['takenBy'];
+                Image img = Image.memory(bytesUint8);
 
-              // if user has set a label, then save that label to the database
-              if (selectedLabel != null) {
-                try {
-                  BoxCommunicator().setLabel(id, selectedLabel);
-                  _deleteTask(widget.task);
-                } catch (e) {
-                  print(e);
+                // route to image label page and wait for return
+                // return value will be the designated label
+
+                String selectedLabel = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FotoLabelPage(img, takenBy)),
+                );
+
+                // if user has set a label, then save that label to the database
+                if (selectedLabel != null) {
+                  try {
+                    BoxCommunicator().setLabel(id, selectedLabel);
+                    _deleteTask(widget.task);
+                  } catch (e) {
+                    print(e);
+                  }
                 }
+              } catch (e) {
+                print(e);
               }
             },
             child: Text(widget.task.description)),

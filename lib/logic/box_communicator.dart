@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/data/idAndTimestamp.dart';
@@ -28,7 +27,8 @@ class BoxCommunicator {
   }
 
   Map<String, String> headers = {"Content-type": "application/json"};
-  final String boxIP = "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
+  final String boxIP =
+      "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
   final String backendIP = "http://192.168.0.64:8001";
 
   void uploadToBackend(context) async {
@@ -341,7 +341,7 @@ class BoxCommunicator {
     return response.statusCode;
   }
 
-  Future<Image> fetchImage(var id) async {
+  Future<Map<String, dynamic>> fetchImage(var id) async {
     final response =
         await http.get(boxIP + "/api/getImage/?id=$id", headers: headers);
 
@@ -349,9 +349,7 @@ class BoxCommunicator {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String, dynamic> img = jsonDecode(response.body);
-      Uint8List bytesUint8 =
-          Uint8List.fromList(img['data']['data'].cast<int>());
-      return Image.memory(bytesUint8);
+      return img;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -408,14 +406,14 @@ class BoxCommunicator {
   }
 
   void saveUserImage(var imgPath, var label) async {
-    String base64Img = base64Encode(File(imgPath).readAsBytesSync());
-
     var req =
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
-    req.files.add(http.MultipartFile.fromString('data', base64Img));
+
+    req.files.add(await http.MultipartFile.fromPath('data', imgPath));
     req.fields['label'] = label;
     // set type to user to distinguish from box images
-    req.fields['type'] = 'user';
+    req.fields['takenBy'] = 'user';
+
     final response = await req.send();
 
     if (response.statusCode == 200) {
