@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../data/task.dart';
 import '../provider/tasklist_state.dart';
 import 'package:provider/provider.dart';
+import 'package:data_offloading_app/logic/stats.dart';
 
 class TaskWidget extends StatefulWidget {
   TaskWidget(this.task);
@@ -64,6 +65,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                   try {
                     BoxCommunicator().setLabel(id, selectedLabel);
                     _deleteTask(widget.task);
+                    Stats.increaseTask("imageTask");
                   } catch (e) {
                     print(e);
                   }
@@ -92,6 +94,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                   BoxCommunicator()
                       .saveUserImage(img["pathToImg"], img["label"]);
                   _deleteTask(widget.task);
+                  Stats.increaseTask("imageTask");
                 } catch (e) {
                   print(e);
                 }
@@ -111,7 +114,10 @@ class _TaskWidgetState extends State<TaskWidget> {
         ),
         SizedBox(height: 15.0),
         RaisedButton(
-          onPressed: () => {_deleteTask(widget.task)},
+          onPressed: () {
+            _deleteTask(widget.task);
+            Stats.increaseTask("cleaningTask");
+          },
           textColor: Colors.white,
           padding: EdgeInsets.all(0.0),
           child: Container(

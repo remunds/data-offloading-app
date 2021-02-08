@@ -1,11 +1,22 @@
+import 'package:data_offloading_app/widgets/favorite_box_widget.dart';
+import 'package:data_offloading_app/widgets/finished_tasks_widget.dart';
+import 'package:data_offloading_app/widgets/level_display_widget.dart';
+import 'package:data_offloading_app/widgets/reset_widget.dart';
+import 'package:data_offloading_app/widgets/used_memory_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-class StatisticsPage extends StatelessWidget {
+class StatisticsPage extends StatefulWidget {
+  @override
+  _StatisticsPageState createState() => _StatisticsPageState();
+}
+
+class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -31,7 +42,21 @@ class StatisticsPage extends StatelessWidget {
                       }),
                 ],
               ),
-              Text("Statistiken")
+              Text("Statistiken"),
+              LevelDisplay(),
+              Expanded(
+                child: GridView.count(
+                  padding: const EdgeInsets.all(20),
+                  crossAxisCount: 1,
+                  children: [
+                    //create all the statitics cards and a reset button.
+                    FavoriteBoxDisplay(),
+                    FinishedTasksDisplay(),
+                    UsedMemoryDisplay(),
+                    ResetButton(),
+                  ],
+                ),
+              )
             ],
           ),
         ),
