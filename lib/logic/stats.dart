@@ -57,19 +57,6 @@ class Stats {
             : j);
   }
 
-  //this function removes a string (box-id) from a given list
-  static List<dynamic> removeFromList(List<dynamic> list, String removeObj) {
-    if (!list.contains(removeObj)) {
-      return list;
-    }
-    for (int i = 0; i < list.length; i++) {
-      if (list[i] == removeObj) {
-        list.removeAt(i);
-      }
-    }
-    return list;
-  }
-
   //this function returns the most visited sensor boxes. The first entry in the returned list is the most frequently visited box and so on.
   static List<dynamic> getMostFrequentlyVisitedBoxes() {
     //this operation writes all values from the list of already visited boxes to a new list. This is necessary because otherwise the '=' operator just copies the pointer to the list. This function however needs a copy.
@@ -77,7 +64,7 @@ class Stats {
     List<dynamic> top3 = [];
     for (int i = 0; i < 3; i++) {
       top3.add(mostFrequentBox(boxes));
-      boxes = removeFromList(boxes, top3[i]);
+      boxes.removeWhere((element) => element == top3[i]);
     }
     return top3;
   }
