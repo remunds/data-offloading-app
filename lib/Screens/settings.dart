@@ -1,10 +1,10 @@
 import 'package:data_offloading_app/Screens/aboutus.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
-import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:data_offloading_app/widgets/reset_widget.dart';
+import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';

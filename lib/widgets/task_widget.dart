@@ -24,7 +24,13 @@ class TaskWidget extends StatefulWidget {
 class _TaskWidgetState extends State<TaskWidget> {
   Future<CameraDescription> _getCamera() async {
     final cameras = await availableCameras();
-    return cameras.first;
+    //select the fron camera
+    CameraDescription cam = cameras[1];
+    //if there is no frontcamera take the backcamera
+    if (cam == null) {
+      return cameras[0];
+    }
+    return cam;
   }
 
   @override
@@ -96,12 +102,14 @@ class _TaskWidgetState extends State<TaskWidget> {
                 MaterialPageRoute(
                     builder: (context) => FotoCapturePage(camera: cam)),
               );
-
               print(img);
-              if (img["pathToImg"] != null && img["label"] != null) {
+              if (img != null &&
+                  img["pathToImg"] != null &&
+                  img["label"] != null &&
+                  img["luxValue"] != null) {
                 try {
-                  BoxCommunicator()
-                      .saveUserImage(img["pathToImg"], img["label"]);
+                  BoxCommunicator().saveUserImage(
+                      img["pathToImg"], img["label"], img["luxValue"]);
                   _deleteTask(widget.task);
                   Stats.increaseTask("imageTask");
                   Fluttertoast.showToast(
