@@ -39,9 +39,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       }),
+                  Text(
+                    '   Statistiken',
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black45),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
-              Text("Statistiken"),
               LevelDisplay(),
               Expanded(
                 child: GridView.count(
