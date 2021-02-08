@@ -110,7 +110,7 @@ class BoxCommunicator {
     List<String> idList = [];
     Stats.setBox(storage);
     //add the current box to the list of already visited boxes stored on the hive
-    Stats.addVisitedBox(boxName);
+    Stats.addVisitedBox(boxName.toString());
 
     bool oldData = storage.get('oldDataSwitch', defaultValue: true);
 
