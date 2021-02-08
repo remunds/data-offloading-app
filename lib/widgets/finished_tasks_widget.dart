@@ -46,7 +46,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     if (storage.get('totalFinishedTasks', defaultValue: 0) == 0) {
       return Card(
           child:
-              Center(child: Text("Du hast bisher noch keine Tasks erfuellt")));
+              Center(child: Text("Du hast bisher noch keine Tasks erfüllt")));
     } else {
       //if the user has finished at least one task the piechart is displayed.
       return _makeTaskTile();

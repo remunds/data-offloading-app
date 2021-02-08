@@ -1,7 +1,6 @@
 import 'package:data_offloading_app/widgets/favorite_box_widget.dart';
 import 'package:data_offloading_app/widgets/finished_tasks_widget.dart';
 import 'package:data_offloading_app/widgets/level_display_widget.dart';
-import 'package:data_offloading_app/widgets/reset_widget.dart';
 import 'package:data_offloading_app/widgets/used_memory_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +52,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     FavoriteBoxDisplay(),
                     FinishedTasksDisplay(),
                     UsedMemoryDisplay(),
-                    ResetButton(),
+                    // ResetButton(),
                   ],
                 ),
               )

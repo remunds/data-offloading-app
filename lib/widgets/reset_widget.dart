@@ -3,21 +3,75 @@ import 'package:data_offloading_app/logic/stats.dart';
 
 //this widget is for development purposes only. It is used to reset all data regarding the finished tasks and visited boxes.
 class ResetButton extends StatelessWidget {
+  final double horizontalAlertPadding;
+  final double verticalAlertPadding;
+  ResetButton({this.horizontalAlertPadding, this.verticalAlertPadding});
   @override
   Widget build(BuildContext context) {
+//Dialog shown when user wants to download all data
+    Future<void> _showResetDialogue() async {
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'Ja',
+                      style: TextStyle(color: Colors.lightGreen),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Abbrechen',
+                      style: TextStyle(color: Colors.lightGreen),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ],
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: horizontalAlertPadding,
+                    vertical: verticalAlertPadding * 0.95),
+                title: Text(
+                  'Statistiken zurücksetzen?',
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.0),
+                ),
+                content: Text(
+                    'Wollen Sie wirklich alle Statistiken auf ihrem Gerät löschen?'));
+          }).then((val) {
+        if (val) {
+          Stats.reset();
+        }
+      });
+    }
+
     return Card(
-      child: Center(
-          //registers if the button is tapped
-          child: GestureDetector(
-              onTap: () {
-                Stats.reset();
-              },
-              child: SizedBox(
-                  width: 100,
-                  height: 50,
-                  child: Container(
-                      color: Colors.green,
-                      child: Center(child: Text("Reset")))))),
-    );
+        child: FlatButton(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'Statistiken zurücksetzen',
+            style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87),
+          ),
+          Icon(
+            Icons.leaderboard,
+            color: Colors.lightGreen,
+          )
+        ],
+      ),
+      onPressed: () => _showResetDialogue(),
+    ));
   }
 }

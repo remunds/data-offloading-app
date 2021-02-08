@@ -4,6 +4,7 @@ import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
+import 'package:data_offloading_app/widgets/reset_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -13,6 +14,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
+
     double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
     double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
 
@@ -421,6 +423,9 @@ class SettingsPage extends StatelessWidget {
                               ),
                             ),
                           ),
+                          ResetButton(
+                              horizontalAlertPadding: horizontalAlertPadding,
+                              verticalAlertPadding: verticalAlertPadding),
                           Card(
                               child: FlatButton(
                             child: Row(
