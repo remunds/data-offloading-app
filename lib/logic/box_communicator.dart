@@ -368,7 +368,6 @@ class BoxCommunicator {
 
   Future<List<Task>> fetchTasks() async {
     final response = await http.get(boxIP + "/api/getTasks", headers: headers);
-
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.

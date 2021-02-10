@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "60144c09a23558306bd33f35",
+    "title": "Baumkronen Foto",
+    "description": "Bitte nehme ein Foto der Baumkrone auf.",
+    "__v": 0
+  },
+  {
+    "_id": "60144c09a23558306bd33f36",
+    "title": "Box säubern",
+    "description": "Bitte entferne Äste und Schmutz von der Oberfläche der Sensorbox.",
+    "__v": 0
+  },
+  {
+    "_id": "6023f95546ccf901632c0981",
+    "title": "Fotofallen-Bild beschriften",
+    "description": "Bitte waehle das passende Label aus.",
+    "imageId": "601c3e453e77d1202f42767b",
+    "__v": 0
+  }
+]
