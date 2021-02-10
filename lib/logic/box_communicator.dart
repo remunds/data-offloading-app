@@ -40,7 +40,8 @@ class BoxCommunicator {
     String query;
 
     //iterate over all Sensorboxes we downloaded data from
-    for (String box in boxes.values) {
+    for (var boxVal in boxes.values) {
+      String box = boxVal.toString();
       Box currBox = await Hive.openBox(box);
       //get all the data from one Sensorbox
       for (String data in currBox.values) {
@@ -59,11 +60,18 @@ class BoxCommunicator {
           Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
-        final boxResponse = await retry(
-            () => http
-                .get(backendIP + "/api/postData/" + box + query)
-                .timeout(Duration(seconds: 3)),
-            retryIf: (e) => e is SocketException || e is TimeoutException);
+        var boxResponse;
+        try {
+          boxResponse = await retry(
+              () => http
+                  .get(backendIP + "/api/postData/" + box + query)
+                  .timeout(Duration(seconds: 3)),
+              retryIf: (e) => e is SocketException || e is TimeoutException);
+        } catch (e) {
+          print("failed to upload data");
+          Provider.of<DownloadUploadState>(context, listen: false).idle();
+          return;
+        }
         if (boxResponse.statusCode != 200) {
           //user probably left WiFi
           print("user probably left wifi");
@@ -85,15 +93,23 @@ class BoxCommunicator {
     var boxName;
     final r = RetryOptions(maxAttempts: 5);
     //register to get the current boxName from the Sensorbox
-    final boxResponse = await r.retry(
-        () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
-        retryIf: (e) => e is SocketException || e is TimeoutException);
+    print("registering");
+    var boxResponse;
+    try {
+      boxResponse = await r.retry(
+          () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
+          retryIf: (e) => e is SocketException || e is TimeoutException);
+    } catch (e) {
+      print("registering failed: not reachable");
+      Provider.of<DownloadUploadState>(context, listen: false).idle();
+      return;
+    }
 
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
       boxName = res["piId"];
     } else {
-      print('failed to register');
+      print("failed to register:");
       Provider.of<DownloadUploadState>(context, listen: false).idle();
       return;
     }
@@ -123,6 +139,7 @@ class BoxCommunicator {
     }
 
     try {
+      //check if user pressed the download-ALL button
       while (
           Provider.of<DownloadAllState>(context, listen: false).downloadState !=
               1) {
@@ -177,7 +194,7 @@ class BoxCommunicator {
                 jsonDecode(response.body)["uploadDate"];
             if (incomingTime == null) {
               print("error getting time from response");
-              break;
+              continue;
             }
 
             for (int i = 0; i < box.length; i++) {
