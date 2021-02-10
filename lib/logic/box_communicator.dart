@@ -271,7 +271,7 @@ class BoxCommunicator {
       //storage box stores the number of received bytes at 'totalSizeInBytes'
       //opens the box for the current connected Sensorbox
       if (box == null || !box.isOpen) {
-        box = await Hive.openLazyBox(boxName);
+        box = await Hive.openLazyBox(boxName.toString());
       }
       print("Opened box with boxname " + boxName.toString());
       //If List of IDs is empty execute the download without a data limit and without priority restrictions
