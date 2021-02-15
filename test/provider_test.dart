@@ -6,6 +6,10 @@ import 'dart:io';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 
 void main() async {
+  var path = Directory.current.path;
+  Hive.init(path + '/test/hive_testing_path');
+  Box box = await Hive.openBox('storage');
+  // Stats.setBox(box);
   test("TaskListProviderTest", () {
     TaskListProvider tLP = new TaskListProvider();
     tLP.awaitTasks();
