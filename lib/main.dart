@@ -11,6 +11,7 @@ import 'package:data_offloading_app/widgets/home.dart';
 import 'package:data_offloading_app/widgets/map.dart';
 import 'package:data_offloading_app/widgets/tasks.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
@@ -24,7 +25,11 @@ import 'package:data_offloading_app/logic/stats.dart';
 
 void main() async {
   //initialize hive, the nosql database
-  await Hive.initFlutter();
+  WidgetsFlutterBinding.ensureInitialized();
+  var appDir = await getApplicationDocumentsDirectory();
+  var path = Directory('${appDir.path}').path;
+  await Hive.initFlutter(path + '/hive_storage');
+  // await Hive.initFlutter();
   Box storage = await Hive.openBox('storage');
   Stats.setBox(storage);
   runApp(MultiProvider(
@@ -123,8 +128,8 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void dispose() {
-    super.dispose();
     _timer.cancel();
+    super.dispose();
   }
 
   List<Widget> _pages = [MyMap(), Home(), Tasks()];

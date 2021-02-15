@@ -11,6 +11,8 @@ import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 import 'package:retry/retry.dart';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 import '../data/task.dart';
 import '../data/box_position.dart';
@@ -27,12 +29,37 @@ class BoxCommunicator {
     return _numberOfBoxes;
   }
 
+  Future<void> deleteBoxFromDisk(Box box) async {
+    await box.deleteFromDisk();
+    // try {
+    //   // Get the application's document directory
+    //   String boxName = box.name;
+    //   box.close();
+    //   var appDir = await getApplicationDocumentsDirectory();
+
+    //   // // Get the chosen sub-directory for Hive files
+    //   var hiveDbLock = Directory('${appDir.path}/hive_storage/$boxName.lock');
+    //   var hiveDbHive = Directory('${appDir.path}/hive_storage/$boxName.hive');
+
+    //   // // Delete the Hive directory and all its files
+    //   hiveDbLock.delete(recursive: true);
+    //   hiveDbHive.delete(recursive: true);
+
+    //   print("deleted: ${appDir.path}/hive_storage/$boxName.lock");
+    //   print("deleted: ${appDir.path}/hive_storage/$boxName.hive");
+    // } catch (e) {
+    //   print("could not delete box: ${box.name}");
+    // }
+  }
+
   Map<String, String> headers = {"Content-type": "application/json"};
   final String boxIP =
       "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
-  final String backendIP = "http://192.168.0.64:8001";
+  final String backendIP = "http://192.168.0.102:8000";
 
-  void uploadToBackend(context) async {
+  void uploadToBackend(BuildContext context, {http.Client client}) async {
+    client ??= new http.Client();
+
     //We use Provider.of instead of context.read because context will be passed by a StatefulWidget or StatefulElement. StatefulElement has no instance method read.
     Provider.of<DownloadUploadState>(context, listen: false).uploading();
     print("uploading");
@@ -41,11 +68,15 @@ class BoxCommunicator {
 
     //iterate over all Sensorboxes we downloaded data from
     for (var boxVal in boxes.values) {
+      print("found 1 box");
       String box = boxVal.toString();
       Box currBox = await Hive.openBox(box);
       //get all the data from one Sensorbox
       for (String data in currBox.values) {
         //if files_id is specified, given data is a chunk
+
+        print("send data");
+        print(data);
 
         if (data.contains("files_id")) {
           query = "?format=chunk";
@@ -56,22 +87,29 @@ class BoxCommunicator {
         //check if still connected
         if (Provider.of<BoxConnectionState>(context, listen: false)
                 .connectionState !=
-            Connection.SENSORBOX) {
+            Connection.WIFI) {
           Provider.of<DownloadUploadState>(context, listen: false).idle();
+          print("connection lost");
           return;
         }
         var boxResponse;
         try {
           boxResponse = await retry(
-              () => http
-                  .get(backendIP + "/api/postData/" + box + query)
-                  .timeout(Duration(seconds: 3)),
+              () => client
+                  .post(backendIP + "/api/postData/" + box + query,
+                      headers: headers, body: data)
+                  .timeout(Duration(seconds: 10)),
               retryIf: (e) => e is SocketException || e is TimeoutException);
         } catch (e) {
-          print("failed to upload data");
+          print("failed to upload data to: $backendIP/api/postData/$box$query");
+          print(e);
           Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
+        print("got respone");
+        print(boxResponse.statusCode);
+        print(boxResponse.body);
+        print("data: $data");
         if (boxResponse.statusCode != 200) {
           //user probably left WiFi
           print("user probably left wifi");
@@ -81,12 +119,24 @@ class BoxCommunicator {
         //else: succesfully uploaded, continue
       }
       //delete data from disk
-      await currBox.deleteFromDisk();
+      print("done1");
+      print("sizeof currBox: ${currBox.length}");
+      await deleteBoxFromDisk(currBox);
+      // await currBox.clear();
+      // currBox.deleteFromDisk();
+      // currBox = await Hive.openBox(box);
+      // print("sizeof currBox: ${currBox.length}");
+      // // currBox.close();
+      // // await currBox.deleteFromDisk();
+      print("done3");
     }
+    print("doneeeee");
     Provider.of<DownloadUploadState>(context, listen: false).idle();
+    print("done uploading");
   }
 
-  void downloadData(context) async {
+  void downloadData(BuildContext context, {http.Client client}) async {
+    client ??= new http.Client();
     print("downloading...");
     Provider.of<DownloadUploadState>(context, listen: false).downloading();
 
@@ -97,7 +147,8 @@ class BoxCommunicator {
     var boxResponse;
     try {
       boxResponse = await r.retry(
-          () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
+          () =>
+              client.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
           retryIf: (e) => e is SocketException || e is TimeoutException);
     } catch (e) {
       print("registering failed: not reachable");
@@ -152,7 +203,7 @@ class BoxCommunicator {
         }
         //make getData call to collect data chunks or files from box
         final response = await retry(
-            () => http
+            () => client
                 .get(boxIP + "/api/getData" + query)
                 .timeout(Duration(seconds: 3)),
             retryIf: (e) => e is SocketException || e is TimeoutException);
@@ -163,6 +214,7 @@ class BoxCommunicator {
             print('response had no id');
             continue;
           }
+          print("received file: $id");
 
           if (await box.get(id) != null || idList.contains(id)) {
             //all files of the current box have been downloaded or checked (sizeLimit reached)
@@ -256,7 +308,8 @@ class BoxCommunicator {
   //This function is called when a button on the settings page is pressed. After that
   //the method will be executed. Normally all files and chunks will be downloaded that
   //are not on device yet.
-  void downloadAllData(BuildContext context) async {
+  void downloadAllData(BuildContext context, {http.Client client}) async {
+    client ??= new http.Client();
     print("Downloading All Data ...");
     context.read<DownloadAllState>().downloadingAll();
     if (storage == null || !storage.isOpen) {
@@ -272,7 +325,7 @@ class BoxCommunicator {
     //register to get the current boxName and get a id(timestamp) from the Sensorbox
     //we use Future.delayed to pause the completed state for a certain time to show the user completion of download
     final boxResponse = await retry(
-        () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
+        () => client.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
         retryIf: (e) => e is SocketException || e is TimeoutException);
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
@@ -300,7 +353,7 @@ class BoxCommunicator {
           new IdListAndTimeStamp(timestamp: deviceTimestamp, idList: idList);
       String body = json.encode(idListAndTimeStamp);
       final currentDataRegisterResponse = await retry(
-          () => http
+          () => client
               .post(boxIP + "/api/registerCurrentData",
                   headers: headers, body: body)
               .timeout(Duration(seconds: 3)),
@@ -331,7 +384,7 @@ class BoxCommunicator {
         Provider.of<DownloadAllState>(context, listen: false).downloadState ==
             1) {
       final response = await retry(
-          () => http
+          () => client
               .get(boxIP + "/api/getAllData?deviceTimestamp=$deviceTimestamp",
                   headers: headers)
               .timeout(Duration(seconds: 3)),
@@ -366,8 +419,14 @@ class BoxCommunicator {
     }
   }
 
-  Future<List<Task>> fetchTasks() async {
-    final response = await http.get(boxIP + "/api/getTasks", headers: headers);
+  Future<List<Task>> fetchTasks({http.Client client}) async {
+    client ??= new http.Client();
+
+    final response = await retry(
+        () => client
+            .get(boxIP + "/api/getTasks", headers: headers)
+            .timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -387,19 +446,28 @@ class BoxCommunicator {
   }
 
   //This is the way to communicate the deletion of a task with the box
-  Future<int> deleteTask(Task task) async {
+  Future<int> deleteTask(Task task, {http.Client client}) async {
+    client ??= new http.Client();
     //enconding the task to JSON
     String taskDel = json.encode(task);
 
     // sending a http post to the sensorbox to delete the task from our db.
-    final response = await http.post(boxIP + "/api/deleteTask",
-        headers: headers, body: taskDel);
+    final response = await retry(
+        () => client
+            .post(boxIP + "/api/deleteTask", headers: headers, body: taskDel)
+            .timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
+
     return response.statusCode;
   }
 
-  Future<Map<String, dynamic>> fetchImage(var id) async {
-    final response =
-        await http.get(boxIP + "/api/getImage/?id=$id", headers: headers);
+  Future<Map<String, dynamic>> fetchImage(var id, {http.Client client}) async {
+    client ??= new http.Client();
+    final response = await retry(
+        () => client
+            .get(boxIP + "/api/getImage/?id=$id", headers: headers)
+            .timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -414,10 +482,15 @@ class BoxCommunicator {
     }
   }
 
-  void setLabel(var id, String label) async {
+  void setLabel(var id, String label, {http.Client client}) async {
+    client ??= new http.Client();
     var body = {'id': id, 'label': label};
-    final response = await http.post(boxIP + "/api/putLabel",
-        body: json.encode(body), headers: headers);
+    final response = await retry(
+        () => client
+            .post(boxIP + "/api/putLabel",
+                body: json.encode(body), headers: headers)
+            .timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -432,11 +505,16 @@ class BoxCommunicator {
   }
 
   //fetches the lat and long coordinates from all sensorboxes
-  Future<List<BoxPosition>> fetchPositions() async {
+  Future<List<BoxPosition>> fetchPositions({http.Client client}) async {
+    client ??= new http.Client();
     List<BoxPosition> posList = new List<BoxPosition>();
     int currBox = 1;
     String url = backendIP + "/api/getPosition/" + currBox.toString();
-    dynamic response = await http.get(url, headers: headers);
+
+    var response = await retry(
+        () => client.get(url, headers: headers).timeout(Duration(seconds: 3)),
+        retryIf: (e) => e is SocketException || e is TimeoutException);
+
     if (response.statusCode != 200) {
       print("StatusCode " + response.statusCode.toString());
       print("Something went wrong!");
@@ -453,15 +531,17 @@ class BoxCommunicator {
 
       ++currBox;
       String url = backendIP + "/api/getPosition/" + currBox.toString();
-      response = await http.get(url, headers: headers);
+      response = await retry(
+          () => client.get(url, headers: headers).timeout(Duration(seconds: 3)),
+          retryIf: (e) => e is SocketException || e is TimeoutException);
     }
     _numberOfBoxes = currBox - 1;
     print(posList);
-
     return posList;
   }
 
-  void saveUserImage(var imgPath, var label) async {
+  void saveUserImage(var imgPath, var label, {http.Client client}) async {
+    client ??= new http.Client();
     var req =
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
 
