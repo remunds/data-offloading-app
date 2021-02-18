@@ -54,16 +54,16 @@ class _TaskWidgetState extends State<TaskWidget> {
                 // route to image label page and wait for return
                 // return value will be the designated label
 
-                String selectedLabel = await Navigator.push(
+                List<String> selectedLabels = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => FotoLabelPage(img, takenBy)),
                 );
 
                 // if user has set a label, then save that label to the database
-                if (selectedLabel != null) {
+                if (selectedLabels.isNotEmpty) {
                   try {
-                    BoxCommunicator().setLabel(id, selectedLabel);
+                    BoxCommunicator().setLabel(id, selectedLabels);
                     _deleteTask(widget.task);
                     Stats.increaseTask("imageTask");
                   } catch (e) {

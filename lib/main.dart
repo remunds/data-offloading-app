@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
@@ -127,7 +128,7 @@ class _MainAppState extends State<MainApp> {
     _timer.cancel();
   }
 
-  List<Widget> _pages = [MyMap(), Home(), Tasks()];
+  List<Widget> _pages = [MyMap(), Home(), FotoLabelPage(Image.asset("assets/dachs.jpeg"), "user")]; //Tasks()];
 
   int _selectedIndex = 1;
   void _onItemTap(int index) {

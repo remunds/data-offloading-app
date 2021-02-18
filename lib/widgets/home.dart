@@ -1,8 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:data_offloading_app/Screens/aboutus.dart';
 import 'package:data_offloading_app/Screens/achievements.dart';
+import 'package:data_offloading_app/Screens/foto_capturing.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
+import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +21,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<CameraDescription> _getCamera() async {
+    final cameras = await availableCameras();
+    return cameras.first;
+  }
+
   void _showFirstOpenDialog(BuildContext context) async {
     double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
     double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
@@ -211,7 +219,27 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     )
-                  : Text(""),
+                  //: Text(""),
+              : RaisedButton(
+                  onPressed: () async {
+                    CameraDescription cam = await _getCamera();
+                    var img = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FotoCapturePage(camera: cam)),
+                    );
+
+                    print(img);
+                    if (img["pathToImg"] != null && img["label"] != null) {
+                      try {
+                        BoxCommunicator()
+                            .saveUserImage(img["pathToImg"], img["label"]);
+                      } catch (e) {
+                        print(e);
+                      }
+                    }
+                  },
+                  child: Text("capture"))
             ],
           ),
         ),

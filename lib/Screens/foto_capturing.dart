@@ -82,7 +82,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             Image img = Image.file(File(xf.path));
 
             // If the picture was taken, display it on a new screen.
-            String selectedLabel = await Navigator.push(
+            List<String> selectedLabels = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FotoLabelPage(img, "user"),
@@ -90,7 +90,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             );
 
             Navigator.pop(
-                context, {"label": selectedLabel, "pathToImg": xf.path});
+                context, {"label": selectedLabels, "pathToImg": xf.path});
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);
