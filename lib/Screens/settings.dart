@@ -19,7 +19,6 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
-
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
 
@@ -42,11 +41,12 @@ class SettingsPage extends StatelessWidget {
           return ValueListenableBuilder(
               valueListenable: sliderBox.listenable(),
               builder: (context, box, widget) {
-                double dataLimitValue = sliderBox.get('dataLimitValueInMB',
-                    defaultValue: 10.0);
-                String dataLimit = dataLimitValue.round() < 1000 ?
-                dataLimitValue.round().toString() + ' MB' :
-                (dataLimitValue.round()/1000).toStringAsFixed(2) + ' GB';
+                double dataLimitValue =
+                    sliderBox.get('dataLimitValueInMB', defaultValue: 10.0);
+                String dataLimit = dataLimitValue.round() < 1000
+                    ? dataLimitValue.round().toString() + ' MB'
+                    : (dataLimitValue.round() / 1000).toStringAsFixed(2) +
+                        ' GB';
                 return AlertDialog(
                   title: Text(
                     'Legen Sie das aktuelle Datenlimit fest, welches von der App in Anspruch genommen werden darf. Aktuell: ' +
@@ -63,9 +63,11 @@ class SettingsPage extends StatelessWidget {
                   content: Slider(
                       activeColor: Colors.lightGreen,
                       inactiveColor: Colors.lightGreen,
-                      value: dataLimitValue > freeDiskSpace*0.9 ? freeDiskSpace*0.9 : dataLimitValue,
+                      value: dataLimitValue > freeDiskSpace * 0.9
+                          ? freeDiskSpace * 0.9
+                          : dataLimitValue,
                       min: 10.0,
-                      max: freeDiskSpace*0.9,
+                      max: freeDiskSpace * 0.9,
                       divisions: 100,
                       label: dataLimit,
                       onChanged: (double value) =>
@@ -73,7 +75,7 @@ class SettingsPage extends StatelessWidget {
                   actions: <Widget>[
                     TextButton(
                       child: Text(
-                        'Abgeschlossen',
+                        'Ok',
                         style: TextStyle(color: Colors.lightGreen),
                       ),
                       onPressed: () {
@@ -267,9 +269,11 @@ class SettingsPage extends StatelessWidget {
                                     children: <TextSpan>[
                                       TextSpan(
                                           text: '  Aktuell: ' +
-                                        (dataLimit < 1000 ?
-                                        dataLimit.toString() + ' MB' :
-                                          (dataLimit/1000).toStringAsFixed(2) + ' GB'),
+                                              (dataLimit < 1000
+                                                  ? dataLimit.toString() + ' MB'
+                                                  : (dataLimit / 1000)
+                                                          .toStringAsFixed(2) +
+                                                      ' GB'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 12.0)),
@@ -303,9 +307,11 @@ class SettingsPage extends StatelessWidget {
                                     /*defining default style is optional */
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text:
-                                          Hive.box('storage')
-                                              .get('oldDataSwitch', defaultValue: true)? '  Zuerst alte Daten runterladen': '  Zuerst neue Daten runterladen',
+                                          text: Hive.box('storage').get(
+                                                  'oldDataSwitch',
+                                                  defaultValue: true)
+                                              ? '  Zuerst alte Daten runterladen'
+                                              : '  Zuerst neue Daten runterladen',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 12.0)),

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
@@ -45,6 +44,8 @@ class MainApp extends StatefulWidget {
   // const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
+  // TODO: MISSING COMMENTARY
+  // something like updates connection state
   static void getConnectionState(BuildContext context) async {
     BoxConnectionState boxConnection = context.read<BoxConnectionState>();
     Connection state = boxConnection.connectionState;
@@ -69,7 +70,6 @@ class MainApp extends StatefulWidget {
       case Connection.SENSORBOX:
         if (name == null)
           boxConnection.disconnected();
-        //"W(G)LAN_f8805106c6"
         else if (name != "Sensorbox") {
           boxConnection.connectedToWifi();
           boxCommunicator.uploadToBackend(context);
@@ -128,7 +128,7 @@ class _MainAppState extends State<MainApp> {
     _timer.cancel();
   }
 
-  List<Widget> _pages = [MyMap(), Home(), FotoLabelPage(Image.asset("assets/dachs.jpeg"), "user")]; //Tasks()];
+  List<Widget> _pages = [MyMap(), Home(), Tasks()];
 
   int _selectedIndex = 1;
   void _onItemTap(int index) {

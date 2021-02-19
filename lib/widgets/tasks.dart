@@ -96,11 +96,13 @@ class _TasksState extends State<Tasks> {
                         },
                       )
                     : Text(
-                        "Glückwunsch, alle Aufgaben wurden erledigt!",
+                        "Für diese Sensorbox sind zurzeit keine Aufgaben zu erledigen. "
+                        "Wir bedanken uns dennoch für Ihre großartige Hilfe "
+                        "und hoffen, dass Sie bald wiederkommen!",
                         textAlign: TextAlign.center,
                       )
                 : Text(
-                    "Verbinden Sie sich mit einer Sensorbox, um Aufgaben zu erhalten.",
+                    "Verbinden Sie sich mit einer Sensorbox, um Aufgaben für diese zu erhalten.",
                     textAlign: TextAlign.center,
                   ),
           ),

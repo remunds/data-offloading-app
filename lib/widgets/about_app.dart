@@ -10,7 +10,11 @@ class AboutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Text _appIdeaAndEmergence = Text(
-      'Im Rahmen des Bachelorpraktikums des Fachbereichs Informatik der TU Darmstadt im Wintersemester 2020/21 wurde eine Gruppe von 5 Studierenden beauftragt eine Smartphoneapplikation zur drahtlosen Übertragung unserer Sensordaten auf unsere Server zu entwickeln. Dabei ist in mühevoller Arbeit diese Applikation enstanden.',
+      'Im Rahmen des Bachelorpraktikums des Fachbereichs Informatik der TU Darmstadt '
+      'im Wintersemester 2020/21 wurde eine Gruppe von 5 Studierenden beauftragt, '
+      'eine Smartphoneapplikation zur drahtlosen Übertragung '
+      'von Sensordaten auf unsere Server zu entwickeln. '
+      'Dabei ist in mühevoller Arbeit diese Applikation enstanden.',
       style: TextStyle(
           fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
     );

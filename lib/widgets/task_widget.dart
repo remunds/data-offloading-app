@@ -5,6 +5,7 @@ import 'package:data_offloading_app/Screens/foto_capturing.dart';
 import 'package:data_offloading_app/Screens/foto_labelling.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../data/task.dart';
 import '../provider/tasklist_state.dart';
 import 'package:provider/provider.dart';
@@ -66,6 +67,14 @@ class _TaskWidgetState extends State<TaskWidget> {
                     BoxCommunicator().setLabel(id, selectedLabels);
                     _deleteTask(widget.task);
                     Stats.increaseTask("imageTask");
+                    Fluttertoast.showToast(
+                        msg: "Super, Aufgabe erledigt!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   } catch (e) {
                     print(e);
                   }
@@ -95,6 +104,14 @@ class _TaskWidgetState extends State<TaskWidget> {
                       .saveUserImage(img["pathToImg"], img["label"]);
                   _deleteTask(widget.task);
                   Stats.increaseTask("imageTask");
+                  Fluttertoast.showToast(
+                      msg: "Super, Aufgabe erledigt!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 } catch (e) {
                   print(e);
                 }
@@ -117,6 +134,14 @@ class _TaskWidgetState extends State<TaskWidget> {
           onPressed: () {
             _deleteTask(widget.task);
             Stats.increaseTask("cleaningTask");
+            Fluttertoast.showToast(
+                msg: "Super, Aufgabe erledigt!",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
           },
           textColor: Colors.white,
           padding: EdgeInsets.all(0.0),

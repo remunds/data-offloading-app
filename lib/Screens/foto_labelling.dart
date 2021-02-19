@@ -1,8 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:item_selector/item_selector.dart';
-
 import 'package:flutter/services.dart';
 
 final List<String> labelSetTrees = [
@@ -28,7 +24,6 @@ class FotoLabelPage extends StatefulWidget {
   final Image img;
   final String takenBy;
 
-
   FotoLabelPage(this.img, this.takenBy) {
     labelSet = takenBy == "box" ? labelSetAnimals : labelSetTrees;
   }
@@ -38,12 +33,10 @@ class FotoLabelPage extends StatefulWidget {
 }
 
 class _FotoLabelPageState extends State<FotoLabelPage> {
-
   List<String> _selectedLabels = [];
 
   @override
   Widget build(BuildContext context) {
-
     Widget gridViewSelection = GridView.count(
       childAspectRatio: 4,
       crossAxisCount: 3,
@@ -51,7 +44,7 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
         return GestureDetector(
           onTap: () {
             setState(() {
-              if (_selectedLabels.contains(label)){
+              if (_selectedLabels.contains(label)) {
                 _selectedLabels.remove(label);
               } else {
                 _selectedLabels.add(label);
@@ -113,8 +106,8 @@ Widget buildActionButton(BuildContext context, List<String> selectedLabels) {
               builder: (BuildContext buttonContext) {
                 return AlertDialog(
                   title: Text("Du hast kein Label ausgewählt."),
-                  content: Text(
-                      "Willst du abbrechen oder es nochmal probieren?"),
+                  content:
+                      Text("Willst du abbrechen oder es nochmal probieren?"),
                   actions: [
                     FlatButton(
                         onPressed: () {
@@ -141,8 +134,6 @@ Widget buildActionButton(BuildContext context, List<String> selectedLabels) {
       });
 }
 
-
-
 class GridViewItem extends StatelessWidget {
   final bool _isSelected;
   final String _label;
@@ -157,9 +148,7 @@ class GridViewItem extends StatelessWidget {
         color: _isSelected ? Colors.green : Colors.white,
         elevation: _isSelected ? 5 : 10,
         child: GridTile(
-          child:
-            Center(child: Text(_label, textAlign: TextAlign.center)),
-        )
-    );
+          child: Center(child: Text(_label, textAlign: TextAlign.center)),
+        ));
   }
 }

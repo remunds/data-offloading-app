@@ -415,7 +415,8 @@ class BoxCommunicator {
   }
 
   void setLabel(var id, List<String> labels) async {
-    String labelsStr = labels.toString().substring(1, labels.toString().length-1);
+    String labelsStr =
+        labels.toString().substring(1, labels.toString().length - 1);
 
     var body = {'id': id, 'label': labelsStr};
     final response = await http.post(boxIP + "/api/putLabel",
@@ -464,7 +465,8 @@ class BoxCommunicator {
   }
 
   void saveUserImage(var imgPath, List<String> labels) async {
-    String labelsStr = labels.toString().substring(1, labels.toString().length-1);
+    String labelsStr =
+        labels.toString().substring(1, labels.toString().length - 1);
 
     var req =
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));

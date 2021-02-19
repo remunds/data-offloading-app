@@ -3,29 +3,44 @@ import 'package:flutter/painting.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutNature40 extends StatelessWidget {
+  final TextStyle textStyle = TextStyle(
+      fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54);
+
   @override
   Widget build(BuildContext context) {
     Text _nature40 = Text(
-      'Natur 4.0 verbindet Wissenschaftler/innen der Geographie, Mathematik, Ökologie und Informatik mit naturschutzfachlichen Experten/-innen, Schulen und Verbänden.  ',
-      style: TextStyle(
-          fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
-    );
+        'Natur 4.0 verbindet Wissenschaftler*innen der Geographie, Mathematik, '
+        'Ökologie und Informatik mit naturschutzfachlichen Expert*innen, Schulen und Verbänden.  ',
+        style: textStyle);
     Text _nature40StartingPoint = Text(
-      'Naturschutzstrategien erfordern die Beobachtung und Bewertung von Landschaft. Expertenerhebungen müssen hier Kompromisse zwischen Detailgrad, räumlicher Abdeckung und zeitlicher Wiederholung eingehen, die auch durch Rückgriff auf flugzeug- oder satellitengestützte Fernerkundungsansätze nur bedingt aufgelöst werden. Dies schränkt differenzierte naturschutzfachliche Planungs- und Reaktionsmöglichkeiten ein.   ',
-      style: TextStyle(
-          fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
-    );
+        'Naturschutzstrategien erfordern die Beobachtung und Bewertung von Landschaft. '
+        'Expert*innenerhebungen müssen hier Kompromisse zwischen Detailgrad, '
+        'räumlicher Abdeckung und zeitlicher Wiederholung eingehen, '
+        'die auch durch Rückgriff auf flugzeug- oder satellitengestützte '
+        'Fernerkundungsansätze nur bedingt aufgelöst werden. '
+        'Dies schränkt differenzierte naturschutzfachliche Planungs- und Reaktionsmöglichkeiten ein.   ',
+        style: textStyle);
     Text _nature40Goals = Text(
-      'Ziel des LOEWE-Schwerpunkts Natur 4.0 ist die Entwicklung eines Prototyps von Natur 4.0, einem modularen Umweltmonitoringsystem zur hoch aufgelösten Beobachtung von naturschutzrelevanten Arten, Lebensräumen und Prozessen. Natur 4.0 basiert auf der Kombination von naturschutzfachlichen Expertenaufnahmen und vernetzten Fernerkundungs- und Umweltsensoren, die an ferngesteuerten Fluggeräten, fahrenden Robotern und Tieren angebracht sowie in bildungswissenschaftlichen Projekten eingesetzt werden. Zusammen mit leistungsfähigen Datenintegrations- und Datenanalysemethoden ermöglicht Natur 4.0 die differenzierte und effektive Beobachtung von Landschaft. Die erfassten Zeitreihen dienen zudem der Entwicklung von Frühwarnindikatoren. Natur 4.0 geht damit einen neuen Weg im Bereich der flächendeckenden Umweltbeobachtung. Es verdichtet die in situ Untersuchungen von Experten und nutzt die nicht-reguläre Datenerhebung mit mobilen Plattformen zur Modellierung naturschutzfachlicher Informationen in Form von regulären, kleinräumig differenzierten Rasterkarten.',
-      style: TextStyle(
-          fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
-    );
+        'Ziel des LOEWE-Schwerpunkts Natur 4.0 ist die Entwicklung eines Prototyps von Natur 4.0, '
+        'einem modularen Umweltmonitoringsystem zur hoch aufgelösten Beobachtung '
+        'von naturschutzrelevanten Arten, Lebensräumen und Prozessen. '
+        'Natur 4.0 basiert auf der Kombination von naturschutzfachlichen Expert*innenaufnahmen '
+        'und vernetzten Fernerkundungs- und Umweltsensoren, die an ferngesteuerten Fluggeräten, '
+        'fahrenden Robotern und Tieren angebracht sowie in bildungswissenschaftlichen Projekten eingesetzt werden. '
+        'Zusammen mit leistungsfähigen Datenintegrations- und Datenanalysemethoden '
+        'ermöglicht Natur 4.0 die differenzierte und effektive Beobachtung von Landschaft. '
+        'Die erfassten Zeitreihen dienen zudem der Entwicklung von Frühwarnindikatoren. '
+        'Natur 4.0 geht damit einen neuen Weg im Bereich der flächendeckenden Umweltbeobachtung. '
+        'Es verdichtet die in situ Untersuchungen von Expert*innen und nutzt '
+        'die nicht-reguläre Datenerhebung mit mobilen Plattformen zur Modellierung '
+        'naturschutzfachlicher Informationen in Form von regulären, kleinräumig differenzierten Rasterkarten.',
+        style: textStyle);
 
     Text _nature40ContactAndMore = Text(
-      'Einen detailierteren Überblick über das Projekt, seine Teilprojekte und die verwendete Sensorik finden Sie auf unserer Website, welche unten verlinkt ist. Bei Interesse, Fragen und Anregungen schreiben Sie bitte eine E-Mail an unsere Projektkoordination.',
-      style: TextStyle(
-          fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
-    );
+        'Einen detailierteren Überblick über das Projekt, seine Teilprojekte und die verwendete Sensorik '
+        'finden Sie auf unserer Website, welche unten verlinkt ist. Bei Interesse, '
+        'Fragen und Anregungen schreiben Sie bitte eine E-Mail an unsere Projektkoordination.',
+        style: textStyle);
 
     _launchNature40() async {
       const url = 'https://www.uni-marburg.de/de/fb19/natur40';
