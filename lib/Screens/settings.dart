@@ -14,9 +14,6 @@ import 'package:disk_space/disk_space.dart';
 double diskSpace;
 
 class SettingsPage extends StatelessWidget {
-  Future<double> getFreeDiskSpace() async {
-    return await DiskSpace.getFreeDiskSpace;
-  }
 
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
@@ -34,7 +31,7 @@ class SettingsPage extends StatelessWidget {
     //Dialog shown when user wants to change download data limit
     Future<void> _showDataLimitDialog() async {
       Box sliderBox = await Hive.openBox('storage');
-      double freeDiskSpace = await getFreeDiskSpace();
+      double freeDiskSpace = await DiskSpace.getFreeDiskSpace;
       return await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
