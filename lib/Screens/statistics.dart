@@ -49,6 +49,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   ),
                 ],
               ),
+              Divider(
+                thickness: 2,
+              ),
               LevelDisplay(),
               Expanded(
                 child: GridView.count(
