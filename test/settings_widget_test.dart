@@ -33,7 +33,6 @@ void main() async {
     await tester.tap(dataLimitButton);
     await tester.pump(); //rebuilds the widget
     expect(find.byType(Text), findsWidgets);
-    expect(find.byType(Slider), findsOneWidget);
     expect(find.byType(Switch), findsWidgets);
     expect(find.byType(FlatButton), findsWidgets);
   });
