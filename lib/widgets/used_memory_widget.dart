@@ -16,18 +16,62 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
     return _makeMemoryTile();
   }
 
+  Future<void> _showMemoryInfo() async {
+    double verticalPadding = MediaQuery.of(context).size.height * 0.3;
+    double horizontalPadding = MediaQuery.of(context).size.width * 0.2;
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Was sehe ich hier?',
+              style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18.0),
+            ),
+            content: Center(
+                child: Text(
+                    "Der Speicher, der hier abgebildet wird zeigt an wie viel vom freigegebenen Speicher frei beziehungsweise belegt ist.")),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(color: Colors.lightGreen),
+                  ))
+            ],
+            insetPadding: EdgeInsets.symmetric(
+                vertical: verticalPadding * 0.95,
+                horizontal: horizontalPadding),
+          );
+        });
+  }
+
   //builder for the memory piechart
   Card _makeMemoryTile() {
     return Card(
         child: Column(
       children: [
-        Center(
-          child: Text(
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 8,
+          ),
+          Center(
+              child: Text(
             "Freier Speicher",
             style: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
-          ),
-        ),
+          )),
+          IconButton(
+            icon: Icon(Icons.info),
+            onPressed: () {
+              _showMemoryInfo();
+            },
+          )
+        ]),
         Expanded(
           //a future builder is used to deal with the asynchronos behavior of _buildMemorySections()
           child: FutureBuilder(
