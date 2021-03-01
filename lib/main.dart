@@ -44,6 +44,8 @@ class MainApp extends StatefulWidget {
   // const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
+  // TODO: MISSING COMMENTARY
+  // something like updates connection state
   static void getConnectionState(BuildContext context) async {
     BoxConnectionState boxConnection = context.read<BoxConnectionState>();
     Connection state = boxConnection.connectionState;
@@ -68,7 +70,6 @@ class MainApp extends StatefulWidget {
       case Connection.SENSORBOX:
         if (name == null)
           boxConnection.disconnected();
-        //"W(G)LAN_f8805106c6"
         else if (name != "Sensorbox") {
           boxConnection.connectedToWifi();
           boxCommunicator.uploadToBackend(context);

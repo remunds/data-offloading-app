@@ -43,6 +43,7 @@ dependencies:
   fl_chart: ^0.12.2
   confetti: ^0.5.4+1
   fluttertoast: ^7.1.6
+  disk_space: ^0.0.3
 
 
 

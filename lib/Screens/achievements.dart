@@ -30,7 +30,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
     double _descriptionSize = MediaQuery.of(context).size.width * 0.035;
-    double _titlesize = MediaQuery.of(context).size.width * 0.048;
+    double _titleSize = MediaQuery.of(context).size.width * 0.048;
     Color _lockedColor = Colors.black45;
     Color _unlockedColor = Colors.black;
     Color _checkColor = Colors.lightGreen;
@@ -80,7 +80,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                             Text(
                               title,
                               style: TextStyle(
-                                  fontSize: _titlesize,
+                                  fontSize: _titleSize,
                                   fontWeight: FontWeight.bold,
                                   color:
                                       unlocked ? _unlockedColor : _lockedColor),

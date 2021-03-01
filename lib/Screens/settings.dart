@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:disk_space/disk_space.dart';
+
+double diskSpace;
 
 class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -27,20 +30,23 @@ class SettingsPage extends StatelessWidget {
     //Dialog shown when user wants to change download data limit
     Future<void> _showDataLimitDialog() async {
       Box sliderBox = await Hive.openBox('storage');
-      return showDialog<void>(
+      double freeDiskSpace = await DiskSpace.getFreeDiskSpace;
+      return await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return ValueListenableBuilder(
               valueListenable: sliderBox.listenable(),
               builder: (context, box, widget) {
+                double dataLimitValue =
+                    sliderBox.get('dataLimitValueInMB', defaultValue: 10.0);
+                String dataLimit = dataLimitValue.round() < 1000
+                    ? dataLimitValue.round().toString() + ' MB'
+                    : (dataLimitValue.round() / 1000).toStringAsFixed(2) +
+                        ' GB';
                 return AlertDialog(
                   title: Text(
                     'Legen Sie das aktuelle Datenlimit fest, welches von der App in Anspruch genommen werden darf. Aktuell: ' +
-                        sliderBox
-                            .get('dataLimitValueInMB', defaultValue: 10.0)
-                            .round()
-                            .toString() +
-                        ' MB',
+                        dataLimit,
                     style: TextStyle(
                         color: Colors.black87,
                         fontWeight: FontWeight.w600,
@@ -53,22 +59,19 @@ class SettingsPage extends StatelessWidget {
                   content: Slider(
                       activeColor: Colors.lightGreen,
                       inactiveColor: Colors.lightGreen,
-                      value: sliderBox.get('dataLimitValueInMB',
-                          defaultValue: 10.0),
+                      value: dataLimitValue > freeDiskSpace * 0.9
+                          ? freeDiskSpace * 0.9
+                          : dataLimitValue,
                       min: 10.0,
-                      max: 10000.0,
+                      max: freeDiskSpace * 0.9,
                       divisions: 100,
-                      label: sliderBox
-                              .get('dataLimitValueInMB', defaultValue: 10.0)
-                              .round()
-                              .toString() +
-                          ' MB',
+                      label: dataLimit,
                       onChanged: (double value) =>
                           {sliderBox.put('dataLimitValueInMB', value)}),
                   actions: <Widget>[
                     TextButton(
                       child: Text(
-                        'Abgeschlossen',
+                        'Ok',
                         style: TextStyle(color: Colors.lightGreen),
                       ),
                       onPressed: () {
@@ -192,6 +195,9 @@ class SettingsPage extends StatelessWidget {
       body: ValueListenableBuilder(
           valueListenable: Hive.box('storage').listenable(),
           builder: (context, box, widget) {
+            int dataLimit = Hive.box('storage')
+                .get('dataLimitValueInMB', defaultValue: 10.0)
+                .round();
             return SafeArea(
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -259,12 +265,11 @@ class SettingsPage extends StatelessWidget {
                                     children: <TextSpan>[
                                       TextSpan(
                                           text: '  Aktuell: ' +
-                                              Hive.box('storage')
-                                                  .get('dataLimitValueInMB',
-                                                      defaultValue: 10.0)
-                                                  .round()
-                                                  .toString() +
-                                              ' MB',
+                                              (dataLimit < 1000
+                                                  ? dataLimit.toString() + ' MB'
+                                                  : (dataLimit / 1000)
+                                                          .toStringAsFixed(2) +
+                                                      ' GB'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 12.0)),
@@ -298,8 +303,11 @@ class SettingsPage extends StatelessWidget {
                                     /*defining default style is optional */
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text:
-                                              '  Zuerst alte Daten runterladen',
+                                          text: Hive.box('storage').get(
+                                                  'oldDataSwitch',
+                                                  defaultValue: true)
+                                              ? '  Zuerst alte Daten runterladen'
+                                              : '  Zuerst neue Daten runterladen',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 12.0)),

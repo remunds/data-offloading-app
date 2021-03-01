@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:item_selector/item_selector.dart';
-
 import 'package:flutter/services.dart';
 
-final labelSetTrees = [
+final List<String> labelSetTrees = [
   "Tanne",
   "Fichte",
   "Laubbaum",
@@ -13,16 +11,14 @@ final labelSetTrees = [
   "Kastanie",
   "Anderer Baum"
 ];
-final labelSetAnimals = [
+final List<String> labelSetAnimals = [
   "Dachs",
   "Reh",
   "Fuchs",
   "Sonstiges",
   "Ich weiß nicht"
 ];
-var labelSet;
-
-int selectedLabel = -1;
+List<String> labelSet;
 
 class FotoLabelPage extends StatefulWidget {
   final Image img;
@@ -37,15 +33,34 @@ class FotoLabelPage extends StatefulWidget {
 }
 
 class _FotoLabelPageState extends State<FotoLabelPage> {
+  List<String> _selectedLabels = [];
+
   @override
   Widget build(BuildContext context) {
+    Widget gridViewSelection = GridView.count(
+      childAspectRatio: 4,
+      crossAxisCount: 3,
+      children: labelSet.map((label) {
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (_selectedLabels.contains(label)) {
+                _selectedLabels.remove(label);
+              } else {
+                _selectedLabels.add(label);
+              }
+            });
+          },
+          child: GridViewItem(label, _selectedLabels.contains(label)),
+        );
+      }).toList(),
+    );
+
     // disable auto rotation of screen
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
 
-    // on new build, reset label selection
-    selectedLabel = -1;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -67,87 +82,73 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
                 padding: EdgeInsets.all(10),
-                child: GridViewPage(),
+                child: gridViewSelection,
               ),
             ),
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.done_all),
-          backgroundColor: Colors.green,
-          onPressed: () {
-            // if there is no label selected, show dialog if user wants to
-            // cancel the process or go back to labelling
-            if (selectedLabel == -1) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext buttonContext) {
-                    return AlertDialog(
-                      title: Text("Du hast kein Label ausgewählt."),
-                      content: Text(
-                          "Willst du abbrechen oder es nochmal probieren?"),
-                      actions: [
-                        FlatButton(
-                            onPressed: () {
-                              // close dialog window and go back to labelling
-                              Navigator.of(buttonContext).pop();
-                            },
-                            child: Text("Nochmal")),
-                        FlatButton(
-                            onPressed: () {
-                              // close dialog window and go back to task page
-                              // without setting a label
-                              Navigator.of(buttonContext).pop();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text("Abbrechen")),
-                      ],
-                    );
-                  });
-            } else {
-              // go back to tasks page and return the selected label
-              Navigator.pop(context, labelSet[selectedLabel]);
-            }
-            // write label to database
-          }),
+      floatingActionButton: buildActionButton(context, _selectedLabels),
     );
   }
 }
 
-// taken from the item selector package example
-Widget buildGridItem(BuildContext context, int index, bool selected) {
-  if (selected) {
-    selectedLabel = index;
-  }
-  return Card(
-      margin: EdgeInsets.all(3),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: selected ? Colors.green : Colors.white,
-      elevation: selected ? 5 : 10,
-      child: GridTile(
-        child:
-            Center(child: Text(labelSet[index], textAlign: TextAlign.center)),
-      ));
+Widget buildActionButton(BuildContext context, List<String> selectedLabels) {
+  return FloatingActionButton(
+      child: Icon(Icons.done_all),
+      backgroundColor: Colors.green,
+      onPressed: () {
+        // if there is no label selected, show dialog if user wants to
+        // cancel the process or go back to labelling
+        if (selectedLabels.isEmpty) {
+          showDialog(
+              context: context,
+              builder: (BuildContext buttonContext) {
+                return AlertDialog(
+                  title: Text("Du hast kein Label ausgewählt."),
+                  content:
+                      Text("Willst du abbrechen oder es nochmal probieren?"),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          // close dialog window and go back to labelling
+                          Navigator.of(buttonContext).pop();
+                        },
+                        child: Text("Nochmal")),
+                    FlatButton(
+                        onPressed: () {
+                          // close dialog window and go back to task page
+                          // without setting a label
+                          Navigator.of(buttonContext).pop();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Abbrechen")),
+                  ],
+                );
+              });
+        } else {
+          // go back to tasks page and return the selected label
+          Navigator.pop(context, selectedLabels);
+        }
+        // write label to database
+      });
 }
 
-class GridViewPage extends StatelessWidget {
+class GridViewItem extends StatelessWidget {
+  final bool _isSelected;
+  final String _label;
+
+  GridViewItem(this._label, this._isSelected);
+
   @override
   Widget build(BuildContext context) {
-    final selection = ItemSelection();
-    return ItemSelectionController(
-      selection: selection,
-      selectionMode: ItemSelectionMode.single,
-      child: GridView.count(
-        childAspectRatio: 2.5,
-        crossAxisCount: 4, // number of label in a row
-        children: List.generate(labelSet.length, (int index) {
-          return ItemSelectionBuilder(
-            index: index,
-            builder: buildGridItem,
-          );
-        }),
-      ),
-    );
+    return Card(
+        margin: EdgeInsets.all(3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: _isSelected ? Colors.green : Colors.white,
+        elevation: _isSelected ? 5 : 10,
+        child: GridTile(
+          child: Center(child: Text(_label, textAlign: TextAlign.center)),
+        ));
   }
 }

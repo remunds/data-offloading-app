@@ -414,15 +414,18 @@ class BoxCommunicator {
     }
   }
 
-  void setLabel(var id, String label) async {
-    var body = {'id': id, 'label': label};
+  void setLabel(var id, List<String> labels) async {
+    String labelsStr =
+        labels.toString().substring(1, labels.toString().length - 1);
+
+    var body = {'id': id, 'label': labelsStr};
     final response = await http.post(boxIP + "/api/putLabel",
         body: json.encode(body), headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      print("successfully saved label");
+      print("successfully saved labels");
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -461,12 +464,15 @@ class BoxCommunicator {
     return posList;
   }
 
-  void saveUserImage(var imgPath, var label) async {
+  void saveUserImage(var imgPath, List<String> labels) async {
+    String labelsStr =
+        labels.toString().substring(1, labels.toString().length - 1);
+
     var req =
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
 
     req.files.add(await http.MultipartFile.fromPath('data', imgPath));
-    req.fields['label'] = label;
+    req.fields['label'] = labelsStr;
     // set type to user to distinguish from box images
     req.fields['takenBy'] = 'user';
 
