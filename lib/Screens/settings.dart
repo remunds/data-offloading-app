@@ -251,6 +251,7 @@ class SettingsPage extends StatelessWidget {
                           ),
                           Card(
                               child: FlatButton(
+                            key: Key('Set Data Limit'),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
