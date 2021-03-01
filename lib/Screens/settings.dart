@@ -14,7 +14,6 @@ import 'package:disk_space/disk_space.dart';
 double diskSpace;
 
 class SettingsPage extends StatelessWidget {
-
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
