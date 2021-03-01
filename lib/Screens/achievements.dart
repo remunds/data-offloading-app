@@ -29,7 +29,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
-    double _descriptionSize = MediaQuery.of(context).size.width * 0.035;
+    double _descriptionSize = MediaQuery.of(context).size.width * 0.034;
     double _titleSize = MediaQuery.of(context).size.width * 0.048;
     Color _lockedColor = Colors.black45;
     Color _unlockedColor = Colors.black;
@@ -61,13 +61,13 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 Column(
                   children: [
                     SizedBox(
-                        height: MediaQuery.of(context).size.width * 0.09,
-                        width: MediaQuery.of(context).size.width * 0.09,
+                        height: MediaQuery.of(context).size.width * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.08,
                         child: achIcon)
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.01,
+                  width: MediaQuery.of(context).size.width * 0.02,
                 ),
                 Column(children: [
                   SizedBox(
@@ -105,8 +105,8 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 Column(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.09,
+                      height: MediaQuery.of(context).size.width * 0.08,
+                      width: MediaQuery.of(context).size.width * 0.08,
                       child: unlocked
                           ? Icon(
                               FontAwesomeIcons.check,
