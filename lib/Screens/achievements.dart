@@ -1,3 +1,4 @@
+import 'package:data_offloading_app/widgets/level_display_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
@@ -182,6 +183,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   Divider(
                     thickness: 2,
                   ),
+                  LevelDisplay(),
                   Expanded(
                     child: ListView(
                       scrollDirection: Axis.vertical,
