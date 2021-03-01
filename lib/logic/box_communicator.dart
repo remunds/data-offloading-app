@@ -464,10 +464,9 @@ class BoxCommunicator {
     return posList;
   }
 
-  void saveUserImage(var imgPath, List<String> labels) async {
+  void saveUserImage(var imgPath, var labels, var luxValue) async {
     String labelsStr =
         labels.toString().substring(1, labels.toString().length - 1);
-
     var req =
         http.MultipartRequest('POST', Uri.parse(boxIP + "/api/saveUserImage"));
 
@@ -475,9 +474,8 @@ class BoxCommunicator {
     req.fields['label'] = labelsStr;
     // set type to user to distinguish from box images
     req.fields['takenBy'] = 'user';
-
+    req.fields['luxValue'] = luxValue;
     final response = await req.send();
-
     if (response.statusCode == 200) {
       print("successfully saved user image with label");
     } else {

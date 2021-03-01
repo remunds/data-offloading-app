@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
+  disk_space:
+    dependency: "direct main"
+    description:
+      name: disk_space
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   equatable:
     dependency: transitive
     description:
@@ -282,6 +289,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
+  light:
+    dependency: "direct main"
+    description:
+      name: light
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   location:
     dependency: transitive
     description:
