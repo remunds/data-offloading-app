@@ -14,7 +14,7 @@ public class MainActivity extends FlutterActivity {
  @Override
  protected void onCreate(Bundle savedInstanceState) {
   super.onCreate(savedInstanceState);
- GeneratedPluginRegistrant.registerWith(this);
+  GeneratedPluginRegistrant.registerWith(this);
 
   if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ){
    startForegroundService(forService);
