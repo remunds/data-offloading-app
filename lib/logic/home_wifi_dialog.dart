@@ -12,8 +12,8 @@ class HomeWifiDialog {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Du bist mit einem unbekannten Wifi verbunden."),
-            content: Text("Möchtest du dieses Wifi zum Datenupload verwenden?"),
+            title: Text("Sie sind mit einem unbekannten Wifi verbunden."),
+            content: Text("Möchten Sie dieses Wifi zum Datenupload verwenden?"),
             actions: [
               FlatButton(
                   onPressed: () {

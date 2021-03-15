@@ -65,7 +65,7 @@ class Privacy extends StatelessWidget {
                         child: Column(
                           children: <Widget>[
                             Text(
-                              'Für technische Informationen zur Applikation, besuchen sie das GitHub Repository oder wenden Sie sich per E-Mail an die Entwickler.',
+                              'Für technische Informationen zur Applikation, besuchen sie das GitHub Repository oder wenden Sie sich per E-Mail an das Entwicklerteam.',
                               style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,

@@ -18,12 +18,14 @@ class HowToUse extends StatelessWidget {
         'Dabei ist es unwichtig, wie lange Sie mit der Sensorbox verbunden sind. '
         'Bitte stellen Sie vor dem Verbinden sicher, dass sie das Speicherlimit, '
         'welches der App zur Verfügung steht, in den Einstellungen auf ihre Wünsche anpassen. '
-        'Wenn das Limit erreicht ist werden keine Daten mehr heruntergeladen. ',
+        'Wenn das Limit erreicht ist, werden keine Daten mehr heruntergeladen. ',
         style: textStyle);
     Text _usage2 = Text(
       'Wenn Sie nun mit einem WLAN-Netzwerk, welches über eine Internetanbindung '
-      'verfügt, verbunden sind, werden die Sensordaten auf Ihrem Gerät '
-      'automatisch auf einen Server geladen und die Daten auf ihrem Gerät gelöscht.',
+      'verfügt, verbunden sind, werden Sie gefragt, ob Sie dieses WLAN zum Datenupload verwenden möchten. '
+      'Stimmen Sie zu, werden die Sensordaten auf Ihrem Gerät '
+      'automatisch auf einen Server geladen und die Daten auf ihrem Gerät gelöscht. '
+      'Das WLAN wird abgespeichert, so dass Sie beim nächsten Verbinden nicht erneut zustimmen müssen.',
       style: textStyle,
     );
     Text _usage3 = Text(

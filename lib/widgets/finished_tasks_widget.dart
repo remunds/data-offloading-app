@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
-//create the card with statistics for fullfilled tasks
+//create the card with statistics for fulfilled tasks
 class FinishedTasksDisplay extends StatefulWidget {
   @override
   _FinishedTasksDisplayState createState() => _FinishedTasksDisplayState();
@@ -28,7 +28,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
   Widget build(BuildContext context) {
     //a FutureBuilder is used to deal with the asynchronous behavior of the Hive
     return FutureBuilder(
-        future: _selectPieChartorError(),
+        future: _selectPieChart(),
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             //snapshot.data is the widget of the future returned by _makeFavBoxTile()
@@ -39,16 +39,16 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
         });
   }
 
-  //if no tasks have been done the selector selects a message to be displayed. Otherwise the piechart is dsisplayed. This is used to prevent rendering errors for a piechart with no value-entries.
-  Future<Widget> _selectPieChartorError() async {
+  //if no tasks have been done the selector selects a message to be displayed. Otherwise the pie chart is displayed. This is used to prevent rendering errors for a piechart with no value-entries.
+  Future<Widget> _selectPieChart() async {
     Box storage = await Hive.openBox('storage');
-    //if the user hasn't finished any tasks the piechart has no values to display. Therefore the message "Du hast bisher noch keine Tasks erfuellt" will be displayed
+    //if the user hasn't finished any tasks the pie chart has no values to display. Therefore the message "Du hast bisher noch keine Tasks erfuellt" will be displayed
     if (storage.get('totalFinishedTasks', defaultValue: 0) == 0) {
       return Card(
-          child:
-              Center(child: Text("Du hast bisher noch keine Tasks erfüllt")));
+          child: Center(
+              child: Text("Sie haben bisher noch keine Tasks erfüllt.")));
     } else {
-      //if the user has finished at least one task the piechart is displayed.
+      //if the user has finished at least one task the pie chart is displayed.
       return _makeTaskTile();
     }
   }
@@ -56,7 +56,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
   //function to build the indicators in the bottom left corner.
   List<ChartIndicator> _buildIndicators() {
     List<ChartIndicator> indicators = [];
-    //colorIndex is used to select the approriate color of the colorList.
+    //colorIndex is used to select the appropriate color of the colorList.
     int colorIndex = 0;
     for (int taskIndex = 0; taskIndex < taskList.length; taskIndex++) {
       //when there are more tasks than colors the list is repeated from the beginning
@@ -82,7 +82,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
           ),
         ),
         Expanded(
-            //a future builder is used to deal with the asynchronos behavior of _buildTasktions()
+            //a future builder is used to deal with the asynchronous behavior of _buildTaskSections()
             child: FutureBuilder(
           future: _buildTaskSections(),
           builder:
@@ -120,7 +120,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     ));
   }
 
-  //build sections for the fullfilled tasks piechart
+  //build sections for the fulfilled tasks pie chart
   Future<List<PieChartSectionData>> _buildTaskSections() async {
     Stats.openBox();
     //read Total number of tasks here
@@ -132,15 +132,15 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     int colorIndex = 0;
     //bool if the current part of the pie chart is touched or not
     bool isTouched;
-    //fontsize of the touched part
+    //font size of the touched part
     double fontSize;
     //radius of the touched part
     double radius;
     //this var stores how many times a certain task has been done by the user
     int numOfTask;
-    //value of the part of the piechart
+    //value of the part of the pie chart
     double value;
-    //percentage displayed of the part in the piechart
+    //percentage displayed of the part in the pie chart
     String percentage;
     for (int taskIndex = 0; taskIndex < taskList.length; taskIndex++) {
       isTouched = taskIndex == _touchedIndex;

@@ -17,7 +17,7 @@ class Stats {
     box = await Hive.openBox('storage');
   }
 
-  //a wrapper to set the datafield visitedBoxes of the Hive
+  //a wrapper to set the data field visitedBoxes of the Hive
   static void setVisitedBoxes(List<dynamic> boxes) {
     box.put('visitedBoxes', boxes);
   }
@@ -46,7 +46,7 @@ class Stats {
     return box.get('dataLimitValue', defaultValue: 10.0);
   }
 
-  //this function returns the most frequenlty visited box. In contrary to getTop3Boxes(Box box) only on box-id is returned
+  //this function returns the most frequently visited box. In contrary to getTop3Boxes(Box box) only on box-id is returned
   static String mostFrequentBox(List<dynamic> list) {
     if (list.isEmpty) {
       return "";
@@ -57,9 +57,11 @@ class Stats {
             : j);
   }
 
-  //this function returns the most visited sensor boxes. The first entry in the returned list is the most frequently visited box and so on.
+  // This function returns the most visited sensor boxes.
+  // The first entry in the returned list is the most frequently visited box and so on.
   static List<dynamic> getMostFrequentlyVisitedBoxes() {
-    //this operation writes all values from the list of already visited boxes to a new list. This is necessary because otherwise the '=' operator just copies the pointer to the list. This function however needs a copy.
+    // This operation writes all values from the list of already visited boxes to a new list.
+    // This is necessary because otherwise the '=' operator just copies the pointer to the list. This function however needs a copy.
     List<dynamic> boxes = []..addAll(Stats.getVisitedBoxes());
     List<dynamic> top3 = [];
     for (int i = 0; i < 3; i++) {
@@ -69,16 +71,17 @@ class Stats {
     return top3;
   }
 
-  //this function returns how many times a given box a has been visited
+  // This function returns how many times a given box a has been visited
   static double getFrequency(String boxid, List<dynamic> visitedBoxes) {
     if (boxid == "1st" || boxid == "2nd" || boxid == "3rd") {
       return 0;
     }
     Map map = Map();
-    //this operation iterates over the visitedBoxes list and counts the occurences of every element. The results are written to a ma p which maps the boxid as a key to its frequency as a value.
+    // This operation iterates over the visitedBoxes list and counts the occurrences of every element.
+    // The results are written to a ma p which maps the box id as a key to its frequency as a value.
     visitedBoxes
         .forEach((x) => map[x] = !map.containsKey(x) ? (1) : (map[x] + 1));
-    //get the value to the key boxid of the map
+    //get the value to the key box id of the map
     int freq = map[boxid];
     return freq.toDouble();
   }
@@ -111,22 +114,22 @@ class Stats {
     resetVisitedBoxes();
   }
 
-  //a wrapper to get the datafield level of the Hive
+  //a wrapper to get the data field level of the Hive
   static int getLevel() {
     return box.get('level', defaultValue: 1);
   }
 
-  //a wrapper to set the datafield level of the Hive
+  //a wrapper to set the data field level of the Hive
   static void setLevel(int level) {
     box.put('level', level);
   }
 
-  //a wrapper to get the datafield progress of the Hive
+  //a wrapper to get the data field progress of the Hive
   static double getProgress() {
     return box.get('progress', defaultValue: 0.0);
   }
 
-  //a wrapper to set the datafield progress of the Hive
+  //a wrapper to set the data field progress of the Hive
   static void setProgress(double progress) {
     box.put('progress', progress);
   }

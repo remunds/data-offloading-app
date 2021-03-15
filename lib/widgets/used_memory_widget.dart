@@ -31,8 +31,8 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
                   fontSize: 18.0),
             ),
             content: Center(
-                child: Text(
-                    "Der Speicher, der hier abgebildet wird zeigt an wie viel vom freigegebenen Speicher frei beziehungsweise belegt ist.")),
+                child: Text("Der Speicher, der hier abgebildet wird, zeigt an,"
+                    " wie viel vom freigegebenen Speicher frei beziehungsweise belegt ist.")),
             actions: [
               TextButton(
                   onPressed: () {
@@ -50,7 +50,7 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
         });
   }
 
-  //builder for the memory piechart
+  //builder for the memory pie chart
   Card _makeMemoryTile() {
     return Card(
         child: Column(
@@ -73,14 +73,14 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
           )
         ]),
         Expanded(
-          //a future builder is used to deal with the asynchronos behavior of _buildMemorySections()
+          //a future builder is used to deal with the asynchronous behavior of _buildMemorySections()
           child: FutureBuilder(
             future: _buildMemorySections(),
             builder:
                 (context, AsyncSnapshot<List<PieChartSectionData>> snapshot) {
               if (snapshot.hasData) {
                 return PieChart(PieChartData(
-                  //checks if a part of the piechart is touched or not
+                  //checks if a part of the pie chart is touched or not
                   pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
                     setState(() {
                       if (pieTouchResponse.touchInput is FlLongPressEnd ||
@@ -122,33 +122,33 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
   //build sections for the memory usage pie chart
   Future<List<PieChartSectionData>> _buildMemorySections() async {
     Stats.openBox();
-    //generate a list of 2 piechartsections. One is used for useable memory and for used memory.
+    //generate a list of 2 pie chart sections. One is used for usable memory and for used memory.
     return List.generate(2, (index) {
       //bool if the current part of the pie chart is touched or not
       final isTouched = index == _touchedIndexMemory;
-      //fontsize of the touched part
+      //font size of the touched part
       final double fontSize = isTouched ? 20 : 10;
       //radius of the touched part
       final double radius = isTouched ? 60 : 50;
       //the usedMemory in Bytes
       double usedMem = Stats.getUsedMemory().toDouble();
-      //getTotalMemory() returns the size of the useable memory in MegaBytes
+      //getTotalMemory() returns the size of the usable memory in MegaBytes
       double dataLimitMB = Stats.getTotalMemory();
-      //calculate the the size of the useable memory in Bytes
+      //calculate the the size of the usable memory in Bytes
       double dataLimitBytes = dataLimitMB * 1000000.0;
       //rounded percentage
       double percentage = ((usedMem / dataLimitBytes) * 10).ceil() / 10;
-      //names to be displayed in the piechart
+      //names to be displayed in the pie chart
       String free = "${((100 - percentage))}%";
       String blocked = "${(percentage)}%";
       //if the percentage of a section is 0, nothing is displayed instead of 0%.
       if (percentage == 0) {
         blocked = "";
       }
-      //there are only 2 sections in this piechart
+      //there are only 2 sections in this pie chart
       switch (index) {
         case 0:
-          //this section represents the useable memory
+          //this section represents the usable memory
           return PieChartSectionData(
               color: Colors.green,
               value: (100 - percentage),
@@ -170,7 +170,7 @@ class _UsedMemoryDisplayState extends State<UsedMemoryDisplay> {
                   fontWeight: FontWeight.normal,
                   color: Colors.white));
         default:
-          //this section represents the useable memory
+          //this section represents the usable memory
           return PieChartSectionData(
               color: Colors.green,
               value: 100,

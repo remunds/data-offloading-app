@@ -28,8 +28,7 @@ class BoxCommunicator {
   }
 
   Map<String, String> headers = {"Content-type": "application/json"};
-  final String boxIP =
-      "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
+  final String boxIP = "http://10.3.141.1:8000";
   final String backendIP = "http://192.168.0.102:8000";
 
   void uploadToBackend(context) async {
@@ -39,7 +38,7 @@ class BoxCommunicator {
     Box boxes = await Hive.openBox('boxes');
     String query;
 
-    //iterate over all Sensorboxes we downloaded data from
+    //iterate over all boxes we downloaded data from
     for (var boxVal in boxes.values) {
       String box = boxVal.toString();
       Box currBox = await Hive.openBox(box);
@@ -78,7 +77,7 @@ class BoxCommunicator {
           Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
-        //else: succesfully uploaded, continue
+        //else: successfully uploaded, continue
       }
       //delete data from disk
       await currBox.deleteFromDisk();
@@ -388,7 +387,7 @@ class BoxCommunicator {
 
   //This is the way to communicate the deletion of a task with the box
   Future<int> deleteTask(Task task) async {
-    //enconding the task to JSON
+    //encoding the task to JSON
     String taskDel = json.encode(task);
 
     // sending a http post to the sensorbox to delete the task from our db.
@@ -472,7 +471,7 @@ class BoxCommunicator {
 
     req.files.add(await http.MultipartFile.fromPath('data', imgPath));
     req.fields['label'] = labelsStr;
-    // set type to user to distinguish from box images
+    // set takenBy field to user to distinguish from box images
     req.fields['takenBy'] = 'user';
     req.fields['luxValue'] = luxValue;
     final response = await req.send();

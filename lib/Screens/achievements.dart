@@ -245,7 +245,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           ),
                         ),
                         _achievement(
-                          "Hobbyfotograf",
+                          "Hobbyfotograf*in",
                           "Mache dein erstes Foto einer Baumkrone",
                           Hive.box('storage')
                                   .get('brightnessTask', defaultValue: 0) >=
@@ -256,7 +256,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           ),
                         ),
                         _achievement(
-                          "Profifotograf",
+                          "Profifotograf*in",
                           "Schließe fünf Fotoaufgaben ab",
                           Hive.box('storage')
                                   .get('brightnessTask', defaultValue: 0) >=
@@ -267,7 +267,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           ),
                         ),
                         _achievement(
-                          "Label-Anfänger",
+                          "Label-Anfänger*in",
                           "Labele ein Foto",
                           Hive.box('storage')
                                   .get('imageTask', defaultValue: 0) >=

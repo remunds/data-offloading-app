@@ -58,7 +58,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   padding: const EdgeInsets.all(20),
                   crossAxisCount: 1,
                   children: [
-                    //create all the statitics cards and a reset button.
+                    //create all the statistics cards and a reset button.
                     FavoriteBoxDisplay(),
                     FinishedTasksDisplay(),
                     UsedMemoryDisplay(),

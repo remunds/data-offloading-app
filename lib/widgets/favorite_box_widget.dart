@@ -6,7 +6,7 @@ class FavoriteBoxDisplay extends StatelessWidget {
   //create the card with statistics for the most visited boxes
   @override
   Widget build(BuildContext context) {
-    //a future builder is used to deal with the asynchronos behavior of _makeFavBoxTile()
+    //a future builder is used to deal with the asynchronous behavior of _makeFavBoxTile()
     return FutureBuilder(
         future: _makeFavBoxTile(),
         builder: (context, AsyncSnapshot<Card> snapshot) {
@@ -19,7 +19,7 @@ class FavoriteBoxDisplay extends StatelessWidget {
         });
   }
 
-  //wrapper to build a single bar of the barchart. x is the value on the x-axis and y is the value on the y-axis. x is only int because the differences on the x-axis are always the same.
+  //wrapper to build a single bar of the bar chart. x is the value on the x-axis and y is the value on the y-axis. x is only int because the differences on the x-axis are always the same.
   BarChartGroupData _buildChartBar(int x, double y) {
     return BarChartGroupData(
       x: x,

@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
                     vertical: verticalAlertPadding),
                 contentPadding: EdgeInsets.all(20.0),
                 content: Text(
-                    'Möchten Sie wissen wie diese App funktioniert? Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen '),
+                    'Möchten Sie wissen, wie diese App funktioniert? Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
                 actions: <Widget>[
                   TextButton(
                     child: Text(
@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
-    //Im Moment fuehrt die Folgende Abfrage bei Auswertung zu zweifacher ausfuehrung des jeweiligen Codes.
+    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes.
 
     if (_connection == Connection.UNKNOWN_WIFI) {
       HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
@@ -234,12 +234,12 @@ Card _makeHomeTile(
       child: InkWell(
           splashColor: Colors.grey.withAlpha(30),
           onTap: () {
-            //push the appropiate page to the navigator
+            //push the appropriate page to the navigator
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      wgt), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                      wgt), // We use the Navigator to Route to the settings page which is located in a new .dart file
             );
           },
           child: Padding(
