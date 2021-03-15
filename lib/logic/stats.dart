@@ -134,6 +134,10 @@ class Stats {
     box.put('progress', progress);
   }
 
+  static int getTotalNumberOfTasks() {
+    return box.get('totalFinishedTasks', defaultValue: 0);
+  }
+
   //this function increases the number of tasks stored in the Hive
   static void increaseTotalTasks() {
     int _total = box.get('totalFinishedTasks', defaultValue: 0);
