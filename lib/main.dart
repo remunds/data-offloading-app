@@ -21,6 +21,59 @@ import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:flutter/services.dart';
 import 'package:data_offloading_app/logic/stats.dart';
+import 'package:workmanager/workmanager.dart';
+
+// TODO: MISSING COMMENTARY
+// something like updates connection state
+
+void getConnectionState() {
+  print("Sick");
+  Workmanager.executeTask((task, inputdata) async {
+    print("LOL");
+    // BoxConnectionState boxConnection = context.read<BoxConnectionState>();
+    // Connection state = boxConnection.connectionState;
+    // String name = await WifiInfo().getWifiName();
+    // BoxCommunicator boxCommunicator = BoxCommunicator();
+    // switch (state) {
+    //   case Connection.NONE:
+    //     if (name == "Sensorbox") {
+    //       if (Platform.isAndroid) {
+    //         //force wifi so that we do not have problems with mobile data interfering api requests
+    //         WiFiForIoTPlugin.forceWifiUsage(true);
+    //       }
+    //       Workmanager.initialize(boxCommunicator.downloadData,
+    //           isInDebugMode: true);
+    //       boxConnection.connectedToSensorbox();
+    //       boxCommunicator.downloadData(context);
+    //       break;
+    //     } else if (name != null) {
+    //       boxConnection.connectedToWifi();
+    //       boxCommunicator.uploadToBackend(context);
+    //     }
+    //     break;
+
+    //   case Connection.SENSORBOX:
+    //     if (name == null)
+    //       boxConnection.disconnected();
+    //     else if (name != "Sensorbox") {
+    //       boxConnection.connectedToWifi();
+    //       boxCommunicator.uploadToBackend(context);
+    //     }
+    //     break;
+
+    //   case Connection.WIFI:
+    //     if (name == null)
+    //       boxConnection.disconnected();
+    //     else if (name == "Sensorbox") {
+    //       boxConnection.connectedToSensorbox();
+    //       boxCommunicator.downloadData(context);
+    //     }
+    //     break;
+    // }
+    print("Setting connection state and downloading");
+    return Future.value(true);
+  });
+}
 
 void main() async {
   //initialize hive, the nosql database
@@ -43,49 +96,6 @@ void main() async {
 class MainApp extends StatefulWidget {
   // const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
-
-  // TODO: MISSING COMMENTARY
-  // something like updates connection state
-  static void getConnectionState(BuildContext context) async {
-    BoxConnectionState boxConnection = context.read<BoxConnectionState>();
-    Connection state = boxConnection.connectionState;
-    String name = await WifiInfo().getWifiName();
-    BoxCommunicator boxCommunicator = BoxCommunicator();
-    switch (state) {
-      case Connection.NONE:
-        if (name == "Sensorbox") {
-          if (Platform.isAndroid) {
-            //force wifi so that we do not have problems with mobile data interfering api requests
-            WiFiForIoTPlugin.forceWifiUsage(true);
-          }
-          boxConnection.connectedToSensorbox();
-          boxCommunicator.downloadData(context);
-          break;
-        } else if (name != null) {
-          boxConnection.connectedToWifi();
-          boxCommunicator.uploadToBackend(context);
-        }
-        break;
-
-      case Connection.SENSORBOX:
-        if (name == null)
-          boxConnection.disconnected();
-        else if (name != "Sensorbox") {
-          boxConnection.connectedToWifi();
-          boxCommunicator.uploadToBackend(context);
-        }
-        break;
-
-      case Connection.WIFI:
-        if (name == null)
-          boxConnection.disconnected();
-        else if (name == "Sensorbox") {
-          boxConnection.connectedToSensorbox();
-          boxCommunicator.downloadData(context);
-        }
-        break;
-    }
-  }
 
   @override
   _MainAppState createState() => _MainAppState();
@@ -116,9 +126,11 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer t) {
-      MainApp.getConnectionState(context);
-    });
+    print("Vor");
+    Workmanager.initialize(getConnectionState, isInDebugMode: true);
+    Workmanager.registerPeriodicTask("1", "manageBackgroundProcess",
+        frequency: Duration(seconds: 3));
+    print("Nach");
     getPermission();
   }
 
