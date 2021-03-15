@@ -13,7 +13,7 @@ class Stats {
     return box;
   }
 
-  static openBox() async {
+  static Future<void> openBox() async {
     box = await Hive.openBox('storage');
   }
 
@@ -138,7 +138,6 @@ class Stats {
   }
 
   static void increaseTask(String taskName) {
-    //Stats.openBox();
     Stats.increaseLevel();
     increaseTotalTasks();
     int _finishedTasks = Stats.getBox().get(taskName, defaultValue: 0);
