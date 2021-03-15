@@ -59,7 +59,8 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             ),
             content: Center(
                 child: Text(
-                    "Die Helligkeitssensoren deines Smartphones befinden sich nur auf der Vorderseite. Deswegen solltest du das Baumkronenfoto mit der Frontkamera machen!")),
+                    "Die Helligkeitssensoren deines Smartphones befinden sich nur auf der Vorderseite. "
+                    "Deswegen solltest du das Baumkronenfoto mit der Frontkamera machen!")),
             actions: [
               TextButton(
                   onPressed: () {
@@ -127,7 +128,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             // var file = await ImagePicker.pickImage(source: ImageSource.camera);
             XFile xf = await _controller.takePicture();
             String luxValue;
-            //this means that the backcamera is selected
+            //this means that the back camera is selected
             if (_controller.description.name == "0") {
               luxValue = "0";
             } else {

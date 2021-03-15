@@ -131,7 +131,7 @@ class AboutNature40 extends StatelessWidget {
                   _launchNature40();
                 },
                 child: Text(
-                  "Zur Webaufritt von Natur 4.0",
+                  "Zum Webaufritt von Natur 4.0",
                   style: TextStyle(color: Colors.lightGreen, fontSize: 12.0),
                 ),
               )

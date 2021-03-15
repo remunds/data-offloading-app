@@ -12,7 +12,7 @@ class AboutApp extends StatelessWidget {
     Text _appIdeaAndEmergence = Text(
       'Im Rahmen des Bachelorpraktikums des Fachbereichs Informatik der TU Darmstadt '
       'im Wintersemester 2020/21 wurde eine Gruppe von 5 Studierenden beauftragt, '
-      'eine Smartphoneapplikation zur drahtlosen Übertragung '
+      'eine Smartphone-Applikation zur drahtlosen Übertragung '
       'von Sensordaten auf unsere Server zu entwickeln. '
       'Dabei ist in mühevoller Arbeit diese Applikation enstanden.',
       style: TextStyle(
@@ -20,14 +20,14 @@ class AboutApp extends StatelessWidget {
     );
 
     Text _appContactAndGit = Text(
-      'Für technische Informationen zur Applikation, besuchen Sie das GitHub Repository oder wenden Sie sich per E-Mail an die Entwickler.',
+      'Für technische Informationen zur Applikation, besuchen Sie das GitHub Repository oder wenden Sie sich per E-Mail an das Entwicklungsteam.',
       style: TextStyle(
           fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
     );
 
     _launchMailTo() async {
       final mailtoLink = Mailto(
-        to: ['raban.emunds@stud.tu-darmstadt.de'],
+        to: [],
         cc: [],
         subject: 'Frage zur Data Offloading App ',
         body: '',

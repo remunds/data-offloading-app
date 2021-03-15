@@ -11,8 +11,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:disk_space/disk_space.dart';
 
-double diskSpace;
-
 class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
@@ -134,8 +132,8 @@ class SettingsPage extends StatelessWidget {
                 ),
                 content: _connection == Connection.SENSORBOX
                     ? Text(
-                        'Wollen Sie wirklich alle Daten auf ihr Gerät laden? (Das Datenlimit wird nicht berücksichtigt)')
-                    : Text('Bitte verbinden Sie sich mit einer Sensorbox'));
+                        'Wollen Sie wirklich alle Daten auf ihr Gerät laden? (Das Datenlimit wird nicht berücksichtigt.)')
+                    : Text('Bitte verbinden Sie sich mit einer Sensorbox.'));
           }).then((val) {
         if (val) {
           BoxCommunicator().downloadAllData(_downloadIconContext);
@@ -185,7 +183,7 @@ class SettingsPage extends StatelessWidget {
                       fontSize: 18.0),
                 ),
                 content: Text(
-                    'Nur für Wissenschaftler. Wollen sie wirklich den Download mit den neuesten Daten starten?'),
+                    'Nur für Wissenschaftler*innen. Wollen sie wirklich den Download mit den neuesten Daten starten?'),
               );
             });
       }

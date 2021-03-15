@@ -7,7 +7,7 @@ class HowToConnect extends StatelessWidget {
     Text _wificonnect = Text(
       'Gehen Sie in die WLAN-Einstellungen ihres Gerätes und suchen Sie nach verfügbaren Netzwerken. '
       'Wenn Sie sich in der Nähe einer Sensorbox befinden, sollte ein Netzwerk namens "Sensorbox" auftauchen. '
-      'Dieses ist ein offenes WLAN Netzwerk. '
+      'Dies ist ein offenes WLAN Netzwerk. '
       'Verbinden Sie sich mit diesem und gehen Sie dann zurück zur App.  ',
       style: TextStyle(
           fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),

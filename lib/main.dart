@@ -180,9 +180,8 @@ class _MainAppState extends State<MainApp> {
               child: _pages.elementAt(_selectedIndex),
             ),
             bottomNavigationBar: BottomNavigationBar(
-              //our navigation bar at the botton
+              //our navigation bar at the bottom
               items: [
-                // array of tabs, are icons enough?
                 BottomNavigationBarItem(
                     icon: new Icon(Icons.map), label: "Map"),
                 BottomNavigationBarItem(
