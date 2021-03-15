@@ -1,5 +1,4 @@
 import '../provider/poslist_state.dart';
-import 'package:data_offloading_app/Screens/box_info.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 
 import 'package:flutter_map/flutter_map.dart';
@@ -20,7 +19,6 @@ class _MyMapState extends State<MyMap> {
   MapController mapController = MapController();
   List<Marker> _boxes = [];
   UserLocationOptions userLocationOptions;
-  latLng.LatLng pos;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,6 @@ class _MyMapState extends State<MyMap> {
     return new Scaffold(
       body: FlutterMap(
         options: MapOptions(
-          center: new latLng.LatLng(49.8728, 8.6512),
           zoom: 13.0,
           plugins: [
             //to track user
@@ -63,23 +60,11 @@ class _MyMapState extends State<MyMap> {
   //pass latitude and longitude as parameter
   Marker _buildBoxMarker(double lat, double long) {
     return Marker(
-      width: 20.0,
-      height: 20.0,
       point: new latLng.LatLng(lat, long),
-      builder: (ctx) => Container(
-        //GestureDetector to detect if marker is clicked
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Icon(
-            Icons.location_on,
-            color: Colors.brown,
-          ),
-          onTap: () {
-            //push the boxinfopage to the navigator
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BoxInfo(1337, 7331)));
-          },
-        ),
+      builder: (ctx) => Icon(
+        Icons.location_on,
+        color: Colors.brown,
+        size: 40,
       ),
     );
   }
