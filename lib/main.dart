@@ -52,8 +52,7 @@ class MainApp extends StatefulWidget {
     BoxCommunicator boxCommunicator = BoxCommunicator();
 
     Box storage = await Hive.openBox('storage');
-
-    print(storage.get('knownWifis', defaultValue: []));
+    List knownWifis = storage.get('knownWifis', defaultValue: []);
 
     switch (state) {
       case Connection.NONE:
@@ -67,7 +66,7 @@ class MainApp extends StatefulWidget {
           break;
         } else if (name != null) {
           // connected to a wifi
-          if (storage.get('knownWifis', defaultValue: []).contains(name)) {
+          if (knownWifis.contains(name)) {
             boxConnection.connectedToKnownWifi();
             boxCommunicator.uploadToBackend(context);
           } else {
@@ -80,7 +79,7 @@ class MainApp extends StatefulWidget {
         if (name == null)
           boxConnection.disconnected();
         else if (name != "Sensorbox") {
-          if (storage.get('knownWifis', defaultValue: []).contains(name)) {
+          if (knownWifis.contains(name)) {
             boxConnection.connectedToKnownWifi();
             boxCommunicator.uploadToBackend(context);
           } else {
@@ -104,7 +103,7 @@ class MainApp extends StatefulWidget {
         else if (name == "Sensorbox") {
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
-        } else if (storage.get('knownWifis', defaultValue: []).contains(name)) {
+        } else if (knownWifis.contains(name)) {
           boxConnection.connectedToKnownWifi();
           boxCommunicator.uploadToBackend(context);
         }
