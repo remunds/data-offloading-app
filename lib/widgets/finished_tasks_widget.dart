@@ -45,8 +45,8 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     //if the user hasn't finished any tasks the pie chart has no values to display. Therefore the message "Du hast bisher noch keine Tasks erfuellt" will be displayed
     if (storage.get('totalFinishedTasks', defaultValue: 0) == 0) {
       return Card(
-          child:
-              Center(child: Text("Du hast bisher noch keine Tasks erfüllt")));
+          child: Center(
+              child: Text("Sie haben bisher noch keine Tasks erfüllt.")));
     } else {
       //if the user has finished at least one task the pie chart is displayed.
       return _makeTaskTile();

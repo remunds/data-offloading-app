@@ -59,8 +59,8 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
             ),
             content: Center(
                 child: Text(
-                    "Die Helligkeitssensoren deines Smartphones befinden sich nur auf der Vorderseite. "
-                    "Deswegen solltest du das Baumkronenfoto mit der Frontkamera machen!")),
+                    "Die Helligkeitssensoren Ihres Smartphones befinden sich nur auf der Vorderseite. "
+                    "Deswegen sollten Sie das Baumkronenfoto mit der Frontkamera machen!")),
             actions: [
               TextButton(
                   onPressed: () {
