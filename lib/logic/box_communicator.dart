@@ -30,7 +30,7 @@ class BoxCommunicator {
   Map<String, String> headers = {"Content-type": "application/json"};
   final String boxIP =
       "http://10.3.141.1:8000"; //"http://192.168.178.26:8000"; //
-  final String backendIP = "http://192.168.0.64:8001";
+  final String backendIP = "http://192.168.0.102:8000";
 
   void uploadToBackend(context) async {
     //We use Provider.of instead of context.read because context will be passed by a StatefulWidget or StatefulElement. StatefulElement has no instance method read.
