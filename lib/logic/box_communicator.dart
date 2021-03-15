@@ -41,12 +41,13 @@ class BoxCommunicator {
 
   /// standard headers for HTTP Requests
   Map<String, String> headers = {"Content-type": "application/json"};
-
-  /// box server IP and port for downloading data and accessing server database
-  final String boxIP = "http://10.3.141.1:8000";
-
-  /// backend server IP and port for uploading data
-  final String backendIP = "http://192.168.0.102:8000";
+  // make sure that the boxIP is not a common IP in networks,
+  // as we distinguish between sensorboxes and
+  // regular wifi networks by checking if boxIP is available in the current network.
+  static final String boxRawIP = "10.3.141.1";
+  static final String backendRawIP = "192.168.0.102";
+  final String boxIP = "http://$boxRawIP:8000";
+  final String backendIP = "http://$backendRawIP:8000";
 
   /// getter for [_numberOfBoxes]
   int getNumberOfBoxes() {
@@ -148,7 +149,10 @@ class BoxCommunicator {
     //opens the box for the current connected Sensorbox
     box = await Hive.openLazyBox(boxName.toString());
     Box boxes = await Hive.openBox('boxes');
-    boxes.add(boxName);
+    if (!boxes.values.contains(boxName)) {
+      print("adding $boxName");
+      boxes.add(boxName);
+    }
 
     //list to store all the id's of files/chunks that have already
     // been downloaded/stored
