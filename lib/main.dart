@@ -44,13 +44,16 @@ class MainApp extends StatefulWidget {
   // const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
-  // TODO: MISSING COMMENTARY
-  // something like updates connection state
+  // updates connection state
   static void getConnectionState(BuildContext context) async {
     BoxConnectionState boxConnection = context.read<BoxConnectionState>();
     Connection state = boxConnection.connectionState;
     String name = await WifiInfo().getWifiName();
     BoxCommunicator boxCommunicator = BoxCommunicator();
+
+    Box storage = await Hive.openBox('storage');
+    List knownWifis = storage.get('knownWifis', defaultValue: []);
+
     switch (state) {
       case Connection.NONE:
         if (name == "Sensorbox") {
@@ -62,8 +65,13 @@ class MainApp extends StatefulWidget {
           boxCommunicator.downloadData(context);
           break;
         } else if (name != null) {
-          boxConnection.connectedToWifi();
-          boxCommunicator.uploadToBackend(context);
+          // connected to a wifi
+          if (knownWifis.contains(name)) {
+            boxConnection.connectedToKnownWifi();
+            boxCommunicator.uploadToBackend(context);
+          } else {
+            boxConnection.connectedToUnknownWifi();
+          }
         }
         break;
 
@@ -71,17 +79,33 @@ class MainApp extends StatefulWidget {
         if (name == null)
           boxConnection.disconnected();
         else if (name != "Sensorbox") {
-          boxConnection.connectedToWifi();
-          boxCommunicator.uploadToBackend(context);
+          if (knownWifis.contains(name)) {
+            boxConnection.connectedToKnownWifi();
+            boxCommunicator.uploadToBackend(context);
+          } else {
+            boxConnection.connectedToUnknownWifi();
+          }
         }
         break;
 
-      case Connection.WIFI:
+      case Connection.KNOWN_WIFI:
         if (name == null)
           boxConnection.disconnected();
         else if (name == "Sensorbox") {
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
+        }
+        break;
+
+      case Connection.UNKNOWN_WIFI:
+        if (name == null)
+          boxConnection.disconnected();
+        else if (name == "Sensorbox") {
+          boxConnection.connectedToSensorbox();
+          boxCommunicator.downloadData(context);
+        } else if (knownWifis.contains(name)) {
+          boxConnection.connectedToKnownWifi();
+          boxCommunicator.uploadToBackend(context);
         }
         break;
     }

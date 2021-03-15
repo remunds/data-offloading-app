@@ -44,7 +44,20 @@ class _TaskWidgetState extends State<TaskWidget> {
     // if imageId is null, then this is not an image task
     if (widget.task.imageId != null) {
       // this is an image task
+      String takenBy =
+          widget.task.title.compareTo("Nutzerbild beschriften") == 0
+              ? "einem Nutzer"
+              : "der Box";
       tileContent = [
+        Text(
+          "Dieses Bild wurde von " + takenBy + " aufgenommen.",
+          style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              color: Colors.black45),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 15.0),
         RaisedButton(
             onPressed: () async {
               var id = widget.task.imageId;

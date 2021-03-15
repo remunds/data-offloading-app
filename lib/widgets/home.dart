@@ -3,6 +3,7 @@ import 'package:data_offloading_app/Screens/achievements.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
+import 'package:data_offloading_app/logic/home_wifi_dialog.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -87,8 +88,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Connection _connection =
-        context.watch<BoxConnectionState>().connectionState;
+    BoxConnectionState boxConnectionState = context.watch<BoxConnectionState>();
+
+    Connection _connection = boxConnectionState.connectionState;
 
     DownloadUpload _downloadUpload =
         context.watch<DownloadUploadState>().downloadUploadState;
@@ -96,6 +98,10 @@ class _HomeState extends State<Home> {
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
     //Im Moment fuehrt die Folgende Abfrage bei Auswertung zu zweifacher ausfuehrung des jeweiligen Codes.
+
+    if (_connection == Connection.UNKNOWN_WIFI) {
+      HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
+    }
 
     return new Scaffold(
         body: Stack(
@@ -114,7 +120,8 @@ class _HomeState extends State<Home> {
                   ? Center(
                       child: Text("Mit Sensorbox verbunden"),
                     )
-                  : _connection == Connection.WIFI
+                  : _connection == Connection.KNOWN_WIFI ||
+                          _connection == Connection.KNOWN_WIFI
                       ? Center(
                           child: Text(
                             "Mit Wlan verbunden",
