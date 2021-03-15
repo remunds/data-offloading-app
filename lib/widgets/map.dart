@@ -12,13 +12,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 //MyMap class
-class MyMap extends StatefulWidget {
+class Map extends StatefulWidget {
   @override
-  _MyMapState createState() => _MyMapState();
+  _MapState createState() => _MapState();
 }
 
 //MyMap state to keep track of the _boxes list
-class _MyMapState extends State<MyMap> {
+class _MapState extends State<Map> {
   MapController mapController = MapController();
   List<Marker> _boxes = [];
   UserLocationOptions userLocationOptions;

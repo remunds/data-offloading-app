@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:disk_space/disk_space.dart';
 
 /// This page displays the settings for the app.
+double freeDiskSpace;
+
 class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
@@ -26,18 +28,71 @@ class SettingsPage extends StatelessWidget {
 
     BuildContext _downloadIconContext = context;
 
-    /// Dialog shown when user wants to change download data limit
+    Color iconColor = Colors.lightGreen;
+
+    TextStyle textspanThick = TextStyle(
+        color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 16.0);
+    TextStyle textspanThin =
+        TextStyle(fontWeight: FontWeight.w100, fontSize: 12.0);
+
+    Widget _divider(String divideText) {
+      return Stack(children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.025,
+        ),
+        Text(
+          divideText,
+          style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54),
+          textAlign: TextAlign.left,
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.02,
+        )
+      ]);
+    }
+
+    Widget _sitemapCard(String site, String desc, IconData icon, Widget route) {
+      return Card(
+          child: FlatButton(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            RichText(
+              text: TextSpan(
+                text: site,
+                style: textspanThick,
+                children: <TextSpan>[
+                  TextSpan(text: desc, style: textspanThin),
+                ],
+              ),
+            ),
+            Icon(icon, color: iconColor),
+          ],
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => route),
+          );
+        },
+      ));
+    }
+
+    //Dialog shown when user wants to change download data limit
     Future<void> _showDataLimitDialog() async {
       Box sliderBox = await Hive.openBox('storage');
-      double freeDiskSpace = await DiskSpace.getFreeDiskSpace;
+      freeDiskSpace = await DiskSpace.getFreeDiskSpace;
       return await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return ValueListenableBuilder(
               valueListenable: sliderBox.listenable(),
               builder: (context, box, widget) {
-                double dataLimitValue =
-                    sliderBox.get('dataLimitValueInMB', defaultValue: 10.0);
+                double dataLimitValue = sliderBox.get('dataLimitValueInMB',
+                    defaultValue: freeDiskSpace * 0.5);
                 String dataLimit = dataLimitValue.round() < 1000
                     ? dataLimitValue.round().toString() + ' MB'
                     : (dataLimitValue.round() / 1000).toStringAsFixed(2) +
@@ -113,7 +168,7 @@ class SettingsPage extends StatelessWidget {
                   TextButton(
                     child: Text(
                       'Abbrechen',
-                      style: TextStyle(color: Colors.lightGreen),
+                      style: TextStyle(color: iconColor),
                     ),
                     onPressed: () {
                       Navigator.of(context).pop(false);
@@ -136,7 +191,7 @@ class SettingsPage extends StatelessWidget {
                         'Wollen Sie wirklich alle Daten auf ihr Gerät laden? (Das Datenlimit wird nicht berücksichtigt.)')
                     : Text('Bitte verbinden Sie sich mit einer Sensorbox.'));
           }).then((val) {
-        if (val) {
+        if (val && val != null) {
           BoxCommunicator().downloadAllData(_downloadIconContext);
         }
       });
@@ -195,363 +250,243 @@ class SettingsPage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: ValueListenableBuilder(
-          valueListenable: Hive.box('storage').listenable(),
-          builder: (context, box, widget) {
-            int dataLimit = Hive.box('storage')
-                .get('dataLimitValueInMB', defaultValue: 10.0)
-                .round();
-            return SafeArea(
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    vertical: verticalPadding,
-                    horizontal:
-                        horizontalPadding), //set a padding of 1% of screen size on all sides
-                child: Column(
-                  children: [
-                    // This row displays the appbar on the top of the screen
-                    Row(
-                      //Make a Row with a back button on the left side
-                      mainAxisAlignment: MainAxisAlignment
-                          .start, //align the button to the left side
-                      children: [
-                        IconButton(
-                            //button initialisation
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Colors.black45,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                        Text(
-                          '   Einstellungen',
-                          style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black45),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                    Divider(
-                      thickness: 2,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Expanded(
-                      // This list displays all the settings
-                      child: ListView(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        children: <Widget>[
-                          Text(
-                            'Download-Einstellungen',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54),
-                            textAlign: TextAlign.left,
-                          ),
-                          Card(
-                              child: FlatButton(
-                            key: Key('Set Data Limit'),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Datenmenge festlegen',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: '  Aktuell: ' +
-                                              (dataLimit < 1000
-                                                  ? dataLimit.toString() + ' MB'
-                                                  : (dataLimit / 1000)
-                                                          .toStringAsFixed(2) +
-                                                      ' GB'),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
+      body: FutureBuilder<double>(
+          future: DiskSpace.getFreeDiskSpace,
+          builder: (context, snapshot) {
+            return ValueListenableBuilder(
+                valueListenable: Hive.box('storage').listenable(),
+                builder: (context, box, widget) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+                  double dataLimit = Hive.box('storage').get(
+                      'dataLimitValueInMB',
+                      defaultValue: snapshot.data * 0.5);
+                  return SafeArea(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: verticalPadding,
+                          horizontal:
+                              horizontalPadding), //set a padding of 1% of screen size on all sides
+                      child: Column(
+                        children: [
+                          Row(
+                            //Make a Row with a settings button on the right side
+                            mainAxisAlignment: MainAxisAlignment
+                                .start, //align the button to the left side
+                            children: [
+                              IconButton(
+                                  //button initialisation
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.black45,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.equalizer_rounded,
-                                  color: Colors.lightGreen,
-                                )
-                              ],
-                            ),
-                            onPressed: () {
-                              _showDataLimitDialog();
-                            },
-                          )),
-                          Card(
-                              child: Padding(
-                            padding: EdgeInsets.only(
-                                left: MediaQuery.of(context).size.width * 0.04),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Datenpriorität',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    /*defining default style is optional */
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: Hive.box('storage').get(
-                                                  'oldDataSwitch',
-                                                  defaultValue: true)
-                                              ? '  Zuerst alte Daten runterladen'
-                                              : '  Zuerst neue Daten runterladen',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
-                                  ),
-                                ),
-                                Switch(
-                                  value: Hive.box('storage')
-                                      .get('oldDataSwitch', defaultValue: true),
-                                  onChanged: _changedOldData, // {
-                                  //   Hive.box('storage')
-                                  //       .put('oldDataSwitch', value);
-                                  // },
-                                  activeColor: Colors.lightGreen,
-                                  activeTrackColor: Colors.lightGreenAccent,
-                                )
-                              ],
-                            ),
-                          )),
-
-                          //NATIVITY IS STILL MISSING. SORRY FOR THAT (TODO: delete??)
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            'Entwickleroptionen',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54),
-                            textAlign: TextAlign.left,
-                          ),
-                          Card(
-                              child: FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Alle Daten herunterladen',
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 1),
+                                child: Text(
+                                  '   Einstellungen',
                                   style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87),
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black45),
+                                  textAlign: TextAlign.center,
                                 ),
-                                _downloadAllState == 0
-                                    ? Icon(
-                                        Icons.download_rounded,
-                                        color: Colors.lightGreen,
-                                      )
-                                    : _downloadAllState == 1
-                                        ? SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Colors.lightGreen),
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : Icon(
-                                            Icons.done_rounded,
-                                            color: Colors.lightGreen,
-                                          ),
-                              ],
-                            ),
-                            onPressed: () {
-                              _showDownloadAllDialog();
-                            },
-                          )),
+                              ),
+                            ],
+                          ),
+                          Divider(
+                            thickness: 2,
+                          ),
                           SizedBox(
                             height: 5,
                           ),
-                          Text(
-                            'Sonstige Einstellungen',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54),
-                            textAlign: TextAlign.left,
-                          ),
-                          Card(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.04),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  RichText(
-                                    text: TextSpan(
-                                      text: 'Mitteilungen',
-                                      style: TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                      /*defining default style is optional */
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                '  Benachrichtigungen erlauben',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w100,
-                                                fontSize: 12.0)),
+                          Expanded(
+                            child: ListView(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              children: <Widget>[
+                                _divider("Download-Einstellungen"),
+                                Card(
+                                    child: FlatButton(
+                                  key: Key('Set Data Limit'),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Datenmenge festlegen',
+                                          style: textspanThick,
+                                          /*defining default style is optional */
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: '  Aktuell: ' +
+                                                    (dataLimit < 1000.0
+                                                        ? dataLimit.toString() +
+                                                            ' MB'
+                                                        : (dataLimit / 1000.0)
+                                                                .toStringAsFixed(
+                                                                    2) +
+                                                            ' GB'),
+                                                style: textspanThin),
+                                          ],
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.equalizer_rounded,
+                                        color: iconColor,
+                                      )
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    _showDataLimitDialog();
+                                  },
+                                )),
+                                Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.04),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Datenpriorität',
+                                          style: textspanThick,
+                                          /*defining default style is optional */
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: Hive.box('storage').get(
+                                                        'oldDataSwitch',
+                                                        defaultValue: true)
+                                                    ? '  Zuerst alte Daten herunterladen'
+                                                    : '  Zuerst neue Daten herunterladen',
+                                                style: textspanThin),
+                                          ],
+                                        ),
+                                      ),
+                                      Switch(
+                                        value: Hive.box('storage').get(
+                                            'oldDataSwitch',
+                                            defaultValue: true),
+                                        onChanged: _changedOldData, // {
+                                        //   Hive.box('storage')
+                                        //       .put('oldDataSwitch', value);
+                                        // },
+                                        activeColor: iconColor,
+                                        activeTrackColor: iconColor,
+                                      )
+                                    ],
+                                  ),
+                                )),
+                                _divider("Entwickleroptionen"),
+                                Card(
+                                    child: FlatButton(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        'Alle Daten herunterladen',
+                                        style: textspanThick,
+                                      ),
+                                      _downloadAllState == 0
+                                          ? Icon(
+                                              Icons.download_rounded,
+                                              color: iconColor,
+                                            )
+                                          : _downloadAllState == 1
+                                              ? SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(iconColor),
+                                                    strokeWidth: 2,
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  Icons.done_rounded,
+                                                  color: iconColor,
+                                                ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    _showDownloadAllDialog();
+                                  },
+                                )),
+                                _divider("Sonstige Einstellungen"),
+                                Card(
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width *
+                                                0.04),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Mitteilungen',
+                                            style: textspanThick,
+                                            /*defining default style is optional */
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text:
+                                                      '  Benachrichtigungen erlauben',
+                                                  style: textspanThin),
+                                            ],
+                                          ),
+                                        ),
+                                        Switch(
+                                          value: Hive.box('storage').get(
+                                              'notificationSwitch',
+                                              defaultValue: false),
+                                          onChanged: (bool value) {
+                                            Hive.box('storage').put(
+                                                'notificationSwitch', value);
+                                          },
+                                          activeColor: iconColor,
+                                          activeTrackColor: iconColor,
+                                        )
                                       ],
                                     ),
                                   ),
-                                  Switch(
-                                    value: Hive.box('storage').get(
-                                        'notificationSwitch',
-                                        defaultValue: false),
-                                    onChanged: (bool value) {
-                                      Hive.box('storage')
-                                          .put('notificationSwitch', value);
-                                    },
-                                    activeColor: Colors.lightGreen,
-                                    activeTrackColor: Colors.lightGreenAccent,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          ResetButton(
-                              horizontalAlertPadding: horizontalAlertPadding,
-                              verticalAlertPadding: verticalAlertPadding),
-                          Card(
-                              child: FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Anleitung',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: '  Wie funktioniert die App? ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
-                                  ),
                                 ),
-                                Icon(
-                                  Icons.article_rounded,
-                                  color: Colors.lightGreen,
-                                )
+                                ResetButton(
+                                    horizontalAlertPadding:
+                                        horizontalAlertPadding,
+                                    verticalAlertPadding: verticalAlertPadding),
+                                _divider("Sitemap"),
+                                _sitemapCard(
+                                    'Anleitung ',
+                                    '  Wie funktioniert die App? ',
+                                    Icons.article_rounded,
+                                    ManualPage()),
+                                _sitemapCard('Statistiken ', '  Nackte Zahlen ',
+                                    Icons.analytics_rounded, StatisticsPage()),
+                                _sitemapCard(
+                                    'About us',
+                                    '  Hör mal wer da hämmert',
+                                    Icons.import_contacts_rounded,
+                                    AboutUsPage())
                               ],
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ManualPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
-                              );
-                            },
-                          )),
-                          Card(
-                              child: FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Statistiken',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: '  Nackte Zahlen ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.analytics_rounded,
-                                  color: Colors.lightGreen,
-                                )
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => StatisticsPage()),
-                              );
-                            },
-                          )),
-                          Card(
-                              child: FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'About us',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: '  Hör mal wer da hämmert',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w100,
-                                              fontSize: 12.0)),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.import_contacts_rounded,
-                                  color: Colors.lightGreen,
-                                )
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AboutUsPage()),
-                              );
-                            },
-                          )),
+                          )
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-            );
+                    ),
+                  );
+                });
           }),
     );
   }

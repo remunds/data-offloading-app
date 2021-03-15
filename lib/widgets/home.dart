@@ -10,8 +10,18 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcase.dart';
+import 'package:showcaseview/showcaseview.dart';
+
+var homeKeys = {
+  "welcome": GlobalKey(),
+  "settings": GlobalKey(),
+  "manual": GlobalKey(),
+  "stats": GlobalKey(),
+  "achievements": GlobalKey(),
+  "aboutus": GlobalKey(),
+};
 
 /// This is the Home Page. It has a header for displaying the connection status
 /// and four buttons for navigating to other pages:
@@ -23,71 +33,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  void _showFirstOpenDialog(BuildContext context) async {
-    double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
-    double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
-
-    Box box = await Hive.openBox('storage');
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return ValueListenableBuilder(
-            valueListenable: box.listenable(),
-            builder: (context, box, widget) {
-              return AlertDialog(
-                title: Text(
-                  'Herzlich Willkommen! ',
-                  style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0),
-                ),
-                insetPadding: EdgeInsets.symmetric(
-                    horizontal: horizontalAlertPadding,
-                    vertical: verticalAlertPadding),
-                contentPadding: EdgeInsets.all(20.0),
-                content: Text('Möchten Sie wissen, wie diese App funktioniert? '
-                    'Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text(
-                      'Zur Anleitung',
-                      style: TextStyle(color: Colors.lightGreen),
-                    ),
-                    onPressed: () {
-                      Hive.box('storage').put('firstTime', false);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ManualPage()),
-                      );
-                    },
-                  ),
-                  TextButton(
-                    child: Text(
-                      'Schließen',
-                      style: TextStyle(color: Colors.lightGreen),
-                    ),
-                    onPressed: () {
-                      Hive.box('storage').put('firstTime', false);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      },
-    );
-  }
-
   @override
   initState() {
     super.initState();
-
-    Future.delayed(Duration.zero, () {
-      if (Hive.box('storage').get('firstTime', defaultValue: true)) {
-        _showFirstOpenDialog(context);
-      }
-    });
   }
 
   @override
@@ -101,10 +49,17 @@ class _HomeState extends State<Home> {
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
-    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes. (TODO: delete?)
-
     if (_connection == Connection.UNKNOWN_WIFI) {
       KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
+    }
+
+    /// Creates a custom ShowCase Widget. Standard widgets shown when bool 'guideFinished' evaluates to true.
+    Widget customShowCase(
+        GlobalKey key, String title, String description, Widget child) {
+      return Hive.box('storage').get('guideFinished', defaultValue: false)
+          ? child
+          : Showcase(
+              key: key, title: title, description: description, child: child);
     }
 
     return new Scaffold(
@@ -152,28 +107,39 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment:
                     MainAxisAlignment.end, //align the button to the right side
                 children: [
-                  IconButton(
-                      //button initialisation
-                      icon: Icon(
-                        Icons.settings,
-                        color: Colors.black54,
-                      ),
-                      onPressed: () {
-                        // this is what happens when the settings button is pressed
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
-                        );
-                      }),
+                  customShowCase(
+                    homeKeys["settings"],
+                    "Einstellungen",
+                    "Hier gelangen Sie zu den Einstellungen",
+                    IconButton(
+                        //button initialisation
+                        icon: Icon(
+                          Icons.settings,
+                          color: Colors.black54,
+                        ),
+                        onPressed: () {
+                          //when settings button is pressed, route to settings page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SettingsPage()), // We use the Navigator to Route to the settings page wich is located in a new .dart file
+                          );
+                        }),
+                  ),
                 ],
               ),
               //Nature 4.0 Image
-              Container(
-                  child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Image.asset('assets/logo_n40.png'))),
+              customShowCase(
+                homeKeys["welcome"],
+                "Herzlich Willkommen!",
+                "Es folgt eine kurze Tour durch die App. Viel Spaß!",
+                Container(
+                    child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Image.asset('assets/logo_n40.png'),
+                )),
+              ),
               //creation of the 4 tile menu
               Expanded(
                 child: GridView.count(
@@ -182,14 +148,31 @@ class _HomeState extends State<Home> {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   children: [
-                    _makeHomeTile(
-                        "Anleitung", Icons.article, ManualPage(), context),
-                    _makeHomeTile("Statistiken", Icons.analytics,
-                        StatisticsPage(), context),
-                    _makeHomeTile("Achievements", Icons.emoji_events,
-                        AchievementsPage(), context),
-                    _makeHomeTile("Über uns", Icons.import_contacts,
-                        AboutUsPage(), context)
+                    customShowCase(
+                      homeKeys["manual"],
+                      "Anleitung",
+                      "Hier gelangen Sie zu einer ausführlichen Anleitung",
+                      _makeHomeTile(
+                          "Anleitung", Icons.article, ManualPage(), context),
+                    ),
+                    customShowCase(
+                        homeKeys["stats"],
+                        "Statistiken",
+                        "Hier sehen Sie alle wichtigen Daten",
+                        _makeHomeTile("Statistiken", Icons.analytics,
+                            StatisticsPage(), context)),
+                    customShowCase(
+                        homeKeys["achievements"],
+                        "Achievements",
+                        "Mit dem Abschließen von Aufgaben sammeln Sie Erfolge",
+                        _makeHomeTile("Achievements", Icons.emoji_events,
+                            AchievementsPage(), context)),
+                    customShowCase(
+                        homeKeys["aboutus"],
+                        "Über uns",
+                        "Hier können Sie mehr über uns erfahren",
+                        _makeHomeTile("Über uns", Icons.import_contacts,
+                            AboutUsPage(), context))
                   ],
                 ),
               ),

@@ -53,7 +53,7 @@ class HowToUse extends StatelessWidget {
               Text(
                 ' Wie nutze ich die App? ',
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
                     fontWeight: FontWeight.w600,
                     color: Colors.black),
                 textAlign: TextAlign.center,
