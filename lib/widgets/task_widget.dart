@@ -124,7 +124,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                   BoxCommunicator().saveUserImage(
                       img["pathToImg"], img["label"], img["luxValue"]);
                   _deleteTask(widget.task);
-                  Stats.increaseTask("imageTask");
+                  Stats.increaseTask("brightnessTask");
                   Fluttertoast.showToast(
                       msg: "Super, Aufgabe erledigt!",
                       toastLength: Toast.LENGTH_SHORT,

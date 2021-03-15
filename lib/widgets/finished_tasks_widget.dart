@@ -20,10 +20,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     Colors.white,
     Colors.blue
   ];
-  List<String> taskList = [
-    'imageTask',
-    'cleaningTask',
-  ];
+  List<String> taskList = ['imageTask', 'cleaningTask', 'brightnessTask'];
   @override
   Widget build(BuildContext context) {
     //a FutureBuilder is used to deal with the asynchronous behavior of the Hive
@@ -111,11 +108,16 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
             }
           },
         )),
+        Text("Sie haben bisher " +
+            Stats.getTotalNumberOfTasks().toString() +
+            " Task" +
+            (Stats.getTotalNumberOfTasks() > 1 ? "s" : "") +
+            " abgeschlossen"),
         Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: _buildIndicators())
+            children: _buildIndicators()),
       ],
     ));
   }
