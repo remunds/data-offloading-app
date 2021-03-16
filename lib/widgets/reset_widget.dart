@@ -50,7 +50,7 @@ class ResetButton extends StatelessWidget {
                 content: Text(
                     'Wollen Sie wirklich alle Statistiken auf ihrem Gerät löschen?'));
           }).then((val) {
-        if (val) {
+        if (val != null && val) {
           Stats.reset();
         }
       });
@@ -64,7 +64,7 @@ class ResetButton extends StatelessWidget {
           Text(
             'Statistiken zurücksetzen',
             style: TextStyle(
-                fontSize: 16.0,
+                fontSize: MediaQuery.of(context).size.height * 0.019,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87),
           ),

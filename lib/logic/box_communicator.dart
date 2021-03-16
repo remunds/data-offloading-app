@@ -68,12 +68,12 @@ class BoxCommunicator {
     //iterate over all boxes we downloaded data from
     for (var boxVal in boxes.values) {
       String box = boxVal.toString();
-      Box currBox = await Hive.openBox(box);
+      LazyBox<String> currBox = await Hive.openLazyBox(box);
       //get all the data from one Sensorbox
-      for (String data in currBox.values) {
+      for (String data in currBox.keys) {
         //if files_id is specified, given data is a chunk
 
-        if (data.contains("files_id")) {
+        if ((await currBox.get(data)).contains("files_id")) {
           query = "?format=chunk";
         } else {
           query = "?format=file";
@@ -81,8 +81,11 @@ class BoxCommunicator {
 
         //check if still connected
         if (Provider.of<BoxConnectionState>(context, listen: false)
-                .connectionState !=
-            Connection.SENSORBOX) {
+                    .connectionState ==
+                Connection.SENSORBOX ||
+            Provider.of<BoxConnectionState>(context, listen: false)
+                    .connectionState ==
+                Connection.NONE) {
           Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
@@ -147,7 +150,11 @@ class BoxCommunicator {
     //storage box stores the number of received bytes at 'totalSizeInBytes'
     storage = await Hive.openBox('storage');
     //opens the box for the current connected Sensorbox
-    box = await Hive.openLazyBox(boxName.toString());
+    if (Hive.isBoxOpen(boxName.toString())) {
+      box = Hive.lazyBox(boxName.toString());
+    } else {
+      box = await Hive.openLazyBox(boxName.toString());
+    }
     Box boxes = await Hive.openBox('boxes');
     if (!boxes.values.contains(boxName)) {
       print("adding $boxName");
@@ -321,9 +328,12 @@ class BoxCommunicator {
       deviceTimestamp = res["timestamp"];
       //storage box stores the number of received bytes at 'totalSizeInBytes'
       //opens the box for the current connected Sensorbox
-      if (box == null || !box.isOpen) {
+      if (Hive.isBoxOpen(boxName.toString())) {
+        box = Hive.lazyBox(boxName.toString());
+      } else {
         box = await Hive.openLazyBox(boxName.toString());
       }
+
       print("Opened box with boxname " + boxName.toString());
       //If List of IDs is empty execute the download without a data limit and without priority restrictions
       if (box.length > 0) {

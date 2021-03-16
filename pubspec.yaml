@@ -67,7 +67,8 @@ flutter:
     - assets/logo_n40.png
     - assets/dachs.jpeg
     - assets/example_wifi_connect.png
-    - assets/natur40_konzept.png
+    - assets/natur40_konzept_1.png
+    - assets/natur40_konzept_2.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
