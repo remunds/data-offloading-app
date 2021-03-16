@@ -1,3 +1,6 @@
+import 'package:data_offloading_app/logic/known_wifi_dialog.dart';
+import 'package:data_offloading_app/provider/box_connection_state.dart';
+
 import '../provider/poslist_state.dart';
 import 'package:data_offloading_app/logic/box_communicator.dart';
 
@@ -22,6 +25,15 @@ class _MyMapState extends State<MyMap> {
 
   @override
   Widget build(BuildContext context) {
+
+    BoxConnectionState boxConnectionState = context.watch<BoxConnectionState>();
+
+    Connection _connection = boxConnectionState.connectionState;
+
+    if (_connection == Connection.UNKNOWN_WIFI) {
+      KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
+    }
+
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
