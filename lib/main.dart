@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 
@@ -13,6 +14,7 @@ import 'package:data_offloading_app/widgets/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
@@ -22,12 +24,32 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:flutter/services.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
+var mainKeys = {"mapKey": GlobalKey(), "tasks": GlobalKey()};
+
 void main() async {
   //initialize hive, the nosql database
   await Hive.initFlutter();
   Box storage = await Hive.openBox('storage');
   Stats.setBox(storage);
-  runApp(MultiProvider(
+
+  // This Widget inits the showcase of the functionalities of the app. After first startup it never appears again
+  Widget showCaseStart(Builder builder) {
+    return ShowCaseWidget(
+        onStart: (index, key) {
+          log('onStart: $index, $key');
+        },
+        onComplete: (index, key) {
+          log('onComplete: $index, $key');
+        },
+        onFinish: () {
+          storage.put('guideFinished', true);
+          log('finished');
+        },
+        autoPlay: false,
+        builder: builder);
+  }
+
+  MultiProvider mainApp = MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),
       ChangeNotifierProvider(create: (_) => TaskListProvider()),
@@ -36,7 +58,13 @@ void main() async {
       ChangeNotifierProvider(create: (_) => DownloadUploadState()),
     ],
     builder: (context, child) => MainApp(),
-  ));
+  );
+
+  runApp(storage.get('guideFinished', defaultValue: false)
+      ? mainApp
+      : showCaseStart(
+          Builder(builder: (context) => mainApp),
+        ));
 }
 
 /// This is the main application widget.
@@ -152,7 +180,7 @@ class _MainAppState extends State<MainApp> {
     _timer.cancel();
   }
 
-  List<Widget> _pages = [MyMap(), Home(), Tasks()];
+  List<Widget> _pages = [Map(), Home(), Tasks()];
 
   int _selectedIndex = 1;
   void _onItemTap(int index) {
@@ -168,6 +196,28 @@ class _MainAppState extends State<MainApp> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
+    List<GlobalKey<State<StatefulWidget>>> globalKeyList = [];
+    homeKeys.values.forEach((val) => globalKeyList.add(val));
+    mainKeys.values.forEach((val) => globalKeyList.add(val));
+
+    //startup of the showcase on first app start
+    if (Hive.box('storage').get('guideFinished', defaultValue: false) ==
+        false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase(globalKeyList);
+      });
+    }
+
+    /// Creates a custom ShowCase Widget. Standard widgets shown when bool 'guideFinished' evaluates to true.
+    Widget customShowCase(
+        GlobalKey key, String title, String description, Widget child) {
+      return Hive.box('storage').get('guideFinished', defaultValue: false)
+          ? child
+          : Showcase(
+              key: key, title: title, description: description, child: child);
+    }
+
     return MaterialApp(
         title: MainApp._title,
         theme: ThemeData(
@@ -183,11 +233,19 @@ class _MainAppState extends State<MainApp> {
               //our navigation bar at the bottom
               items: [
                 BottomNavigationBarItem(
-                    icon: new Icon(Icons.map), label: "Map"),
+                    icon: customShowCase(
+                        mainKeys["mapKey"],
+                        "Karte",
+                        "Suchen Sie nach Sensorboxen in ihrer Nähe",
+                        Icon(Icons.map)),
+                    label: "Map"),
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
                 BottomNavigationBarItem(
-                    icon: new Icon(Icons.home), label: "Home"),
-                BottomNavigationBarItem(
-                    icon: new Icon(Icons.assignment_turned_in),
+                    icon: customShowCase(
+                        mainKeys["tasks"],
+                        "Aufgaben",
+                        "Schließen Sie Aufgaben einer verbundenen Sensorbox ab",
+                        Icon(Icons.assignment_turned_in)),
                     label: "Aufgaben"),
               ],
               unselectedItemColor: Colors.grey,

@@ -1,5 +1,6 @@
 import 'package:data_offloading_app/widgets/how_to_connect.dart';
 import 'package:data_offloading_app/widgets/how_to_use.dart';
+import 'package:data_offloading_app/widgets/important_info.dart';
 
 import 'package:flutter/material.dart';
 
@@ -53,6 +54,10 @@ class ManualPage extends StatelessWidget {
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   children: <Widget>[
+                    ImportantInfo(),
+                    SizedBox(
+                      height: 5,
+                    ),
                     HowToConnect(),
                     SizedBox(
                       height: 5,
