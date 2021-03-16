@@ -1,11 +1,8 @@
-# Nature 4.0
-Conservation strategies require the observation and assessment of landscape. Expert surveys must make trade-offs here between level of detail, spatial coverage, and temporal repetition, which are only partially resolved even by resorting to airborne or satellite-based remote sensing approaches. This limits differentiated conservation planning and response options.
+# About this project
 
+In support of the [Nature 4.0 project](https://www.uni-marburg.de/de/fb19/natur40) an app was developed for collecting nature data and making them available to researchers. 
 
-
-# Data-Offloading
-
-The Data-Offloading project is split into three different repositories.
+This project is split into three different repositories:
 
 * [backend](https://github.com/remunds/data-offloading-backend/) 
 * [box](https://github.com/remunds/data-offloading-box)
@@ -17,7 +14,7 @@ This repository covers the application component.
 
 
 
-## Authorizations for the application 
+# Authorizations for the application 
 
 The application requests authorization for your location while it is running to determine your position on the map. Furthermore, when doing a photo capturing task, you are asked to allow access to the camera and microphone of the device. 
 
