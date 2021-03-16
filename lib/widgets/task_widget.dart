@@ -11,22 +11,30 @@ import '../provider/tasklist_state.dart';
 import 'package:provider/provider.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
+/// This widget displays exactly one [Task].
+/// A task is represented by an ExpansionTile.
+/// Unexpanded, title and task icon are displayed.
+/// Upon expansion, the task description and a 'Complete' button become visible.
+/// The content of the tile depends on the specific task.
 class TaskWidget extends StatefulWidget {
+
   TaskWidget(this.task);
+
+  /// the specific task for this widget
   final Task task;
 
   @override
   _TaskWidgetState createState() => _TaskWidgetState();
 }
 
-//This is is our TaskWidget. Every task is represented by a ExpansionTile, where you can see the title and a icon when it's unexpanded.
-//When you expand the tile you also see the task description and a button to check off that task
 class _TaskWidgetState extends State<TaskWidget> {
+
+  /// returns the camera to be used for capturing
   Future<CameraDescription> _getCamera() async {
     final cameras = await availableCameras();
-    //select the fron camera
+    // select the front camera
     CameraDescription cam = cameras[1];
-    //if there is no frontcamera take the backcamera
+    // if there is no front camera take the back camera
     if (cam == null) {
       return cameras[0];
     }
@@ -35,7 +43,8 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //this local function calls a provider function that deletes the task from the global task list and calls a delete function in box_communicator
+    // this local function calls a provider function that deletes the task from
+    // the global task list and calls a delete function in box_communicator
     void _deleteTask(Task task) async {
       context.read<TaskListProvider>().deleteFromTasks(task);
     }

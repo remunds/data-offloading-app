@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+/// A widget to display version info about the app
 class VersionInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

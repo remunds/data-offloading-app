@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
+/// A widget for displaying the level
 class LevelDisplay extends StatelessWidget {
-  //create the level display
   @override
   Widget build(BuildContext context) {
-    //a future builder is used to deal with the asynchronos behavior of _makeLevelTile()
+    // a future builder is used to deal with the asynchronous behaviour of _makeLevelTile()
     return FutureBuilder(
         future: _makeLevelTile(),
         builder: (context, AsyncSnapshot<Container> snapshot) {
@@ -20,7 +20,7 @@ class LevelDisplay extends StatelessWidget {
         });
   }
 
-  //function to build the level tile
+  /// function to build the level tile
   Future<Container> _makeLevelTile() async {
     Stats.openBox();
     //get the current level stored in the Hive

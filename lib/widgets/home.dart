@@ -13,12 +13,18 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+
+/// This is the Home Page. It has a header for displaying the connection status
+/// and four buttons for navigating to other pages:
+/// HowToUse, HowToConnect, Statistics and Achievements.
+/// It's also displayed whether uploading or downloading is currently in progress.
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+
   void _showFirstOpenDialog(BuildContext context) async {
     double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
     double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
@@ -43,7 +49,8 @@ class _HomeState extends State<Home> {
                     vertical: verticalAlertPadding),
                 contentPadding: EdgeInsets.all(20.0),
                 content: Text(
-                    'Möchten Sie wissen, wie diese App funktioniert? Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
+                    'Möchten Sie wissen, wie diese App funktioniert? '
+                        'Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
                 actions: <Widget>[
                   TextButton(
                     child: Text(
@@ -97,7 +104,7 @@ class _HomeState extends State<Home> {
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
-    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes.
+    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes. (TODO: delete?)
 
     if (_connection == Connection.UNKNOWN_WIFI) {
       KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);

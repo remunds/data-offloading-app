@@ -11,20 +11,22 @@ import 'task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Tasks Page displays all available Tasks or none, if not connected to a sensor box
 class Tasks extends StatefulWidget {
   @override
   _TasksState createState() => _TasksState();
 }
 
 class _TasksState extends State<Tasks> {
-  //BuildContext context;
+
+  /// timer for reloading available tasks
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
     context.read<TaskListProvider>().awaitTasks();
-    //check every second for new Tasks
+    //check every 5 seconds for new Tasks
     _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
       context.read<TaskListProvider>().awaitTasks();
     });

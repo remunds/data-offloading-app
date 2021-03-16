@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
-//this widget is for development purposes only. It is used to reset all data regarding the finished tasks and visited boxes.
+/// This widget is a reset button for development purposes only.
+/// It is used to reset all statistics data regarding the finished tasks and visited boxes.
 class ResetButton extends StatelessWidget {
+
   final double horizontalAlertPadding;
   final double verticalAlertPadding;
+
   ResetButton({this.horizontalAlertPadding, this.verticalAlertPadding});
+
   @override
   Widget build(BuildContext context) {
-//Dialog shown when user wants to download all data
+    //Dialog shown when user wants to download all data
     Future<void> _showResetDialogue() async {
       await showDialog<bool>(
           context: context,
