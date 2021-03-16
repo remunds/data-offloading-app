@@ -134,7 +134,7 @@ You have to configure the following parameters to run the project
       ...
           //You can change the condition to identify your task to anything you like
       	else if (widget.task.title.compareTo("MyNewTask") == 0){
-          	//process your new task here
+          	  //process your new task here
               ...
               //maybe call a function from box_communicator.dart
               BoxCommunicator().myNewProcessingAndCommunicationFunction();
