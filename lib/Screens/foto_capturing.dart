@@ -48,7 +48,7 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
   /// This function displays information for the FotoCapturePage when the info icon in the top right corner is pressed
   Future<void> _showCameraInfo() async {
     double verticalPadding = MediaQuery.of(context).size.height * 0.3;
-    double horizontalPadding = MediaQuery.of(context).size.width * 0.2;
+    double horizontalPadding = MediaQuery.of(context).size.width * 0.1;
     await showDialog(
         context: context,
         builder: (BuildContext context) {
