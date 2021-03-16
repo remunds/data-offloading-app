@@ -1,7 +1,5 @@
-
 /// This class stores which files and chunks are stored on device.
 class IdListAndTimeStamp {
-
   /// timestamp is used as device ID
   final int timestamp;
 

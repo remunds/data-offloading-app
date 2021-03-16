@@ -17,7 +17,6 @@ import 'package:data_offloading_app/logic/stats.dart';
 /// Upon expansion, the task description and a 'Complete' button become visible.
 /// The content of the tile depends on the specific task.
 class TaskWidget extends StatefulWidget {
-
   TaskWidget(this.task);
 
   /// the specific task for this widget
@@ -28,7 +27,6 @@ class TaskWidget extends StatefulWidget {
 }
 
 class _TaskWidgetState extends State<TaskWidget> {
-
   /// returns the camera to be used for capturing
   Future<CameraDescription> _getCamera() async {
     final cameras = await availableCameras();

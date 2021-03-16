@@ -16,7 +16,6 @@ import '../data/task.dart';
 import '../data/box_position.dart';
 import 'stats.dart';
 
-
 /// Class for communicating with Sensorbox and Backend Server
 /// This class is used for:
 ///   - downloading data
@@ -26,10 +25,9 @@ import 'stats.dart';
 ///   - sending user images to server
 ///   - labelling images
 class BoxCommunicator {
-
   /// data limit in MB for downloading data
-  double dataLimitInMB =
-      Hive.box('storage').get('dataLimitValueInMB', defaultValue: 10.0); // TODO: default datalimit was supposed to be changed
+  double dataLimitInMB = Hive.box('storage').get('dataLimitValueInMB',
+      defaultValue: 10.0); // TODO: default datalimit was supposed to be changed
 
   /// number of boxes known by the server
   int _numberOfBoxes = 0;
@@ -38,7 +36,8 @@ class BoxCommunicator {
   LazyBox<String> box;
 
   /// Hive [Box] stores global data across all files
-  Box<dynamic> storage; //TODO: in main state that this data is kept after app restart
+  Box<dynamic>
+      storage; //TODO: in main state that this data is kept after app restart
 
   /// standard headers for HTTP Requests
   Map<String, String> headers = {"Content-type": "application/json"};

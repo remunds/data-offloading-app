@@ -13,7 +13,6 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-
 /// This is the Home Page. It has a header for displaying the connection status
 /// and four buttons for navigating to other pages:
 /// HowToUse, HowToConnect, Statistics and Achievements.
@@ -24,7 +23,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   void _showFirstOpenDialog(BuildContext context) async {
     double verticalAlertPadding = MediaQuery.of(context).size.height * 0.30;
     double horizontalAlertPadding = MediaQuery.of(context).size.width * 0.1;
@@ -48,9 +46,8 @@ class _HomeState extends State<Home> {
                     horizontal: horizontalAlertPadding,
                     vertical: verticalAlertPadding),
                 contentPadding: EdgeInsets.all(20.0),
-                content: Text(
-                    'Möchten Sie wissen, wie diese App funktioniert? '
-                        'Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
+                content: Text('Möchten Sie wissen, wie diese App funktioniert? '
+                    'Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
                 actions: <Widget>[
                   TextButton(
                     child: Text(

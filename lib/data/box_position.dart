@@ -1,4 +1,3 @@
-
 /// This class wraps the lat and long coordinates of the sensor boxes
 class BoxPosition {
   final double lat;

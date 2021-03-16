@@ -12,7 +12,6 @@ class FinishedTasksDisplay extends StatefulWidget {
 }
 
 class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
-
   int _touchedIndex;
 
   List<Color> colorList = [

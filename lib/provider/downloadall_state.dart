@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// This provider switches between different download states
 class DownloadAllState with ChangeNotifier {
-
   /// initially in normal download state (0)
   /// with button on settings page downloadAll state (1) can be enabled
   /// finally, download completed state (2)

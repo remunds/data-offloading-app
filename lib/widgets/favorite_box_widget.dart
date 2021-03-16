@@ -5,7 +5,6 @@ import 'package:fl_chart/fl_chart.dart';
 /// A widget for displaying the favourite (most visited) boxes.
 /// This widget is displayed on the Statistics page.
 class FavoriteBoxDisplay extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     //a future builder is used to deal with the asynchronous behavior of _makeFavBoxTile()

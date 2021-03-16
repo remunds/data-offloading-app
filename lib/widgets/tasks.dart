@@ -18,7 +18,6 @@ class Tasks extends StatefulWidget {
 }
 
 class _TasksState extends State<Tasks> {
-
   /// timer for reloading available tasks
   Timer _timer;
 

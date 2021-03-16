@@ -25,7 +25,6 @@ class _MyMapState extends State<MyMap> {
 
   @override
   Widget build(BuildContext context) {
-
     BoxConnectionState boxConnectionState = context.watch<BoxConnectionState>();
 
     Connection _connection = boxConnectionState.connectionState;

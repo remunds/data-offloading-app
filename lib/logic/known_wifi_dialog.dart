@@ -5,7 +5,6 @@ import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 /// Class for adding currently connected Wifi to Known Wifis for Data Upload
 class KnownWifiDialog {
-
   /// opens dialog asking whether connected wifi should be added to known wifis
   ///
   /// [context] build context from page calling this function

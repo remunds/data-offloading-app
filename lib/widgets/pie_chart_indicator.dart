@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 /// This class is used to build the indicators for the pie charts.
 /// They are usually displayed in the bottom left corner of a pie chart.
 class ChartIndicator extends StatelessWidget {
-
   final Color color;
   final String text;
+
   /// The index and touchIndex are used in conjunction with the fl_charts lib.
   /// They are needed to determine if part of the pie chart that corresponds to the current indicator is tapped or not.
   final int index, touchIndex;

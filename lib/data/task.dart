@@ -1,12 +1,14 @@
-
 /// Task class
 class Task {
   /// task id
   final String id;
+
   /// task title
   final String title;
+
   /// task description
   final String description;
+
   /// image associated with task, null if not an image task
   final String imageId;
 

@@ -4,7 +4,6 @@ import 'package:data_offloading_app/logic/stats.dart';
 /// This widget is a reset button for development purposes only.
 /// It is used to reset all statistics data regarding the finished tasks and visited boxes.
 class ResetButton extends StatelessWidget {
-
   final double horizontalAlertPadding;
   final double verticalAlertPadding;
 

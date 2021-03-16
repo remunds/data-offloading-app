@@ -5,7 +5,6 @@ import '../logic/box_communicator.dart';
 
 /// Provider for list of [Task]
 class TaskListProvider with ChangeNotifier {
-
   /// list of [Task]
   List<Task> _taskList = List();
 
