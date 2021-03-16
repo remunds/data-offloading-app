@@ -3,7 +3,7 @@ import 'package:data_offloading_app/widgets/about_nature40.dart';
 import 'package:data_offloading_app/widgets/version_info.dart';
 import 'package:flutter/material.dart';
 
-/// This page displays the "about us" page with informations about the project
+/// This page displays the "about us" page with information about the project
 class AboutUsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class AboutUsPage extends StatelessWidget {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
-              ///This describes the appbar on the top of the screen
+              //This describes the appbar on the top of the screen
               Row(
                 //Make a Row with a back button on the left side
                 mainAxisAlignment:
@@ -48,7 +48,7 @@ class AboutUsPage extends StatelessWidget {
                 thickness: 2,
               ),
 
-              ///The following list lists the content of the "about us" page
+              //The following list lists the content of the "about us" page
               Expanded(
                 child: ListView(
                   scrollDirection: Axis.vertical,

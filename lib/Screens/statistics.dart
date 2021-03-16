@@ -6,6 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// This page displays the following statistics:
+///   - most frequently visited boxes,
+///   - number and type of finished tasks
+///   - used device memory
 class StatisticsPage extends StatefulWidget {
   @override
   _StatisticsPageState createState() => _StatisticsPageState();
@@ -25,7 +29,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
-              /// This row displays the appbar on the top of the screen
+              // This row displays the appbar on the top of the screen
               Row(
                 //Make a Row with a back button on the left side
                 mainAxisAlignment:
@@ -54,10 +58,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 thickness: 2,
               ),
 
-              /// The following widget displays the level display
+              // The following widget displays the level display
               LevelDisplay(),
               Expanded(
-                ///The following list displays all the statistics widgets
+                //The following list displays all the statistics widgets
                 child: GridView.count(
                   padding: const EdgeInsets.all(20),
                   crossAxisCount: 1,

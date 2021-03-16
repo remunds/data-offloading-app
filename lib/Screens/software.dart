@@ -16,7 +16,7 @@ class Software extends StatelessWidget {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
-              /// This row displays the appbar on the top of the screen
+              // This row displays the appbar on the top of the screen
               Row(
                 //Make a Row with a back button on the left side
                 mainAxisAlignment:
@@ -45,7 +45,7 @@ class Software extends StatelessWidget {
                 thickness: 2,
               ),
               Expanded(
-                /// This list displays the software information
+                // This list displays the software information
                 child: ListView(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,

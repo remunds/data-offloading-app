@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// This page displays the privacy information. ATM this page is a dummy page
+/// This page displays the privacy information. At the moment this page is a dummy page
 class Privacy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class Privacy extends StatelessWidget {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
-              /// This row displays the appbar on the top of the screen
+              // This row displays the appbar on the top of the screen
               Row(
                 //Make a Row with a settings button on the right side
                 mainAxisAlignment: MainAxisAlignment
@@ -45,7 +45,7 @@ class Privacy extends StatelessWidget {
                 thickness: 2,
               ),
 
-              /// This card displays the privacy information
+              // This card displays the privacy information
               Card(
                   child: Column(
                 children: [

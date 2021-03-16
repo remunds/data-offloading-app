@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:confetti/confetti.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-/// This page lists all the achievements of the user and takes care of the "confetti" when an achievement has been reached
+/// This page lists all the achievements of the user and takes care of the "confetti" when an achievement has been reached.
 class AchievementsPage extends StatefulWidget {
   @override
   _AchievementsPageState createState() => _AchievementsPageState();
@@ -37,7 +37,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
     Color _unlockedColor = Colors.black;
     Color _checkColor = Colors.lightGreen;
 
-    ///function to build an achievement tile
+    // function to build an achievement tile
     Stack _achievement(
         String title, String description, bool unlocked, Icon achIcon) {
       return Stack(children: [
@@ -146,7 +146,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       ]);
     }
 
-    /// This Scaffold wraps the list of achievements
+    // This Scaffold wraps the list of achievements
     return Scaffold(
       body: ValueListenableBuilder(
         valueListenable: Hive.box('storage').listenable(),
@@ -192,7 +192,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
 
-                      /// Here all the achievements are listed
+                      // Here all the achievements are listed
                       children: [
                         _achievement(
                           "Stadtkind",
