@@ -6,8 +6,10 @@ import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:data_offloading_app/widgets/reset_widget.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:disk_space/disk_space.dart';
 
@@ -15,6 +17,14 @@ import 'package:disk_space/disk_space.dart';
 double freeDiskSpace;
 
 class SettingsPage extends StatelessWidget {
+  static Future<FlutterBackgroundAndroidConfig> getAndroidConfig() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return FlutterBackgroundAndroidConfig(
+        notificationTitle: packageInfo.appName,
+        notificationText: "App im Hintergrund aktiv.",
+        notificationImportance: AndroidNotificationImportance.Default);
+  }
+
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.01;
@@ -249,6 +259,145 @@ class SettingsPage extends StatelessWidget {
       }
     }
 
+    void _backgroundData(bool background) async {
+      await FlutterBackground.initialize(
+          androidConfig: await getAndroidConfig());
+      if (!await FlutterBackground.hasPermissions) {
+        return;
+      }
+      if (!background) {
+        Hive.box('storage').put('backgroundService', false);
+        await FlutterBackground.disableBackgroundExecution();
+      } else {
+        Hive.box('storage').put('backgroundService', true);
+        await FlutterBackground.enableBackgroundExecution();
+        //also enable upload in all wifis, if background execution is allowed
+        Hive.box('storage').put('uploadInAllWifis', true);
+      }
+    }
+
+    void _uploadInAllWifis(bool allow) async {
+      Hive.box('storage').put('uploadInAllWifis', allow);
+      //also disable background usage, if user does not allow all wifis
+      if (!allow) _backgroundData(false);
+    }
+
+    void _backgroundDialog(bool value) async {
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              actions: <Widget>[
+                TextButton(
+                  child: Text(
+                    'Abbrechen',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                MaterialButton(
+                  color: Colors.green,
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    _backgroundData(value);
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalAlertPadding,
+                  vertical: verticalAlertPadding * 0.95),
+              title: Text(
+                'Achtung!',
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0),
+              ),
+              content: Text(
+                  'Im Hintergrund kann nur erkannt werden, ob Sie mit einem WLAN-Netz verbunden sind, deshalb werden in allen WLAN-Netzwerken Sensordaten hochgeladen. Sie können also nicht gefragt werden, ob das hochladen in diesem Netzwerk in Ordnung ist. Mobilfunkdaten werden nie benutzt. Fortfahren?'),
+            );
+          });
+    }
+
+    void _allWifiDialog(bool value) async {
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'Ja',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    onPressed: () {
+                      _uploadInAllWifis(value);
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                  MaterialButton(
+                    color: Colors.green,
+                    child: Text(
+                      'Abbrechen',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ],
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: horizontalAlertPadding,
+                    vertical: verticalAlertPadding * 0.95),
+                //contentPadding: EdgeInsets.all(8.0),
+                title: Text(
+                  'Achtung!',
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.0),
+                ),
+                content: Text(
+                    'Da im Hintergrund nur erkannt werden kann, ob Sie mit einem WLAN-Netz verbunden sind (und nicht welches), müssen die Hintergrundaktivitäten auch deaktiviert werden, wenn Sie vor Uploads gefragt werden möchten. Fortfahren?'));
+          });
+    }
+
+    void _showInfoDialogWifiNetworks() async {
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              actions: <Widget>[
+                TextButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalAlertPadding,
+                  vertical: verticalAlertPadding * 0.95),
+              //contentPadding: EdgeInsets.all(8.0),
+              title: Text(
+                'Information',
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0),
+              ),
+              content: Text(
+                  'Wenn deaktiviert, werden Sie in jedem unbekannten WLAN-Netzwerk gefragt, ob Sie Sensordaten uploaden möchten.'),
+            );
+          });
+    }
+
     return Scaffold(
       body: FutureBuilder<double>(
           future: DiskSpace.getFreeDiskSpace,
@@ -284,17 +433,13 @@ class SettingsPage extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   }),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 1),
-                                child: Text(
-                                  '   Einstellungen',
-                                  style: TextStyle(
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black45),
-                                  textAlign: TextAlign.center,
-                                ),
+                              Text(
+                                '   Einstellungen',
+                                style: TextStyle(
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black45),
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
@@ -305,11 +450,20 @@ class SettingsPage extends StatelessWidget {
                             height: 5,
                           ),
                           Expanded(
+                            // This list displays all the settings
                             child: ListView(
                               scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
+                              // shrinkWrap: tr/Liaue,
+
                               children: <Widget>[
-                                _divider("Download-Einstellungen"),
+                                Text(
+                                  'Download-Einstellungen',
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black54),
+                                  textAlign: TextAlign.left,
+                                ),
                                 Card(
                                     child: FlatButton(
                                   key: Key('Set Data Limit'),
@@ -320,25 +474,29 @@ class SettingsPage extends StatelessWidget {
                                       RichText(
                                         text: TextSpan(
                                           text: 'Datenmenge festlegen',
-                                          style: textspanThick,
-                                          /*defining default style is optional */
+                                          style: TextStyle(
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
                                           children: <TextSpan>[
                                             TextSpan(
                                                 text: '  Aktuell: ' +
-                                                    (dataLimit < 1000.0
+                                                    (dataLimit < 1000
                                                         ? dataLimit.toString() +
                                                             ' MB'
-                                                        : (dataLimit / 1000.0)
+                                                        : (dataLimit / 1000)
                                                                 .toStringAsFixed(
                                                                     2) +
                                                             ' GB'),
-                                                style: textspanThin),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w100,
+                                                    fontSize: 12.0)),
                                           ],
                                         ),
                                       ),
                                       Icon(
                                         Icons.equalizer_rounded,
-                                        color: iconColor,
+                                        color: Colors.lightGreen,
                                       )
                                     ],
                                   ),
@@ -359,29 +517,107 @@ class SettingsPage extends StatelessWidget {
                                         text: TextSpan(
                                           text: 'Datenpriorität',
                                           style: textspanThick,
-                                          /*defining default style is optional */
                                           children: <TextSpan>[
                                             TextSpan(
                                                 text: Hive.box('storage').get(
                                                         'oldDataSwitch',
                                                         defaultValue: true)
-                                                    ? '  Zuerst alte Daten herunterladen'
-                                                    : '  Zuerst neue Daten herunterladen',
+                                                    ? '  Zuerst alte Daten runterladen'
+                                                    : '  Zuerst neue Daten runterladen',
                                                 style: textspanThin),
                                           ],
                                         ),
                                       ),
                                       Switch(
-                                        value: Hive.box('storage').get(
-                                            'oldDataSwitch',
-                                            defaultValue: true),
-                                        onChanged: _changedOldData, // {
-                                        //   Hive.box('storage')
-                                        //       .put('oldDataSwitch', value);
-                                        // },
-                                        activeColor: iconColor,
-                                        activeTrackColor: iconColor,
-                                      )
+                                          value: Hive.box('storage').get(
+                                              'oldDataSwitch',
+                                              defaultValue: true),
+                                          onChanged: _changedOldData,
+                                          activeColor: iconColor,
+                                          activeTrackColor: iconColor)
+                                    ],
+                                  ),
+                                )),
+                                Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.04),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Hintergrund',
+                                          style: textspanThick,
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: Hive.box('storage').get(
+                                                        'backgroundService',
+                                                        defaultValue:
+                                                            FlutterBackground
+                                                                .isBackgroundExecutionEnabled)
+                                                    ? '  App ist im Hintergrund aktiv'
+                                                    : '  App ist nicht im Hintergrund aktiv',
+                                                style: textspanThin),
+                                          ],
+                                        ),
+                                      ),
+                                      Switch(
+                                          value: Hive.box('storage').get(
+                                              'backgroundService',
+                                              defaultValue: FlutterBackground
+                                                  .isBackgroundExecutionEnabled),
+                                          onChanged: (value) {
+                                            if (value &&
+                                                !Hive.box('storage').get(
+                                                    'uploadInAllWifis',
+                                                    defaultValue: true)) {
+                                              _backgroundDialog(value);
+                                            } else {
+                                              _backgroundData(value);
+                                            }
+                                          },
+                                          activeColor: iconColor,
+                                          activeTrackColor: iconColor)
+                                    ],
+                                  ),
+                                )),
+                                Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.04),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Unbekannte WLAN-Netze',
+                                          style: textspanThick,
+                                        ),
+                                      ),
+                                      IconButton(
+                                          icon: Icon(Icons.info_outline),
+                                          onPressed: () =>
+                                              _showInfoDialogWifiNetworks()),
+                                      Switch(
+                                          value: Hive.box('storage').get(
+                                              'uploadInAllWifis',
+                                              defaultValue: true),
+                                          onChanged: (bool value) {
+                                            if (!value &&
+                                                FlutterBackground
+                                                    .isBackgroundExecutionEnabled) {
+                                              _allWifiDialog(value);
+                                            } else {
+                                              _uploadInAllWifis(value);
+                                            }
+                                          },
+                                          activeColor: iconColor,
+                                          activeTrackColor: iconColor)
                                     ],
                                   ),
                                 )),

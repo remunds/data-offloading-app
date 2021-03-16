@@ -23,6 +23,10 @@ import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:flutter/services.dart';
 import 'package:data_offloading_app/logic/stats.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:dart_ping/dart_ping.dart';
+
+import 'Screens/settings.dart';
 
 var mainKeys = {"mapKey": GlobalKey(), "tasks": GlobalKey()};
 
@@ -49,6 +53,12 @@ void main() async {
         builder: builder);
   }
 
+  bool success = await FlutterBackground.initialize(
+      androidConfig: await SettingsPage.getAndroidConfig());
+  if (success) {
+    await FlutterBackground.enableBackgroundExecution();
+  }
+
   MultiProvider mainApp = MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => BoxConnectionState()),
@@ -72,66 +82,140 @@ class MainApp extends StatefulWidget {
   // const MyApp({Key key}) : super(key: key);
   static const String _title = 'Data Offloading App';
 
-  // updates connection state
+  /// Tests whether we are connected to a sensorbox or another wifi
+  static Future<Connection> _checkWifiConnection() async {
+    // ping to the sensorbox to see if it's available
+    final pingBox = Ping(
+      BoxCommunicator.boxRawIP,
+      count: 1,
+      timeout: 1,
+      interval: 1,
+      ipv6: false,
+    );
+    List<PingData> boxResponses = await pingBox.stream.toList();
+    //if the response was valid -> we are connected to a sensorbox
+    for (PingData d in boxResponses) {
+      if (d.error == null && d.response != null) {
+        return Connection.SENSORBOX;
+      }
+    }
+    //else try the backend
+    final pingBackend = Ping(
+      BoxCommunicator.backendRawIP,
+      count: 1,
+      timeout: 1,
+      interval: 1,
+      ipv6: false,
+    );
+    // if the backend response was valid -> we are connected to another wifi network
+    List<PingData> backendResponses = await pingBackend.stream.toList();
+    for (PingData d in backendResponses) {
+      if (d.error == null && d.response != null) {
+        return Connection.UNKNOWN_WIFI;
+      }
+    }
+    //if backend and box are not reachable -> our wifi has no connection
+    return Connection.NONE;
+  }
+
+  ///Checks whether we are connected to wifi, mobile data, or not at all
+  ///using the connectivitymanager from android (natively)
+  static Future<bool> _connectedToWifi() async {
+    const MethodChannel _channel = const MethodChannel('ConnectionManager');
+    String connectionType = await _channel.invokeMethod('getConnectionType');
+    if (connectionType == "WIFI") {
+      return true;
+    }
+    return false;
+  }
+
+  /// Updates connection state and call functions depending on the state
   static void getConnectionState(BuildContext context) async {
     BoxConnectionState boxConnection = context.read<BoxConnectionState>();
-    Connection state = boxConnection.connectionState;
-    String name = await WifiInfo().getWifiName();
+    Connection oldState = boxConnection.connectionState;
+
+    //1. check if connected to wifi
+    if (!await _connectedToWifi()) {
+      boxConnection.disconnected();
+      return;
+    }
+
+    //2. check whether the connection is wifi or Sensorbox
+    Connection currConnection = await _checkWifiConnection();
+    print(currConnection);
+
     BoxCommunicator boxCommunicator = BoxCommunicator();
 
     Box storage = await Hive.openBox('storage');
-    List knownWifis = storage.get('knownWifis', defaultValue: []);
 
-    switch (state) {
+    // if we are connected to a wifi network, check if it is known,
+    // or if it is allowed to upload in all wifis
+    if (currConnection == Connection.UNKNOWN_WIFI) {
+      String name = await WifiInfo().getWifiName();
+      List knownWifis = storage.get('knownWifis', defaultValue: []);
+      bool userAllowsAllWifis =
+          storage.get('uploadInAllWifis', defaultValue: true);
+      if (knownWifis.contains(name) || userAllowsAllWifis) {
+        currConnection = Connection.KNOWN_WIFI;
+      }
+    }
+
+    // this switch case checks whether the connection changed to the last time we checked
+    // if it did it calls the corresponding functions accordingly.
+    switch (oldState) {
       case Connection.NONE:
-        if (name == "Sensorbox") {
+        if (currConnection == Connection.SENSORBOX) {
           if (Platform.isAndroid) {
             //force wifi so that we do not have problems with mobile data interfering api requests
             WiFiForIoTPlugin.forceWifiUsage(true);
           }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
-          break;
-        } else if (name != null) {
-          // connected to a wifi
-          if (knownWifis.contains(name)) {
-            boxConnection.connectedToKnownWifi();
-            boxCommunicator.uploadToBackend(context);
-          } else {
-            boxConnection.connectedToUnknownWifi();
-          }
+        } else if (currConnection == Connection.KNOWN_WIFI) {
+          boxConnection.connectedToKnownWifi();
+          boxCommunicator.uploadToBackend(context);
+        } else if (currConnection == Connection.UNKNOWN_WIFI) {
+          boxConnection.connectedToUnknownWifi();
         }
         break;
 
       case Connection.SENSORBOX:
-        if (name == null)
+        if (currConnection == Connection.NONE)
           boxConnection.disconnected();
-        else if (name != "Sensorbox") {
-          if (knownWifis.contains(name)) {
-            boxConnection.connectedToKnownWifi();
-            boxCommunicator.uploadToBackend(context);
-          } else {
-            boxConnection.connectedToUnknownWifi();
-          }
+        else if (currConnection == Connection.KNOWN_WIFI) {
+          boxConnection.connectedToKnownWifi();
+          boxCommunicator.uploadToBackend(context);
+        } else if (currConnection == Connection.UNKNOWN_WIFI) {
+          boxConnection.connectedToUnknownWifi();
         }
         break;
 
       case Connection.KNOWN_WIFI:
-        if (name == null)
+        if (currConnection == Connection.NONE)
           boxConnection.disconnected();
-        else if (name == "Sensorbox") {
+        else if (currConnection == Connection.SENSORBOX) {
+          if (Platform.isAndroid) {
+            //force wifi so that we do not have problems with mobile data interfering api requests
+            WiFiForIoTPlugin.forceWifiUsage(true);
+          }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
+        } else if (currConnection == Connection.UNKNOWN_WIFI) {
+          boxConnection.connectedToUnknownWifi();
         }
         break;
 
       case Connection.UNKNOWN_WIFI:
-        if (name == null)
+        if (currConnection == Connection.NONE)
           boxConnection.disconnected();
-        else if (name == "Sensorbox") {
+        else if (currConnection == Connection.SENSORBOX) {
+          if (Platform.isAndroid) {
+            //force wifi so that we do not have problems with mobile data interfering api requests
+            WiFiForIoTPlugin.forceWifiUsage(true);
+          }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
-        } else if (knownWifis.contains(name)) {
+        } else if (currConnection == Connection.KNOWN_WIFI) {
           boxConnection.connectedToKnownWifi();
           boxCommunicator.uploadToBackend(context);
         }
