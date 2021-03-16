@@ -28,7 +28,8 @@ class _FMapState extends State<FMap> {
     BoxCommunicator().fetchPositions(context, this);
     BoxConnectionState boxConnectionState = context.watch<BoxConnectionState>();
     context.watch<PosListProvider>().posList.forEach((e) {
-      _boxes.add(_buildBoxMarker(e.lat, e.long));
+      Marker boxMarker = _buildBoxMarker(e.lat, e.long);
+      if (!_boxes.contains(boxMarker)) _boxes.add(boxMarker);
     });
     Connection _connection = boxConnectionState.connectionState;
 
