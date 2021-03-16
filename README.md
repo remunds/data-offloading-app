@@ -160,8 +160,6 @@ You have to configure the following parameters to run the project
 
   
 
-
-
 ### Changing the IP of the back end
 
 * in ` lib/logic/box_communicator.dart ` change
@@ -182,7 +180,18 @@ You have to configure the following parameters to run the project
 
   to the IP of the box.
 
+### Changing the name of the application
 
+* in ```android/app/src/main/AndroidManifest.xml``` change
+
+  ```xml
+  <application
+          android:name="io.flutter.app.FlutterApplication"
+          android:label="myAppName"
+          android:icon="@mipmap/ic_launcher">
+  ```
+
+  
 
 # License
 
