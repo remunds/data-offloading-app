@@ -172,6 +172,18 @@ You have to configure the following parameters to run the project
 
   to the IP of the back end server.
 
+### Changing the IP of the box
+
+* in ```lib/logic/box_communicator``` change 
+
+  ```dart
+  static final String boxRawIP
+  ```
+
+  to the IP of the box.
+
+
+
 # License
 
 This project's code is licensed under the [GNU General Public License version 3 (GPL-3.0-or-later)](LICENSE).
