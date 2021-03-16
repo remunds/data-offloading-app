@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 
-//this class is used to manage the Hive storage box in relation to the statistics page.
-//this class only has class methods.
+/// this class is used to manage the Hive storage box in relation to the statistics page.
+/// this class only has class methods.
 class Stats {
   static Box box;
 

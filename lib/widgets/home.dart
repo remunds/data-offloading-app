@@ -3,7 +3,7 @@ import 'package:data_offloading_app/Screens/achievements.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
-import 'package:data_offloading_app/logic/home_wifi_dialog.dart';
+import 'package:data_offloading_app/logic/known_wifi_dialog.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
     //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes.
 
     if (_connection == Connection.UNKNOWN_WIFI) {
-      HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
+      KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
     }
 
     return new Scaffold(

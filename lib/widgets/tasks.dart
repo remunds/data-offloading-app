@@ -5,7 +5,7 @@ import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
 
 import '../data/task.dart';
-import '../logic/home_wifi_dialog.dart';
+import '../logic/known_wifi_dialog.dart';
 import 'task_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class _TasksState extends State<Tasks> {
     Connection _connection = boxConnectionState.connectionState;
 
     if (_connection == Connection.UNKNOWN_WIFI) {
-      HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
+      KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
     }
 
     return Container(
