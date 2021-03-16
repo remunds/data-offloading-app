@@ -24,17 +24,17 @@ The application requests authorization for your location while it is running to 
 
 
 
-# For Users
+## For Users
 
-## Installation for users
+### Installation for users
 
 You can download a working version of the project in the releases tab.
 
 
 
-# For Developers  
+## For Developers  
 
-## Requirements
+### Requirements
 
 Before you begin, make sure that the following requirements are met:
 
@@ -44,7 +44,7 @@ Before you begin, make sure that the following requirements are met:
 
 
 
-## How to run 
+### How to run 
 
 * clone the git-repository:
 
@@ -67,14 +67,14 @@ flutter run
 
 
 
-# Configure
+### Configure
 
 You have to configure the following parameters to run the project
 
 * complete all steps described in the [backend](https://github.com/remunds/data-offloading-backend/) and [box](https://github.com/remunds/data-offloading-box) repositories
 
 
-### Adding another task
+#### Adding another task
 
 * modify the class ```Task``` in ```lib/data/task.dart``` 
 
@@ -158,7 +158,7 @@ You have to configure the following parameters to run the project
 
   
 
-### Changing the IP of the back end
+#### Changing the IP of the back end
 
 * in ` lib/logic/box_communicator.dart ` change
 
@@ -168,7 +168,7 @@ You have to configure the following parameters to run the project
 
   to the IP of the back end server.
 
-### Changing the IP of the box
+#### Changing the IP of the box
 
 * in ```lib/logic/box_communicator``` change 
 
@@ -178,7 +178,7 @@ You have to configure the following parameters to run the project
 
   to the IP of the box.
 
-### Changing the name of the application
+#### Changing the name of the application
 
 * in ```android/app/src/main/AndroidManifest.xml``` change ```android:label``` 
 
