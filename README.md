@@ -21,9 +21,9 @@ This repository covers the application component.
 
 Before you begin, make sure that the following requirements are met:
 
-* android-sdk version 28 with android-studio
+* android-sdk version 28 with android-studio.
 * flutter, tested with version 1.22.4. You can either install flutter manually or use the provided nix-shell by executing ` nix-shell` in CLI.
-* You either have a mobile device (at the moment only android is supported) connected to your workstation in debug mode or you are using an android emulator
+* You either have a mobile device (at the moment only android is supported) connected to your workstation in debug mode or you are using an android emulator.
 
 
 
