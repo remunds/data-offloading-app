@@ -182,7 +182,7 @@ You have to configure the following parameters to run the project
 
 ### Changing the name of the application
 
-* in ```android/app/src/main/AndroidManifest.xml``` change
+* in ```android/app/src/main/AndroidManifest.xml``` change ```android:label``` 
 
   ```xml
   <application
