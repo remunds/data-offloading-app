@@ -53,6 +53,7 @@ Before you begin, make sure that the following requirements are met:
 
 ```bash
 git clone https://github.com/remunds/data-offloading-app/
+cd data-offloading-app
 ```
 
 * get all flutter dependencies
