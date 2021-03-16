@@ -108,7 +108,20 @@ class AboutNature40 extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width * 0.959,
                 child: Image.asset(
-                  'assets/natur40_konzept.png',
+                  'assets/natur40_konzept_1.png',
+                  scale: 2,
+                  alignment: Alignment.center,
+                ),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.959,
+                child: Image.asset(
+                  'assets/natur40_konzept_2.png',
                   scale: 3,
                   alignment: Alignment.center,
                 ),

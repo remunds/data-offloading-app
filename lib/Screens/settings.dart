@@ -41,9 +41,12 @@ class SettingsPage extends StatelessWidget {
     Color iconColor = Colors.lightGreen;
 
     TextStyle textspanThick = TextStyle(
-        color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 16.0);
-    TextStyle textspanThin =
-        TextStyle(fontWeight: FontWeight.w100, fontSize: 12.0);
+        color: Colors.black87,
+        fontWeight: FontWeight.w600,
+        fontSize: MediaQuery.of(context).size.height * 0.019);
+    TextStyle textspanThin = TextStyle(
+        fontWeight: FontWeight.w100,
+        fontSize: MediaQuery.of(context).size.height * 0.015);
 
     Widget _divider(String divideText) {
       return Stack(children: [
@@ -201,7 +204,7 @@ class SettingsPage extends StatelessWidget {
                         'Wollen Sie wirklich alle Daten auf ihr Gerät laden? (Das Datenlimit wird nicht berücksichtigt.)')
                     : Text('Bitte verbinden Sie sich mit einer Sensorbox.'));
           }).then((val) {
-        if (val && val != null) {
+        if (val != null && val) {
           BoxCommunicator().downloadAllData(_downloadIconContext);
         }
       });
@@ -320,7 +323,10 @@ class SettingsPage extends StatelessWidget {
                     fontSize: 18.0),
               ),
               content: Text(
-                  'Im Hintergrund kann nur erkannt werden, ob Sie mit einem WLAN-Netz verbunden sind, deshalb werden in allen WLAN-Netzwerken Sensordaten hochgeladen. Sie können also nicht gefragt werden, ob das hochladen in diesem Netzwerk in Ordnung ist. Mobilfunkdaten werden nie benutzt. Fortfahren?'),
+                'Im Hintergrund kann nur erkannt werden, ob Sie mit einem WLAN-Netz verbunden sind, deshalb werden in allen WLAN-Netzwerken Sensordaten hochgeladen. Sie können also nicht gefragt werden, ob das hochladen in diesem Netzwerk in Ordnung ist. Mobilfunkdaten werden nie benutzt. Fortfahren?',
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.017),
+              ),
             );
           });
     }
@@ -364,7 +370,9 @@ class SettingsPage extends StatelessWidget {
                       fontSize: 18.0),
                 ),
                 content: Text(
-                    'Da im Hintergrund nur erkannt werden kann, ob Sie mit einem WLAN-Netz verbunden sind (und nicht welches), müssen die Hintergrundaktivitäten auch deaktiviert werden, wenn Sie vor Uploads gefragt werden möchten. Fortfahren?'));
+                    'Da im Hintergrund nur erkannt werden kann, ob Sie mit einem WLAN-Netz verbunden sind (und nicht welches), müssen die Hintergrundaktivitäten auch deaktiviert werden, wenn Sie vor Uploads gefragt werden möchten. Fortfahren?',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.018)));
           });
     }
 
@@ -474,10 +482,7 @@ class SettingsPage extends StatelessWidget {
                                       RichText(
                                         text: TextSpan(
                                           text: 'Datenmenge festlegen',
-                                          style: TextStyle(
-                                              color: Colors.black87,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
+                                          style: textspanThick,
                                           children: <TextSpan>[
                                             TextSpan(
                                                 text: '  Aktuell: ' +
@@ -488,9 +493,7 @@ class SettingsPage extends StatelessWidget {
                                                                 .toStringAsFixed(
                                                                     2) +
                                                             ' GB'),
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w100,
-                                                    fontSize: 12.0)),
+                                                style: textspanThin),
                                           ],
                                         ),
                                       ),
