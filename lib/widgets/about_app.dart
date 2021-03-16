@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mailto/mailto.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// This page displays the "about "information at the bottom of the "about us".
 class AboutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class AboutApp extends StatelessWidget {
           fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54),
     );
 
+    /// please fill out the List<String> to and List<String> cc to the approprite email address
     _launchMailTo() async {
       final mailtoLink = Mailto(
         to: [],
@@ -38,6 +40,7 @@ class AboutApp extends StatelessWidget {
       await launch(mail);
     }
 
+    /// This function links to the git repository of the project
     Future<int> _launchGitHub() async {
       const url = 'https://github.com/remunds/data-offloading-app';
       if (await canLaunch(url)) {
@@ -48,6 +51,7 @@ class AboutApp extends StatelessWidget {
       return null;
     }
 
+    /// This function links to used license of the project
     _launchLicense() async {
       const url = 'http://www.gnu.de/documents/gpl.de.html';
       if (await canLaunch(url)) {
@@ -58,6 +62,10 @@ class AboutApp extends StatelessWidget {
       return null;
     }
 
+    /// This function creates a title with a title and a specific font size
+    ///
+    /// [sub] is the text of the title
+    /// [fontSize] is the font size of the text
     Row _title(String sub, double fontSize) {
       return Row(
         children: [
@@ -73,6 +81,7 @@ class AboutApp extends StatelessWidget {
       );
     }
 
+    /// This function creates a text field
     Row _textField(Text content) {
       return Row(
         children: [
@@ -87,6 +96,7 @@ class AboutApp extends StatelessWidget {
       );
     }
 
+    /// This card displays the "about" information at the bottom of the page
     return Card(
       child: Column(
         children: [

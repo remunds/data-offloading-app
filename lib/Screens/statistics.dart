@@ -25,10 +25,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
+              /// This row displays the appbar on the top of the screen
               Row(
-                //Make a Row with a settings button on the right side
-                mainAxisAlignment: MainAxisAlignment
-                    .start, //align the button to the right side
+                //Make a Row with a back button on the left side
+                mainAxisAlignment:
+                    MainAxisAlignment.start, //align the button to the left side
                 children: [
                   IconButton(
                       //button initialisation
@@ -52,8 +53,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
               Divider(
                 thickness: 2,
               ),
+
+              /// The following widget displays the level display
               LevelDisplay(),
               Expanded(
+                ///The following list displays all the statistics widgets
                 child: GridView.count(
                   padding: const EdgeInsets.all(20),
                   crossAxisCount: 1,

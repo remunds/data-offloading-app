@@ -20,6 +20,7 @@ final List<String> labelSetAnimals = [
 ];
 List<String> labelSet;
 
+/// This page is diplayed when the user does the photo labeling task.
 class FotoLabelPage extends StatefulWidget {
   final Image img;
   final String takenBy;
@@ -93,6 +94,7 @@ class _FotoLabelPageState extends State<FotoLabelPage> {
   }
 }
 
+/// This button is clicked when the user has selected all the appropriate labels in the photo labeling task
 Widget buildActionButton(BuildContext context, List<String> selectedLabels) {
   return FloatingActionButton(
       child: Icon(Icons.done_all),
@@ -134,6 +136,7 @@ Widget buildActionButton(BuildContext context, List<String> selectedLabels) {
       });
 }
 
+/// This class is used to create the labels for the labeling task
 class GridViewItem extends StatelessWidget {
   final bool _isSelected;
   final String _label;
