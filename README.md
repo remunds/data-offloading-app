@@ -15,15 +15,35 @@ To get to know the other components of the project visit the corresponding git-r
 
 This repository covers the application component.
 
+
+
+## Authorizations for the application 
+
+The application requests authorization for your location while it is running to determine your position on the map. Furthermore, when doing a photo capturing task, you are asked to allow access to the camera and microphone of the device. 
+
+
+
 # Getting Started
+
+
+
+# For Users
+
+## Installation for users
+
+You can download a working version of the project in the releases tab.
+
+
+
+# For Developers  
 
 ## Requirements
 
 Before you begin, make sure that the following requirements are met:
 
 * android-sdk version 28 with android-studio.
-* flutter, tested with version 1.22.4. You can either install flutter manually or use the provided nix-shell by executing ` nix-shell` in CLI.
-* You either have a mobile device (at the moment only android is supported) connected to your workstation in debug mode or you are using an android emulator.
+* working flutter installation (we tested with version 1.22.4). You can either install flutter manually or use the provided nix-shell by executing ` nix-shell` in CLI.
+* You either have a mobile device (at the moment only android is supported) connected to your workstation in debug mode or an android emulator setup.
 
 
 
@@ -128,7 +148,7 @@ You have to configure the following parameters to run the project
   }
   ```
 
-* modify ```List<String> taskList``` in ```lib/widgets/finished_tasks_widget.dart``` by adding the new Task ```<taskName>``` 
+* modify ```List<String> taskList``` in ```lib/widgets/finished_tasks_widget.dart``` by adding the new Task ```'myNewTask' ```  
 
   ```dart
   List<String> taskList = [
@@ -147,34 +167,12 @@ You have to configure the following parameters to run the project
 * in ` lib/logic/box_communicator.dart ` change
 
   ```dart
-  final String backendIP
+  static final String backendRawIP
   ```
 
   to the IP of the back end server.
 
-
-
-# Installation for users
-
-You can download a working version of the project in the releases tab.
-
-#  Contributing to the Data-Offloading project
-
-To contribute to the Data-Offloading project, follow these steps:
-
-1. Fork this repository.
-
-2. Create a branch: `git checkout -b <branch_name>` 
-
-3.  Make your changes and commit them: `git commit -m '<commit_message>'` (Remember to write your code according to the dart-style guide!)
-
-4.  Push to the original branch: `git push --set-upstream origin <branch_name>` 
-
-5. Create the pull request.
-
-   
-
 # License
 
-This project's code is licensed under the GNU General Public License version 3 (GPL-3.0-or-later).
+This project's code is licensed under the [GNU General Public License version 3 (GPL-3.0-or-later)](LICENSE).
 
