@@ -1,7 +1,9 @@
+/// This class stores which files and chunks are stored on device.
 class IdListAndTimeStamp {
-  //Class which constructs a IdListAndTimestamp Object with timestamp as device
-  //id and idList as list of on phone IDs (of chunks and files)
+  /// timestamp is used as device ID
   final int timestamp;
+
+  /// list of chunk and file IDs on device
   final List idList;
 
   IdListAndTimeStamp({this.timestamp, this.idList});

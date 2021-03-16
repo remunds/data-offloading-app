@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+/// A widget for displaying the favourite (most visited) boxes.
+/// This widget is displayed on the Statistics page.
 class FavoriteBoxDisplay extends StatelessWidget {
-  //create the card with statistics for the most visited boxes
   @override
   Widget build(BuildContext context) {
     //a future builder is used to deal with the asynchronous behavior of _makeFavBoxTile()
@@ -19,7 +20,9 @@ class FavoriteBoxDisplay extends StatelessWidget {
         });
   }
 
-  //wrapper to build a single bar of the bar chart. x is the value on the x-axis and y is the value on the y-axis. x is only int because the differences on the x-axis are always the same.
+  /// wrapper to build a single bar of the bar chart.
+  /// x is the value on the x-axis and y is the value on the y-axis.
+  /// x is int because the differences on the x-axis are always the same.
   BarChartGroupData _buildChartBar(int x, double y) {
     return BarChartGroupData(
       x: x,
@@ -34,7 +37,7 @@ class FavoriteBoxDisplay extends StatelessWidget {
     );
   }
 
-  //create the card with statistics for the most visited boxes
+  /// create the card with statistics for the most visited boxes
   Future<Card> _makeFavBoxTile() async {
     List<dynamic> _allBoxes = Stats.getVisitedBoxes();
     //toList() adds an empty element to the end of the set. Therefore the length of boxes is calculated with length() -1.

@@ -16,21 +16,47 @@ import '../data/task.dart';
 import '../data/box_position.dart';
 import 'stats.dart';
 
+/// Class for communicating with Sensorbox and Backend Server
+/// This class is used for:
+///   - downloading data
+///   - uploading data
+///   - fetching Sensorbox coordinates
+///   - fetching images
+///   - sending user images to server
+///   - labelling images
 class BoxCommunicator {
-  double dataLimitInMB =
-      Hive.box('storage').get('dataLimitValueInMB', defaultValue: 10.0);
-  int _numberOfBoxes = 0;
-  LazyBox<String> box;
-  Box<dynamic> storage;
+  /// data limit in MB for downloading data
+  double dataLimitInMB = Hive.box('storage').get('dataLimitValueInMB',
+      defaultValue: 10.0); // TODO: default datalimit was supposed to be changed
 
+  /// number of boxes known by the server
+  int _numberOfBoxes = 0;
+
+  /// Hive [LazyBox] stores large amounts of downloaded data
+  LazyBox<String> box;
+
+  /// Hive [Box] stores global data across all files
+  Box<dynamic>
+      storage; //TODO: in main state that this data is kept after app restart
+
+  /// standard headers for HTTP Requests
+  Map<String, String> headers = {"Content-type": "application/json"};
+
+  /// box server IP and port for downloading data and accessing server database
+  final String boxIP = "http://10.3.141.1:8000";
+
+  /// backend server IP and port for uploading data
+  final String backendIP = "http://192.168.0.102:8000";
+
+  /// getter for [_numberOfBoxes]
   int getNumberOfBoxes() {
     return _numberOfBoxes;
   }
 
-  Map<String, String> headers = {"Content-type": "application/json"};
-  final String boxIP = "http://10.3.141.1:8000";
-  final String backendIP = "http://192.168.0.102:8000";
-
+  /// uploads data stored on device to the backend with wifi connection
+  /// calls /api/postData
+  ///
+  /// [context] build context from page calling this function
   void uploadToBackend(context) async {
     //We use Provider.of instead of context.read because context will be passed by a StatefulWidget or StatefulElement. StatefulElement has no instance method read.
     Provider.of<DownloadUploadState>(context, listen: false).uploading();
@@ -85,6 +111,10 @@ class BoxCommunicator {
     Provider.of<DownloadUploadState>(context, listen: false).idle();
   }
 
+  /// downloads data from the server
+  /// calls /api/register and /api/getData
+  ///
+  /// [context] build context from page calling this function
   void downloadData(context) async {
     print("downloading...");
     Provider.of<DownloadUploadState>(context, listen: false).downloading();
@@ -252,9 +282,10 @@ class BoxCommunicator {
     await box.close();
   }
 
-  //This function is called when a button on the settings page is pressed. After that
-  //the method will be executed. Normally all files and chunks will be downloaded that
-  //are not on device yet.
+  /// downloads all files and chunks that are not on device yet
+  /// calls /api/register, /api/registerCurrentData and /api/getAllData
+  ///
+  /// [context] build context from page calling this function
   void downloadAllData(BuildContext context) async {
     print("Downloading All Data ...");
     context.read<DownloadAllState>().downloadingAll();
@@ -365,6 +396,11 @@ class BoxCommunicator {
     }
   }
 
+  /// fetches tasks from server
+  /// calls /api/getTasks
+  ///
+  /// returns a list of [Task]
+  /// or throws Exception if tasks could not be loaded from server
   Future<List<Task>> fetchTasks() async {
     final response = await http.get(boxIP + "/api/getTasks", headers: headers);
 
@@ -385,7 +421,12 @@ class BoxCommunicator {
     }
   }
 
-  //This is the way to communicate the deletion of a task with the box
+  /// sends a request to delete [task]
+  /// calls /api/deleteTask
+  ///
+  /// [task] task to be deleted
+  ///
+  /// returns the status code of the server call
   Future<int> deleteTask(Task task) async {
     //encoding the task to JSON
     String taskDel = json.encode(task);
@@ -396,6 +437,12 @@ class BoxCommunicator {
     return response.statusCode;
   }
 
+  /// fetches image from server
+  /// calls /api/getImage
+  ///
+  /// [id] image id
+  ///
+  /// returns image as map with fields 'data', 'labels' and 'takenBy'
   Future<Map<String, dynamic>> fetchImage(var id) async {
     final response =
         await http.get(boxIP + "/api/getImage/?id=$id", headers: headers);
@@ -413,6 +460,13 @@ class BoxCommunicator {
     }
   }
 
+  /// sends image labels to server
+  /// calls /api/putLabel route
+  ///
+  /// [id] image id
+  /// [labels] list of selected labels
+  ///
+  /// throws Exception if labels could not be saved on server
   void setLabel(var id, List<String> labels) async {
     String labelsStr =
         labels.toString().substring(1, labels.toString().length - 1);
@@ -433,7 +487,10 @@ class BoxCommunicator {
     }
   }
 
-  //fetches the lat and long coordinates from all sensorboxes
+  /// fetches the lat and long coordinates from all sensorboxes
+  /// calls /api/getPosition/ route
+  ///
+  /// returns sensorbox coordinates as future list of [BoxPosition]
   Future<List<BoxPosition>> fetchPositions() async {
     List<BoxPosition> posList = new List<BoxPosition>();
     int currBox = 1;
@@ -458,12 +515,21 @@ class BoxCommunicator {
       response = await http.get(url, headers: headers);
     }
     _numberOfBoxes = currBox - 1;
-    print(posList);
+    print(posList); //TODO: delete this print?
 
     return posList;
   }
 
+  /// sends a HTTP Multipart Request to box server, containing the user image and selected labels
+  /// calls /api/saveUserImage route
+  ///
+  /// [imgPath] path to image file
+  /// [labels] array of selected labels
+  /// [luxValue] value of light sensor during image capturing
+  ///
+  /// throws Exception if image could not be saved on server
   void saveUserImage(var imgPath, var labels, var luxValue) async {
+    // array of labels to string for simplified transmission in json
     String labelsStr =
         labels.toString().substring(1, labels.toString().length - 1);
     var req =

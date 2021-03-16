@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../data/task.dart';
 import '../logic/box_communicator.dart';
 
-//This is the taskList Provider. It has a method to fetch and delete tasks and notifies its listeners if something changes
+/// Provider for list of [Task]
 class TaskListProvider with ChangeNotifier {
+  /// list of [Task]
   List<Task> _taskList = List();
 
   List<Task> get taskList => _taskList;
 
+  /// fetches Tasks from server and notifies listeners
   void awaitTasks() {
     BoxCommunicator().fetchTasks().then((taskList) {
       if (taskList == null) {
@@ -20,6 +22,7 @@ class TaskListProvider with ChangeNotifier {
     });
   }
 
+  /// deletes [task] from server and notifies listeners
   void deleteFromTasks(Task task) async {
     //getting the response code of the sensorbox. The deletion is successful if code 200 is returned.
     int response = await BoxCommunicator().deleteTask(task);

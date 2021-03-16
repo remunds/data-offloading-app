@@ -11,6 +11,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:disk_space/disk_space.dart';
 
+/// This page displays the settings for the app.
 class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double verticalPadding = MediaQuery.of(context).size.height * 0.01;
@@ -25,7 +26,7 @@ class SettingsPage extends StatelessWidget {
 
     BuildContext _downloadIconContext = context;
 
-    //Dialog shown when user wants to change download data limit
+    /// Dialog shown when user wants to change download data limit
     Future<void> _showDataLimitDialog() async {
       Box sliderBox = await Hive.openBox('storage');
       double freeDiskSpace = await DiskSpace.getFreeDiskSpace;
@@ -83,7 +84,7 @@ class SettingsPage extends StatelessWidget {
       );
     }
 
-    //Dialog shown when user wants to download all data
+    /// Dialog shown when user wants to download all data
     Future<void> _showDownloadAllDialog() async {
       await showDialog<bool>(
           context: context,
@@ -141,6 +142,10 @@ class SettingsPage extends StatelessWidget {
       });
     }
 
+    /// switch if the user wants to download old data or new data first
+    ///
+    /// [value] == true old data is downloaded first
+    /// [value] == false new data is downloaded first
     void _changedOldData(bool value) async {
       if (value) {
         Hive.box('storage').put('oldDataSwitch', true);
@@ -204,8 +209,9 @@ class SettingsPage extends StatelessWidget {
                         horizontalPadding), //set a padding of 1% of screen size on all sides
                 child: Column(
                   children: [
+                    // This row displays the appbar on the top of the screen
                     Row(
-                      //Make a Row with a settings button on the right side
+                      //Make a Row with a back button on the left side
                       mainAxisAlignment: MainAxisAlignment
                           .start, //align the button to the left side
                       children: [
@@ -235,6 +241,7 @@ class SettingsPage extends StatelessWidget {
                       height: 5,
                     ),
                     Expanded(
+                      // This list displays all the settings
                       child: ListView(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
@@ -260,7 +267,6 @@ class SettingsPage extends StatelessWidget {
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 16.0),
-                                    /*defining default style is optional */
                                     children: <TextSpan>[
                                       TextSpan(
                                           text: '  Aktuell: ' +
@@ -327,7 +333,7 @@ class SettingsPage extends StatelessWidget {
                             ),
                           )),
 
-                          //NATIVITY IS STILL MISSING. SORRY FOR THAT
+                          //NATIVITY IS STILL MISSING. SORRY FOR THAT (TODO: delete??)
                           SizedBox(
                             height: 5,
                           ),

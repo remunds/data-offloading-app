@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:light/light.dart';
 
+/// This page is displayed when the user has to take a photo.
 class FotoCapturePage extends StatefulWidget {
   final CameraDescription camera;
 
@@ -37,12 +38,14 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
     super.dispose();
   }
 
+  /// This function returns the lux value read by the sensors of the mobile device
   Future<int> getLuxValue() async {
     Light _light = new Light();
     Future<int> luxvalue = _light.lightSensorStream.first;
     return luxvalue;
   }
 
+  /// This function displays information for the FotoCapturePage when the info icon in the top right corner is pressed
   Future<void> _showCameraInfo() async {
     double verticalPadding = MediaQuery.of(context).size.height * 0.3;
     double horizontalPadding = MediaQuery.of(context).size.width * 0.2;
@@ -143,7 +146,6 @@ class _FotoCapturePageState extends State<FotoCapturePage> {
                 builder: (context) => FotoLabelPage(img, "user"),
               ),
             );
-
             Navigator.pop(context, {
               "label": selectedLabels,
               "pathToImg": xf.path,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// A widget to display information about the Nature 4.0 project
 class AboutNature40 extends StatelessWidget {
   final TextStyle textStyle = TextStyle(
       fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54);

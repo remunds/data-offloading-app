@@ -3,6 +3,7 @@ import 'package:data_offloading_app/widgets/how_to_use.dart';
 
 import 'package:flutter/material.dart';
 
+/// This page displays the manual page with all the information on how to use the map
 class ManualPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,10 +19,11 @@ class ManualPage extends StatelessWidget {
                   horizontalPadding), //set a padding of 1% of screen size on all sides
           child: Column(
             children: [
+              // This row displays the appbar on the top of the screen
               Row(
-                //Make a Row with a settings button on the right side
-                mainAxisAlignment: MainAxisAlignment
-                    .start, //align the button to the right side
+                //Make a Row with a back button on the left side
+                mainAxisAlignment:
+                    MainAxisAlignment.start, //align the button to the left side
                 children: [
                   IconButton(
                       //button initialisation
@@ -46,6 +48,7 @@ class ManualPage extends StatelessWidget {
                 thickness: 2,
               ),
               Expanded(
+                // The manual instructions are displayed in the following list
                 child: ListView(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,

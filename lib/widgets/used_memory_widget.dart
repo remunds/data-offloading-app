@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-//create the card with statistics for memory
+/// A widget for displaying how much memory of the device is occupied with downloaded data.
+/// This widget is displayed on the Statistics page.
 class UsedMemoryDisplay extends StatefulWidget {
   @override
   _UsedMemoryDisplayState createState() => _UsedMemoryDisplayState();

@@ -3,7 +3,7 @@ import 'package:data_offloading_app/Screens/achievements.dart';
 import 'package:data_offloading_app/Screens/manual.dart';
 import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
-import 'package:data_offloading_app/logic/home_wifi_dialog.dart';
+import 'package:data_offloading_app/logic/known_wifi_dialog.dart';
 import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +13,10 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+/// This is the Home Page. It has a header for displaying the connection status
+/// and four buttons for navigating to other pages:
+/// HowToUse, HowToConnect, Statistics and Achievements.
+/// It's also displayed whether uploading or downloading is currently in progress.
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -42,8 +46,8 @@ class _HomeState extends State<Home> {
                     horizontal: horizontalAlertPadding,
                     vertical: verticalAlertPadding),
                 contentPadding: EdgeInsets.all(20.0),
-                content: Text(
-                    'Möchten Sie wissen, wie diese App funktioniert? Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
+                content: Text('Möchten Sie wissen, wie diese App funktioniert? '
+                    'Dann klicken Sie auf "Anleitung". Ansonsten können Sie dieses Fenster schließen. '),
                 actions: <Widget>[
                   TextButton(
                     child: Text(
@@ -97,10 +101,10 @@ class _HomeState extends State<Home> {
 
     Color green = Colors.green;
     Color red = Color(0xFFEE4400);
-    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes.
+    //Im Moment führt die folgende Abfrage bei Auswertung zu zweifacher Ausführung des jeweiligen Codes. (TODO: delete?)
 
     if (_connection == Connection.UNKNOWN_WIFI) {
-      HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
+      KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
     }
 
     return new Scaffold(

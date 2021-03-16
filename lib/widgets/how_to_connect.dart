@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:system_settings/system_settings.dart';
 
+/// This widget is a page for explaining how to connect to a Sensorbox.
 class HowToConnect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

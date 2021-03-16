@@ -3,6 +3,7 @@ import 'package:data_offloading_app/Screens/settings.dart';
 import 'package:data_offloading_app/Screens/statistics.dart';
 import 'package:flutter/material.dart';
 
+/// This widget is a page for displaying the instructions for using the app.
 class HowToUse extends StatelessWidget {
   final TextStyle textStyle = TextStyle(
       fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black54);

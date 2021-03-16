@@ -5,26 +5,27 @@ import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/provider/tasklist_state.dart';
 
 import '../data/task.dart';
-import '../logic/home_wifi_dialog.dart';
+import '../logic/known_wifi_dialog.dart';
 import 'task_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Tasks Page displays all available Tasks or none, if not connected to a sensor box
 class Tasks extends StatefulWidget {
   @override
   _TasksState createState() => _TasksState();
 }
 
 class _TasksState extends State<Tasks> {
-  //BuildContext context;
+  /// timer for reloading available tasks
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
     context.read<TaskListProvider>().awaitTasks();
-    //check every second for new Tasks
+    //check every 5 seconds for new Tasks
     _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
       context.read<TaskListProvider>().awaitTasks();
     });
@@ -44,7 +45,7 @@ class _TasksState extends State<Tasks> {
     Connection _connection = boxConnectionState.connectionState;
 
     if (_connection == Connection.UNKNOWN_WIFI) {
-      HomeWifiDialog.showAddWifiDialog(context, boxConnectionState);
+      KnownWifiDialog.showAddWifiDialog(context, boxConnectionState);
     }
 
     return Container(

@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
-class HomeWifiDialog {
+/// Class for adding currently connected Wifi to Known Wifis for Data Upload
+class KnownWifiDialog {
+  /// opens dialog asking whether connected wifi should be added to known wifis
+  ///
+  /// [context] build context from page calling this function
+  /// [connection] connection state to be updated
   static void showAddWifiDialog(
       BuildContext context, BoxConnectionState connection) async {
     String name = await WifiInfo().getWifiName();
@@ -17,6 +22,7 @@ class HomeWifiDialog {
             actions: [
               FlatButton(
                   onPressed: () {
+                    // add connected Wifi to list of Known Wifis
                     List knownWifis =
                         Hive.box('storage').get('knownWifis', defaultValue: []);
                     knownWifis.add(name);

@@ -4,7 +4,8 @@ import 'package:hive/hive.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:data_offloading_app/logic/stats.dart';
 
-//create the card with statistics for fulfilled tasks
+/// A widget for displaying the number of finished tasks.
+/// This widget is displayed on the Statistics page.
 class FinishedTasksDisplay extends StatefulWidget {
   @override
   _FinishedTasksDisplayState createState() => _FinishedTasksDisplayState();
@@ -12,6 +13,7 @@ class FinishedTasksDisplay extends StatefulWidget {
 
 class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
   int _touchedIndex;
+
   List<Color> colorList = [
     Colors.green,
     Colors.red,
@@ -20,7 +22,10 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     Colors.white,
     Colors.blue
   ];
+
+  /// list of different task types
   List<String> taskList = ['imageTask', 'cleaningTask', 'brightnessTask'];
+
   @override
   Widget build(BuildContext context) {
     //a FutureBuilder is used to deal with the asynchronous behavior of the Hive
@@ -36,7 +41,9 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
         });
   }
 
-  //if no tasks have been done the selector selects a message to be displayed. Otherwise the pie chart is displayed. This is used to prevent rendering errors for a piechart with no value-entries.
+  /// If no tasks have been completed the selector selects a message to be displayed.
+  /// Otherwise the pie chart is displayed.
+  /// This is used to prevent rendering errors for a pie chart with no value-entries.
   Future<Widget> _selectPieChart() async {
     Box storage = await Hive.openBox('storage');
     //if the user hasn't finished any tasks the pie chart has no values to display. Therefore the message "Du hast bisher noch keine Tasks erfuellt" will be displayed
@@ -50,7 +57,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     }
   }
 
-  //function to build the indicators in the bottom left corner.
+  /// function to build the indicators in the bottom left corner.
   List<ChartIndicator> _buildIndicators() {
     List<ChartIndicator> indicators = [];
     //colorIndex is used to select the appropriate color of the colorList.
@@ -67,6 +74,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     return indicators;
   }
 
+  /// function to build a tile displaying task information
   Card _makeTaskTile() {
     return Card(
         child: Column(
@@ -86,7 +94,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
               (context, AsyncSnapshot<List<PieChartSectionData>> snapshot) {
             if (snapshot.hasData) {
               return PieChart(PieChartData(
-                //checks if piechart part is touched or not
+                //checks if pie chart part is touched or not
                 pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
                   setState(() {
                     if (pieTouchResponse.touchInput is FlLongPressEnd ||
@@ -122,7 +130,7 @@ class _FinishedTasksDisplayState extends State<FinishedTasksDisplay> {
     ));
   }
 
-  //build sections for the fulfilled tasks pie chart
+  /// build sections for the fulfilled tasks pie chart
   Future<List<PieChartSectionData>> _buildTaskSections() async {
     Stats.openBox();
     //read Total number of tasks here
