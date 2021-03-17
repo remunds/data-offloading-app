@@ -16,7 +16,7 @@ This repository covers the application component.
 
 # Authorizations for the application 
 
-The application requests authorization for your location while it is running to determine your position on the map. Furthermore, when doing a photo capturing task, you are asked to allow access to the camera and microphone of the device. 
+The application requests authorization for your location while it is running to determine your position on the map. Furthermore, when doing a photo capturing task, you are asked to allow access to the camera and microphone of the device. Apart from that the user can run the application as a background service to passively download and upload data.
 
 
 
