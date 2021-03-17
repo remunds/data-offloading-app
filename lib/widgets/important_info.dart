@@ -41,13 +41,16 @@ class ImportantInfo extends StatelessWidget {
       ),
       Row(
         children: [
-          Text(
-            'Vorwort',
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.05,
-                fontWeight: FontWeight.w600,
-                color: Colors.black),
-            textAlign: TextAlign.center,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Vorwort',
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
