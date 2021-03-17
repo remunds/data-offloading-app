@@ -169,10 +169,6 @@ class MainApp extends StatefulWidget {
     switch (oldState) {
       case Connection.NONE:
         if (currConnection == Connection.SENSORBOX) {
-          if (Platform.isAndroid) {
-            //force wifi so that we do not have problems with mobile data interfering api requests
-            WiFiForIoTPlugin.forceWifiUsage(true);
-          }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
         } else if (currConnection == Connection.KNOWN_WIFI) {
@@ -198,10 +194,6 @@ class MainApp extends StatefulWidget {
         if (currConnection == Connection.NONE)
           boxConnection.disconnected();
         else if (currConnection == Connection.SENSORBOX) {
-          if (Platform.isAndroid) {
-            //force wifi so that we do not have problems with mobile data interfering api requests
-            WiFiForIoTPlugin.forceWifiUsage(true);
-          }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
         } else if (currConnection == Connection.UNKNOWN_WIFI) {
@@ -213,10 +205,6 @@ class MainApp extends StatefulWidget {
         if (currConnection == Connection.NONE)
           boxConnection.disconnected();
         else if (currConnection == Connection.SENSORBOX) {
-          if (Platform.isAndroid) {
-            //force wifi so that we do not have problems with mobile data interfering api requests
-            WiFiForIoTPlugin.forceWifiUsage(true);
-          }
           boxConnection.connectedToSensorbox();
           boxCommunicator.downloadData(context);
         } else if (currConnection == Connection.KNOWN_WIFI) {

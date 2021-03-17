@@ -176,13 +176,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
-  disk_space:
-    dependency: "direct main"
-    description:
-      name: disk_space
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.3"
   dart_style:
     dependency: transitive
     description:
@@ -190,6 +183,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.12"
+  disk_space:
+    dependency: "direct main"
+    description:
+      name: disk_space
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   equatable:
     dependency: transitive
     description:
@@ -471,13 +471,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
-  package_info:
-    dependency: "direct main"
-    description:
-      name: package_info
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.3+4"
   package_config:
     dependency: transitive
     description:
@@ -485,6 +478,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.3"
+  package_info:
+    dependency: "direct main"
+    description:
+      name: package_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.3+4"
   path:
     dependency: transitive
     description:
@@ -840,13 +840,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  wifi_iot:
-    dependency: "direct main"
-    description:
-      name: wifi_iot
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.2"
   win32:
     dependency: transitive
     description:

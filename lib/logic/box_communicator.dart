@@ -51,29 +51,6 @@ class BoxCommunicator {
     return _numberOfBoxes;
   }
 
-  Future<void> deleteBoxFromDisk(Box box) async {
-    await box.deleteFromDisk();
-    // try {
-    //   // Get the application's document directory
-    //   String boxName = box.name;
-    //   box.close();
-    //   var appDir = await getApplicationDocumentsDirectory();
-
-    //   // // Get the chosen sub-directory for Hive files
-    //   var hiveDbLock = Directory('${appDir.path}/hive_storage/$boxName.lock');
-    //   var hiveDbHive = Directory('${appDir.path}/hive_storage/$boxName.hive');
-
-    //   // // Delete the Hive directory and all its files
-    //   hiveDbLock.delete(recursive: true);
-    //   hiveDbHive.delete(recursive: true);
-
-    //   print("deleted: ${appDir.path}/hive_storage/$boxName.lock");
-    //   print("deleted: ${appDir.path}/hive_storage/$boxName.hive");
-    // } catch (e) {
-    //   print("could not delete box: ${box.name}");
-    // }
-  }
-
   /// uploads data stored on device to the backend with wifi connection
   /// calls /api/postData
   ///
@@ -89,7 +66,6 @@ class BoxCommunicator {
 
     //iterate over all boxes we downloaded data from
     for (var boxVal in boxes.values) {
-      print("found 1 box");
       String box = boxVal.toString();
       LazyBox<String> currBox = await Hive.openLazyBox(box);
       //get all the data from one Sensorbox
@@ -114,34 +90,35 @@ class BoxCommunicator {
           return;
         }
         var boxResponse;
+        String toSend = await currBox.get(data);
         try {
           boxResponse = await retry(
               () => client
                   .post(backendIP + "/api/postData/" + box + query,
-                      headers: headers, body: data)
-                  .timeout(Duration(seconds: 10)),
-              retryIf: (e) => e is SocketException || e is TimeoutException);
+                      headers: headers, body: toSend)
+                  .timeout(Duration(seconds: 12)),
+              retryIf: (e) => e is SocketException || e is TimeoutException,
+              maxAttempts: 3);
         } catch (e) {
           print("failed to upload data to: $backendIP/api/postData/$box$query");
           print(e);
           Provider.of<DownloadUploadState>(context, listen: false).idle();
           return;
         }
-        print("got respone");
+        print("response:");
         print(boxResponse.statusCode);
-        print(boxResponse.body);
-        print("data: $data");
         if (boxResponse.statusCode != 200) {
           //user probably left WiFi
           print("user probably left wifi");
           Provider.of<DownloadUploadState>(context, listen: false).idle();
+          // client.close();
           return;
         }
+        // client.close();
         //else: successfully uploaded, continue
       }
       //delete data from disk
-      print("done1");
-      print("sizeof currBox: ${currBox.length}");
+      await currBox.deleteAll(currBox.keys);
       await currBox.deleteFromDisk();
       // await deleteBoxFromDisk(currBox);
       // await currBox.clear();
@@ -150,11 +127,11 @@ class BoxCommunicator {
       // print("sizeof currBox: ${currBox.length}");
       // // currBox.close();
       // // await currBox.deleteFromDisk();
-      print("done3");
     }
-    print("doneeeee");
     Provider.of<DownloadUploadState>(context, listen: false).idle();
     print("done uploading");
+    Box storage = await Hive.openBox('storage');
+    storage.put('totalSizeInBytes', 0);
   }
 
   /// downloads data from the server
@@ -171,16 +148,16 @@ class BoxCommunicator {
     Provider.of<DownloadUploadState>(context, listen: false).downloading();
 
     var boxName;
-    final r = RetryOptions(maxAttempts: 5);
+    final r = RetryOptions(maxAttempts: 2);
     //register to get the current boxName from the Sensorbox
     print("registering");
     var boxResponse;
     int deviceTimestamp;
     try {
       boxResponse = await r.retry(
-          () =>
-              client.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
-          retryIf: (e) => e is SocketException || e is TimeoutException);
+        () => client.get(boxIP + "/api/register").timeout(Duration(seconds: 2)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
     } catch (e) {
       print("registering failed: not reachable");
       Provider.of<DownloadUploadState>(context, listen: false).idle();
@@ -242,10 +219,10 @@ class BoxCommunicator {
           break;
         }
         //make getData call to collect data chunks or files from box
-        final response = await retry(
+        final response = await r.retry(
             () => client
                 .get(boxIP + "/api/getData" + query)
-                .timeout(Duration(seconds: 3)),
+                .timeout(Duration(seconds: 5)),
             retryIf: (e) => e is SocketException || e is TimeoutException);
 
         if (response.statusCode == 200 && response.body.length != 0) {
@@ -342,7 +319,7 @@ class BoxCommunicator {
       print(err);
     }
     Provider.of<DownloadUploadState>(context, listen: false).idle();
-    //await box.close();
+    await box.close();
   }
 
   /// downloads all files and chunks that are not on device yet
@@ -411,7 +388,7 @@ class BoxCommunicator {
         }
 
         final response = await retry(
-            () => http
+            () => client
                 .get(boxIP + "/api/getAllData?deviceTimestamp=$deviceTimestamp",
                     headers: headers)
                 .timeout(Duration(seconds: 3)),
