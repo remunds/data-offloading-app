@@ -27,10 +27,6 @@ import 'stats.dart';
 ///   - sending user images to server
 ///   - labelling images
 class BoxCommunicator {
-  /// data limit in MB for downloading data
-  double dataLimitInMB = Hive.box('storage').get('dataLimitValueInMB',
-      defaultValue: 10.0); // TODO: default datalimit was supposed to be changed
-
   /// number of boxes known by the server
   int _numberOfBoxes = 0;
 
@@ -38,8 +34,7 @@ class BoxCommunicator {
   LazyBox<String> box;
 
   /// Hive [Box] stores global data across all files
-  Box<dynamic>
-      storage; //TODO: in main state that this data is kept after app restart
+  Box<dynamic> storage;
 
   /// standard headers for HTTP Requests
   Map<String, String> headers = {"Content-type": "application/json"};
@@ -122,6 +117,11 @@ class BoxCommunicator {
   ///
   /// [context] build context from page calling this function
   void downloadData(context) async {
+    /// data limit in MB for downloading data
+    double dataLimitInMB;
+    dataLimitInMB = Hive.box('storage').get('dataLimitValueInMB',
+        defaultValue: await DiskSpace.getFreeDiskSpace * 0.5);
+
     print("downloading...");
     Provider.of<DownloadUploadState>(context, listen: false).downloading();
 
