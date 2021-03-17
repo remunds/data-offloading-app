@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:data_offloading_app/provider/box_connection_state.dart';
-import 'package:data_offloading_app/data/idAndTimestamp.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
 import 'package:data_offloading_app/provider/poslist_state.dart';
+import 'package:disk_space/disk_space.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
@@ -47,7 +48,7 @@ class BoxCommunicator {
   // regular wifi networks by checking if boxIP is available in the current network.
   static final String boxRawIP = "10.3.141.1";
   static final String backendRawIP = "192.168.0.102";
-  final String boxIP = "http://$boxRawIP:8000";
+  final String boxIP = "http://$boxRawIP:8001";
   final String backendIP = "http://$backendRawIP:8000";
 
   /// getter for [_numberOfBoxes]
@@ -129,6 +130,7 @@ class BoxCommunicator {
     //register to get the current boxName from the Sensorbox
     print("registering");
     var boxResponse;
+    int deviceTimestamp;
     try {
       boxResponse = await r.retry(
           () => http.get(boxIP + "/api/register").timeout(Duration(seconds: 3)),
@@ -142,6 +144,7 @@ class BoxCommunicator {
     if (boxResponse.statusCode == 200) {
       var res = jsonDecode(boxResponse.body);
       boxName = res["piId"];
+      deviceTimestamp = res["timestamp"];
     } else {
       print("failed to register:");
       Provider.of<DownloadUploadState>(context, listen: false).idle();
@@ -178,6 +181,7 @@ class BoxCommunicator {
     } else {
       query += "?data=new";
     }
+    query += "&deviceTimestamp=$deviceTimestamp";
 
     try {
       //check if user pressed the download-ALL button
@@ -291,11 +295,11 @@ class BoxCommunicator {
       print(err);
     }
     Provider.of<DownloadUploadState>(context, listen: false).idle();
-    await box.close();
+    //await box.close();
   }
 
   /// downloads all files and chunks that are not on device yet
-  /// calls /api/register, /api/registerCurrentData and /api/getAllData
+  /// calls /api/register and /api/getAllData
   ///
   /// [context] build context from page calling this function
   void downloadAllData(BuildContext context) async {
@@ -306,7 +310,6 @@ class BoxCommunicator {
     }
     var boxName;
     int deviceTimestamp;
-    List idList = List();
     Map<String, String> headers = {
       "Content-type": "application/json",
     };
@@ -335,36 +338,10 @@ class BoxCommunicator {
         box = await Hive.openLazyBox(boxName.toString());
       }
 
-      print("Opened box with boxname " + boxName.toString());
-      //If List of IDs is empty execute the download without a data limit and without priority restrictions
-      if (box.length > 0) {
-        idList = box.keys.toList();
-      }
-      //after getting list of ids on device for corresponding boxname we send the list to the box among device id (timestamp)
-      IdListAndTimeStamp idListAndTimeStamp =
-          new IdListAndTimeStamp(timestamp: deviceTimestamp, idList: idList);
-      String body = json.encode(idListAndTimeStamp);
-      final currentDataRegisterResponse = await retry(
-          () => http
-              .post(boxIP + "/api/registerCurrentData",
-                  headers: headers, body: body)
-              .timeout(Duration(seconds: 3)),
-          retryIf: (e) => e is SocketException || e is TimeoutException);
-      // if the files db AND chunk db is empty we get a notification and the download stops
-      if (currentDataRegisterResponse.statusCode == 201) {
-        print("No data on box");
-        context.read<DownloadAllState>().completed();
-        await Future.delayed(const Duration(seconds: 15));
-        context.read<DownloadAllState>().initial();
-        return;
-      }
-      if (currentDataRegisterResponse.statusCode == 200) {
-        print("Box recieved ids and timestamp successfully");
-      } else {
-        throw Exception('Failed to send IDs and timestamp with status code ' +
-            currentDataRegisterResponse.statusCode.toString());
-      }
+      print("Registered as ID$deviceTimestamp at box with boxname " +
+          boxName.toString());
     } else {
+      context.read<DownloadAllState>().initial();
       throw Exception('failed to register');
     }
 
@@ -372,42 +349,60 @@ class BoxCommunicator {
     int totalSizeInBytes = storage.get('totalSizeInBytes', defaultValue: 0);
     //now this loop will be executed when the general download loop is paused.
     // Rest of work is done on the box
-    while (
-        Provider.of<DownloadAllState>(context, listen: false).downloadState ==
-            1) {
-      final response = await retry(
-          () => http
-              .get(boxIP + "/api/getAllData?deviceTimestamp=$deviceTimestamp",
-                  headers: headers)
-              .timeout(Duration(seconds: 3)),
-          retryIf: (e) => e is SocketException || e is TimeoutException);
-
-      if (response.statusCode == 200) {
-        var res = jsonDecode(response.body);
-
-        var id = res["_id"];
-
-        if (id == null) {
-          print('response had no id');
-          continue;
+    //If chunk is already on phone next chunk will be downloaded until box sends http code 201 (all chunks sent to phone)
+    try {
+      while (
+          Provider.of<DownloadAllState>(context, listen: false).downloadState ==
+              1) {
+        if (await DiskSpace.getFreeDiskSpace <= 1000) {
+          print("Disk Space Limit ( >= 1000 MB) reached");
+          context.read<DownloadAllState>().completed();
+          await Future.delayed(const Duration(minutes: 2));
+          context.read<DownloadAllState>().initial();
+          break;
         }
 
-        box.put(id, response.body);
+        final response = await retry(
+            () => http
+                .get(boxIP + "/api/getAllData?deviceTimestamp=$deviceTimestamp",
+                    headers: headers)
+                .timeout(Duration(seconds: 3)),
+            retryIf: (e) => e is SocketException || e is TimeoutException);
 
-        storage.put(
-            'totalSizeInBytes', totalSizeInBytes + response.contentLength);
-        print("new entry at: " + DateTime.now().toString());
-      } else if (response.statusCode == 201) {
-        print("Status Code: " + response.statusCode.toString());
-        print('data download is finished');
-        context.read<DownloadAllState>().completed();
-        await Future.delayed(const Duration(minutes: 2));
-        context.read<DownloadAllState>().initial();
-        break;
-      } else {
-        print("Status Code: " + response.statusCode.toString());
-        print('failed to get any data');
+        if (response.statusCode == 200) {
+          var res = jsonDecode(response.body);
+
+          var id = res["_id"];
+
+          if (id == null) {
+            print('response had no id');
+            continue;
+          }
+          if (box.containsKey(id)) {
+            log("ID already on Box");
+            continue;
+          } else {
+            box.put(id, response.body);
+            storage.put(
+                'totalSizeInBytes', totalSizeInBytes + response.contentLength);
+            print("new entry at: " + DateTime.now().toString());
+          }
+        } else if (response.statusCode == 201) {
+          print("Status Code: " + response.statusCode.toString());
+          print('data download is finished');
+          context.read<DownloadAllState>().completed();
+          await Future.delayed(const Duration(minutes: 2));
+          context.read<DownloadAllState>().initial();
+          break;
+        } else {
+          print("Status Code: " + response.statusCode.toString());
+          print('failed to get any data');
+        }
       }
+    } catch (err) {
+      print("User Left");
+      print(err);
+      context.read<DownloadAllState>().initial();
     }
   }
 
