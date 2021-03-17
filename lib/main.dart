@@ -264,7 +264,7 @@ class _MainAppState extends State<MainApp> {
     _timer.cancel();
   }
 
-  List<Widget> _pages = [Map(), Home(), Tasks()];
+  List<Widget> _pages = [FMap(), Home(), Tasks()];
 
   int _selectedIndex = 1;
   void _onItemTap(int index) {

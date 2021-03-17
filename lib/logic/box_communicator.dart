@@ -6,6 +6,7 @@ import 'package:data_offloading_app/provider/box_connection_state.dart';
 import 'package:data_offloading_app/data/idAndTimestamp.dart';
 import 'package:data_offloading_app/provider/download_update_state.dart';
 import 'package:data_offloading_app/provider/downloadall_state.dart';
+import 'package:data_offloading_app/provider/poslist_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
@@ -505,15 +506,15 @@ class BoxCommunicator {
   /// calls /api/getPosition/ route
   ///
   /// returns sensorbox coordinates as future list of [BoxPosition]
-  Future<List<BoxPosition>> fetchPositions() async {
-    List<BoxPosition> posList = new List<BoxPosition>();
+  Future<void> fetchPositions(BuildContext context, State caller) async {
+    List<BoxPosition> posList = List<BoxPosition>();
     int currBox = 1;
     String url = backendIP + "/api/getPosition/" + currBox.toString();
     dynamic response = await http.get(url, headers: headers);
     if (response.statusCode != 200) {
       print("StatusCode " + response.statusCode.toString());
       print("Something went wrong!");
-      return null;
+      return;
     }
     //request sensorbox positions until no boxes are left
     while (response.statusCode == 200) {
@@ -529,9 +530,7 @@ class BoxCommunicator {
       response = await http.get(url, headers: headers);
     }
     _numberOfBoxes = currBox - 1;
-    print(posList); //TODO: delete this print?
-
-    return posList;
+    if (caller.mounted) context.read<PosListProvider>().setPositions(posList);
   }
 
   /// sends a HTTP Multipart Request to box server, containing the user image and selected labels

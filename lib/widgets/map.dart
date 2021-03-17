@@ -12,21 +12,25 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 //MyMap class
-class Map extends StatefulWidget {
+class FMap extends StatefulWidget {
   @override
-  _MapState createState() => _MapState();
+  _FMapState createState() => _FMapState();
 }
 
 //MyMap state to keep track of the _boxes list
-class _MapState extends State<Map> {
+class _FMapState extends State<FMap> {
   MapController mapController = MapController();
   List<Marker> _boxes = [];
   UserLocationOptions userLocationOptions;
 
   @override
   Widget build(BuildContext context) {
+    BoxCommunicator().fetchPositions(context, this);
     BoxConnectionState boxConnectionState = context.watch<BoxConnectionState>();
-
+    context.watch<PosListProvider>().posList.forEach((e) {
+      Marker boxMarker = _buildBoxMarker(e.lat, e.long);
+      if (!_boxes.contains(boxMarker)) _boxes.add(boxMarker);
+    });
     Connection _connection = boxConnectionState.connectionState;
 
     if (_connection == Connection.UNKNOWN_WIFI) {
@@ -46,6 +50,7 @@ class _MapState extends State<Map> {
       body: FlutterMap(
         options: MapOptions(
           zoom: 13.0,
+          center: latLng.LatLng(50.8022, 8.7668),
           plugins: [
             //to track user
             UserLocationPlugin(),
@@ -78,21 +83,5 @@ class _MapState extends State<Map> {
         size: 40,
       ),
     );
-  }
-
-  //used to initialize the _boxes List.
-  @protected
-  @mustCallSuper
-  void initState() {
-    super.initState();
-
-    BoxCommunicator bC = new BoxCommunicator();
-    bC.fetchPositions().then((value) {
-      context.read<PosListProvider>().setPositions(value);
-      int numOfBoxes = bC.getNumberOfBoxes();
-      for (int box = 0; box < numOfBoxes; ++box) {
-        _boxes.add(_buildBoxMarker(value[box].lat, value[box].long));
-      }
-    });
   }
 }
