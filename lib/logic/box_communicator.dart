@@ -48,7 +48,7 @@ class BoxCommunicator {
   // regular wifi networks by checking if boxIP is available in the current network.
   static final String boxRawIP = "10.3.141.1";
   static final String backendRawIP = "192.168.0.102";
-  final String boxIP = "http://$boxRawIP:8001";
+  final String boxIP = "http://$boxRawIP:8000";
   final String backendIP = "http://$backendRawIP:8000";
 
   /// getter for [_numberOfBoxes]
