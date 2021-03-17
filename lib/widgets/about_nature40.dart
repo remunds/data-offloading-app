@@ -106,7 +106,7 @@ class AboutNature40 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.959,
+                width: MediaQuery.of(context).size.width * 0.95,
                 child: Image.asset(
                   'assets/natur40_konzept_1.png',
                   scale: 2,
@@ -119,7 +119,7 @@ class AboutNature40 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.959,
+                width: MediaQuery.of(context).size.width * 0.95,
                 child: Image.asset(
                   'assets/natur40_konzept_2.png',
                   scale: 3,
